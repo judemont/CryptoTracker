@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cryptotracker/models/coin_price.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
@@ -85,6 +86,46 @@ Future<Map> getMetadata(List ids, {bool? localTest}) async {
   }
 
   return response;
+}
+
+Future<List<CoinPrice>> getPricesHistory(String? symbol,
+    {bool? localTest}) async {
+  const testData =
+      '''{"data":{"id":1,"name":"Bitcoin","symbol":"BTC","is_active":1,"is_fiat":0,"quotes":[{"timestamp":"2018-06-22T19:29:37.000Z","quote":{"USD":{"price":6242.29,"volume_24h":4681670000,"market_cap":106800038746.48,"circulating_supply":4681670000,"total_supply":4681670000,"timestamp":"2018-06-22T19:29:37.000Z"}}},{"timestamp":"2018-06-22T19:34:33.000Z","quote":{"USD":{"price":6242.82,"volume_24h":4682330000,"market_cap":106809106575.84,"circulating_supply":4681670000,"total_supply":4681670000,"timestamp":"2018-06-22T19:34:33.000Z"}}}]},"status":{"timestamp":"2024-05-05T14:41:39.871Z","error_code":0,"error_message":"","elapsed":10,"credit_count":1,"notice":""}}''';
+
+  Map<String, dynamic> queryParams = {
+    "symbol": symbol,
+    "skip_invalid": "true",
+  };
+
+  Uri url = Uri.https('pro-api.coinmarketcap.com',
+      "/v3/cryptocurrency/quotes/historical", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"X-CMC_PRO_API_KEY": apiKey});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response;
+  if (!(localTest ?? false)) {
+    response = json.decode(await responseJson.stream.bytesToString());
+  } else {
+    print("USING TEST DATA");
+    response = json.decode(testData);
+  }
+  print(response);
+  var pricesHistoryData = response['data']["quotes"];
+
+  List<CoinPrice> pricesHistory = [];
+
+  for (var quote in pricesHistoryData) {
+    pricesHistory.add(CoinPrice(
+      dateTime: DateTime.parse(quote["timestamp"]),
+      price: quote["quote"]["USD"]["price"],
+    ));
+  }
+
+  return pricesHistory;
 }
 
 // void main() {

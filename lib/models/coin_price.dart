@@ -1,23 +1,23 @@
 class CoinPrice {
   double? price;
-  String? timestamp;
+  DateTime? dateTime;
 
   CoinPrice({
     this.price,
-    this.timestamp,
+    this.dateTime,
   });
 
   Map<String, Object?> toMap() {
     return {
       'price': price,
-      'timestamp': timestamp,
+      'timestamp': dateTime,
     };
   }
 
   static CoinPrice fromMap(Map<String, dynamic> map) {
     return CoinPrice(
       price: map['price'],
-      timestamp: map['timestamp'],
+      dateTime: map['timestamp'],
     );
   }
 }

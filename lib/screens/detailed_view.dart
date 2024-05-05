@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/coin_price.dart';
 import '../models/crypto.dart';
+import '../services/coins_api.dart';
 
 class DetailedView extends StatefulWidget {
   final Crypto crypto;
@@ -11,6 +13,14 @@ class DetailedView extends StatefulWidget {
 }
 
 class _DetailedViewState extends State<DetailedView> {
+  List<CoinPrice> pricesHistory = [];
+
+  @override
+  void initState() {
+    loadPriceHistory();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +34,32 @@ class _DetailedViewState extends State<DetailedView> {
               const SizedBox(
                 height: 20,
               ),
-              Text(
-                widget.crypto.name ?? "",
-                style: const TextStyle(fontSize: 25),
+              Row(
+                children: [
+                  Image.network(
+                    widget.crypto.logoUrl ?? "",
+                    width: 30.0,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    widget.crypto.name ?? "",
+                    style: const TextStyle(fontSize: 25),
+                  )
+                ],
               )
             ],
           )),
     );
+  }
+
+  Future<void> loadPriceHistory() async {
+    getPricesHistory(widget.crypto.symbol).then((values) {
+      setState(() {
+        pricesHistory = values;
+      });
+      print(pricesHistory);
+    });
   }
 }
