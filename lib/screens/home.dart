@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadListings() {
-    getListings(localTest: false).then((values) {
+    getListings().then((values) {
       setState(() {
         listings = values;
       });
