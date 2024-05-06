@@ -71,6 +71,7 @@ class _DetailedViewState extends State<DetailedView> {
                       titlesData: const FlTitlesData(show: false),
                       lineBarsData: [
                         LineChartBarData(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           dotData: const FlDotData(show: false),
                           spots: pricesHistoryChartData,
                         )
@@ -79,11 +80,11 @@ class _DetailedViewState extends State<DetailedView> {
                 height: 5,
               ),
               Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     border: Border.all(),
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                    borderRadius: const BorderRadius.all(Radius.circular(20))),
                 child: ButtonBar(
                   alignment: MainAxisAlignment.start,
                   children: [
