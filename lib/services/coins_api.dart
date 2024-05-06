@@ -5,8 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 
-const String apiKey =
-    "a599804834d4eb69c45e08f8dd3e26a0a82483c6ad187906978ce572796e9464";
+// const String apiKey = "";
 
 Future<List<Crypto>> getListings() async {
   Map<String, dynamic> queryParams = {
@@ -19,7 +18,7 @@ Future<List<Crypto>> getListings() async {
 
   http.Request request = http.Request("get", url);
 
-  request.headers.addAll({"authorization": "Apikey $apiKey"});
+  // request.headers.addAll({"authorization": "Apikey $apiKey"});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -46,52 +45,24 @@ Future<List<Crypto>> getListings() async {
   return cryptoList;
 }
 
-// Future<double> getPrice(String? symbol, {bool? localTest}) async {
-//   const testData = '''{'USD':3151.9}''';
-
-//   Map<String, dynamic> queryParams = {
-//     "fsym": symbol,
-//     "tsyms": "USD",
-//   };
-
-//   Uri url = Uri.https('min-api.cryptocompare.com', "/data/pice", queryParams);
-
-//   http.Request request = http.Request("get", url);
-
-//   request.headers.addAll({"authorization": "Apikey $apiKey"});
-
-//   http.StreamedResponse responseJson = await request.send();
-
-//   var response;
-//   if (!(localTest ?? false)) {
-//     response = json.decode(await responseJson.stream.bytesToString());
-//   } else {
-//     print("USING TEST DATA");
-//     response = json.decode(testData);
-//   }
-//   double price = response["USD"];
-
-//   return price;
-// }
-
 Future<List<CoinPrice>> getPricesHistory(String symbol, int limit,
-    {String interval = "hour"}) async {
+    {String unit = "hour", int interval = 1}) async {
   Map<String, dynamic> queryParams = {
     "fsym": symbol,
     'tsym': "USD",
+    'aggregate': interval.toString(),
     'limit': limit.toString(),
   };
 
   Uri url = Uri.https(
-      'min-api.cryptocompare.com', "/data/v2/histo$interval", queryParams);
+      'min-api.cryptocompare.com', "/data/v2/histo$unit", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"authorization": "Apikey $apiKey"});
+  // request.headers.addAll({"authorization": "Apikey $apiKey"});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-
   List pricesHistoryData = response['Data']["Data"];
 
   List<CoinPrice> pricesHistory = [];
