@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   catppuccin_flutter: ^1.0.0
   http: ^1.2.1
+  fl_chart: ^0.67.0
 
 dev_dependencies:
   flutter_test:

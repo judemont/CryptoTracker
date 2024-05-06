@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../models/coin_price.dart';
@@ -14,10 +15,12 @@ class DetailedView extends StatefulWidget {
 
 class _DetailedViewState extends State<DetailedView> {
   List<CoinPrice> pricesHistory = [];
+  List<FlSpot> pricesHistoryChartData = [];
 
   @override
   void initState() {
-    loadPriceHistory();
+    loadPriceHistory().then((values) => loadPricesHistoryChartData());
+
     super.initState();
   }
 
@@ -48,18 +51,40 @@ class _DetailedViewState extends State<DetailedView> {
                     style: const TextStyle(fontSize: 25),
                   )
                 ],
-              )
+              ),
+              Container(
+                  width: double.infinity,
+                  height: 300,
+                  child: LineChart(LineChartData(
+                      borderData: FlBorderData(show: false),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: pricesHistoryChartData,
+                        )
+                      ]))),
             ],
           )),
     );
   }
 
   Future<void> loadPriceHistory() async {
-    getPricesHistory(widget.crypto.symbol).then((values) {
-      setState(() {
-        pricesHistory = values;
-      });
-      print(pricesHistory);
+    var values = await getPricesHistory(widget.crypto.symbol!, 25);
+    setState(() {
+      pricesHistory = values;
     });
+  }
+
+  Future<void> loadPricesHistoryChartData() async {
+    print(pricesHistory);
+    for (var i = 0; i < pricesHistory.length; i++) {
+      setState(() {
+        pricesHistoryChartData.add(FlSpot(
+            i.toDouble(),
+            pricesHistory[i].price! > 1000
+                ? (pricesHistory[i].price!.round().toDouble())
+                : (pricesHistory[i].price!)));
+      });
+      print(pricesHistoryChartData);
+    }
   }
 }
