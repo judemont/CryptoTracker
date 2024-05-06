@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Crypto> listings = [];
+  bool showSearchField = false;
 
   @override
   void initState() {
@@ -26,9 +27,18 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text("CryptoTracker"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => setState(() {
+              showSearchField = !showSearchField;
+            }),
+          )
+        ],
       ),
       body: Column(
         children: [
+          Visibility(visible: showSearchField, child: TextField()),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
