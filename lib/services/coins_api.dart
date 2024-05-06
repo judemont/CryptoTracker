@@ -75,15 +75,16 @@ Future<List<Crypto>> getListings() async {
 // }
 
 Future<List<CoinPrice>> getPricesHistory(String symbol, int limit,
-    {String interval = "hour"}) async {
+    {String unit = "hour", int interval = 1}) async {
   Map<String, dynamic> queryParams = {
     "fsym": symbol,
     'tsym': "USD",
+    'aggregate': interval.toString(),
     'limit': limit.toString(),
   };
 
   Uri url = Uri.https(
-      'min-api.cryptocompare.com', "/data/v2/histo$interval", queryParams);
+      'min-api.cryptocompare.com', "/data/v2/histo$unit", queryParams);
 
   http.Request request = http.Request("get", url);
   request.headers.addAll({"authorization": "Apikey $apiKey"});
@@ -91,7 +92,6 @@ Future<List<CoinPrice>> getPricesHistory(String symbol, int limit,
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-
   List pricesHistoryData = response['Data']["Data"];
 
   List<CoinPrice> pricesHistory = [];
