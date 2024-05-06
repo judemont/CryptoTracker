@@ -173,9 +173,8 @@ class _DetailedViewState extends State<DetailedView> {
       for (var i = 0; i < pricesHistory.length; i++) {
         pricesHistoryChartData.add(FlSpot(
             pricesHistory[i].dateTime?.millisecondsSinceEpoch.toDouble() ?? 0.0,
-            pricesHistory[i].price! > 1000
-                ? (pricesHistory[i].price!.round().toDouble())
-                : (pricesHistory[i].price!)));
+            double.parse(pricesHistory[i].price!.toStringAsFixed(
+                5 - pricesHistory[i].price.toString().split(".")[0].length))));
       }
     });
   }
