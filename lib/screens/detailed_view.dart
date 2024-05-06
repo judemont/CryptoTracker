@@ -1,7 +1,6 @@
+import 'package:cryptotracker/utils.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../models/coin_price.dart';
 import '../models/crypto.dart';
@@ -45,7 +44,7 @@ class _DetailedViewState extends State<DetailedView> {
                 children: [
                   Image.network(
                     widget.crypto.logoUrl ?? "",
-                    width: 30.0,
+                    width: 40.0,
                   ),
                   const SizedBox(
                     width: 10,
@@ -53,7 +52,11 @@ class _DetailedViewState extends State<DetailedView> {
                   Text(
                     widget.crypto.name ?? "",
                     style: const TextStyle(fontSize: 25),
-                  )
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Text("${roundPrice(widget.crypto.price ?? 0.0)}\$")
                 ],
               ),
               const SizedBox(
@@ -174,8 +177,7 @@ class _DetailedViewState extends State<DetailedView> {
       for (var i = 0; i < pricesHistory.length; i++) {
         pricesHistoryChartData.add(FlSpot(
             pricesHistory[i].dateTime?.millisecondsSinceEpoch.toDouble() ?? 0.0,
-            double.parse(pricesHistory[i].price!.toStringAsFixed(
-                5 - pricesHistory[i].price.toString().split(".")[0].length))));
+            roundPrice(pricesHistory[i].price ?? 0.0)));
       }
     });
   }
