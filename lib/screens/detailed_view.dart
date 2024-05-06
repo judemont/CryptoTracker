@@ -16,6 +16,7 @@ class DetailedView extends StatefulWidget {
 class _DetailedViewState extends State<DetailedView> {
   List<CoinPrice> pricesHistory = [];
   List<FlSpot> pricesHistoryChartData = [];
+  List<ShowingTooltipIndicators> chartIndicators = [];
 
   @override
   void initState() {
@@ -31,7 +32,7 @@ class _DetailedViewState extends State<DetailedView> {
         title: const Text("Details"),
       ),
       body: Container(
-          margin: const EdgeInsets.only(left: 20),
+          margin: const EdgeInsets.only(left: 10),
           child: Column(
             children: [
               const SizedBox(
@@ -52,13 +53,22 @@ class _DetailedViewState extends State<DetailedView> {
                   )
                 ],
               ),
+              const SizedBox(
+                height: 20,
+              ),
               Container(
-                  width: double.infinity,
+                  margin: const EdgeInsets.only(right: 10),
                   height: 300,
                   child: LineChart(LineChartData(
-                      borderData: FlBorderData(show: false),
+                      lineTouchData: LineTouchData(
+                          touchTooltipData: LineTouchTooltipData(
+                              getTooltipItems: getTooltipItems)),
+                      borderData: FlBorderData(show: true),
+                      gridData: const FlGridData(show: false),
+                      titlesData: const FlTitlesData(show: false),
                       lineBarsData: [
                         LineChartBarData(
+                          dotData: const FlDotData(show: false),
                           spots: pricesHistoryChartData,
                         )
                       ]))),
@@ -75,16 +85,34 @@ class _DetailedViewState extends State<DetailedView> {
   }
 
   Future<void> loadPricesHistoryChartData() async {
-    print(pricesHistory);
     for (var i = 0; i < pricesHistory.length; i++) {
       setState(() {
         pricesHistoryChartData.add(FlSpot(
-            i.toDouble(),
+            pricesHistory[i].dateTime?.millisecondsSinceEpoch.toDouble() ?? 0.0,
             pricesHistory[i].price! > 1000
                 ? (pricesHistory[i].price!.round().toDouble())
                 : (pricesHistory[i].price!)));
       });
-      print(pricesHistoryChartData);
     }
+  }
+
+  List<LineTooltipItem> getTooltipItems(List<LineBarSpot> lineBarSpots) {
+    List<LineTooltipItem> tooltipItems = [];
+    for (var lineBarSpot in lineBarSpots) {
+      DateTime date =
+          DateTime.fromMillisecondsSinceEpoch(lineBarSpot.x.toInt());
+
+      tooltipItems.add(LineTooltipItem("", const TextStyle(), children: [
+        TextSpan(
+            text: "${lineBarSpot.y}\$",
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        const TextSpan(text: "\n"),
+        TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
+        const TextSpan(text: "\n"),
+        TextSpan(text: "${date.month}/${date.day}/${date.year}"),
+      ]));
+    }
+
+    return tooltipItems;
   }
 }
