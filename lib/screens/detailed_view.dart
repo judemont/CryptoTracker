@@ -1,4 +1,3 @@
-import 'package:cryptotracker/utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +21,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   @override
   void initState() {
-    loadPriceHistory("minute", 1440, interval: 5);
+    loadPriceHistory(1);
 
     super.initState();
   }
@@ -56,7 +55,7 @@ class _DetailedViewState extends State<DetailedView> {
                   const SizedBox(
                     width: 20,
                   ),
-                  Text("${roundPrice(widget.crypto.price ?? 0.0)}\$")
+                  Text("${widget.crypto.price ?? 0.0}\$")
                 ],
               ),
               const SizedBox(
@@ -94,25 +93,13 @@ class _DetailedViewState extends State<DetailedView> {
                     TextButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 0
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("1H"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 0;
-                        loadPriceHistory("minute", 60);
-                      }),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
                               selectedTimePriceChartInterval == 1
                                   ? Theme.of(context).colorScheme.secondary
                                   : Colors.transparent)),
                       child: const Text("1D"),
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 1;
-                        loadPriceHistory("minute", 288, interval: 5);
+                        loadPriceHistory(1);
                       }),
                     ),
                     TextButton(
@@ -124,7 +111,7 @@ class _DetailedViewState extends State<DetailedView> {
                       child: const Text("1W"),
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 2;
-                        loadPriceHistory("minute", 336, interval: 30);
+                        loadPriceHistory(7);
                       }),
                     ),
                     TextButton(
@@ -136,7 +123,7 @@ class _DetailedViewState extends State<DetailedView> {
                       child: const Text("30D"),
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 3;
-                        loadPriceHistory("hour", 720);
+                        loadPriceHistory(30);
                       }),
                     ),
                     TextButton(
@@ -148,7 +135,7 @@ class _DetailedViewState extends State<DetailedView> {
                       child: const Text("1Y"),
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 4;
-                        loadPriceHistory("day", 365);
+                        loadPriceHistory(365);
                       }),
                     )
                   ],
@@ -159,11 +146,10 @@ class _DetailedViewState extends State<DetailedView> {
     );
   }
 
-  Future<void> loadPriceHistory(String unit, int limit,
-      {int interval = 1}) async {
-    getPricesHistory(widget.crypto.symbol!, limit,
-            unit: unit, interval: interval)
-        .then((values) {
+  Future<void> loadPriceHistory(
+    int daysNum,
+  ) async {
+    getPricesHistory(widget.crypto.id!, daysNum).then((values) {
       setState(() {
         pricesHistory = values;
       });
@@ -177,7 +163,7 @@ class _DetailedViewState extends State<DetailedView> {
       for (var i = 0; i < pricesHistory.length; i++) {
         pricesHistoryChartData.add(FlSpot(
             pricesHistory[i].dateTime?.millisecondsSinceEpoch.toDouble() ?? 0.0,
-            roundPrice(pricesHistory[i].price ?? 0.0)));
+            pricesHistory[i].price ?? 0.0));
       }
     });
   }

@@ -5,118 +5,112 @@ import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 
-// const String apiKey = "";
+const String apiKey = "CG-WLqjJpvFoq2XU2SXZEknL1aD";
 
 Future<List<Crypto>> getListings() async {
   Map<String, dynamic> queryParams = {
-    "limit": 100.toString(),
-    "tsym": "USD",
+    "vs_currency": "usd",
+    "order": "market_cap_desk",
   };
 
-  Uri url = Uri.https(
-      'min-api.cryptocompare.com', "/data/top/mktcapfull", queryParams);
+  Uri url =
+      Uri.https('api.coingecko.com', "/api/v3/coins/markets", queryParams);
 
   http.Request request = http.Request("get", url);
 
-  // request.headers.addAll({"authorization": "Apikey $apiKey"});
+  request.headers.addAll({"x-cg-demo-api-key": apiKey});
 
   http.StreamedResponse responseJson = await request.send();
 
-  var response = json.decode(await responseJson.stream.bytesToString());
-
-  var listing = response['Data'];
+  var listing = json.decode(await responseJson.stream.bytesToString());
 
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
-    var infos = crypto["CoinInfo"];
-    var name = infos['FullName'];
-    var symbol = infos['Internal'];
-    var price = crypto["RAW"]?["USD"]["PRICE"];
-    var logoUrl = "https://cryptocompare.com${infos["ImageUrl"]}";
-
     cryptoList.add(Crypto(
-      name: name,
-      symbol: symbol,
-      price: price,
-      logoUrl: logoUrl,
+      id: crypto["id"],
+      name: crypto["name"],
+      symbol: crypto["symbol"],
+      price: crypto["current_price"].toDouble(),
+      logoUrl: crypto["image"],
     ));
   }
 
   return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(String symbol, int limit,
-    {String unit = "hour", int interval = 1}) async {
+Future<List<CoinPrice>> getPricesHistory(
+  String coinId,
+  int daysNum,
+) async {
   Map<String, dynamic> queryParams = {
-    "fsym": symbol,
-    'tsym': "USD",
-    'aggregate': interval.toString(),
-    'limit': limit.toString(),
+    "vs_currency": "usd",
+    "days": daysNum.toString()
   };
 
   Uri url = Uri.https(
-      'min-api.cryptocompare.com', "/data/v2/histo$unit", queryParams);
+      'api.coingecko.com', "/api/v3/coins/$coinId/market_chart", queryParams);
 
   http.Request request = http.Request("get", url);
-  // request.headers.addAll({"authorization": "Apikey $apiKey"});
+  request.headers.addAll({"x-cg-demo-api-key": apiKey});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-  List pricesHistoryData = response['Data']["Data"];
+
+  var pricesHistoryData = response["prices"];
 
   List<CoinPrice> pricesHistory = [];
 
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
-      dateTime: DateTime.fromMillisecondsSinceEpoch(data["time"] * 1000),
-      price: (data["high"] + data["low"]) / 2,
+      dateTime: DateTime.fromMillisecondsSinceEpoch(data[0]),
+      price: data[1],
     ));
   }
 
   return pricesHistory;
 }
 
-Future getPrices(List<String> symbols, {bool? localTest}) async {
+// Future getPrices(List<String> symbols, {bool? localTest}) async {
+//   Map<String, dynamic> queryParams = {
+//     "fsyms": symbols.join(","),
+//     "tsyms": "USD",
+//   };
+
+//   Uri url =
+//       Uri.https('min-api.cryptocompare.com', "/data/pricemulti", queryParams);
+//   print(url.toString());
+//   http.Request request = http.Request("get", url);
+
+//   http.StreamedResponse responseJson = await request.send();
+
+//   var response = json.decode(await responseJson.stream.bytesToString());
+//   return response;
+// }
+
+Future<List<Crypto>> search(String query) async {
   Map<String, dynamic> queryParams = {
-    "fsyms": symbols.join(","),
-    "tsyms": "USD",
+    "query": query,
   };
 
-  Uri url =
-      Uri.https('min-api.cryptocompare.com', "/data/pricemulti", queryParams);
-  print(url.toString());
+  Uri url = Uri.https('api.coingecko.com', "/api/v3/search", queryParams);
+
   http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-cg-demo-api-key": apiKey});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-  return response;
-}
-
-Future<List<Crypto>> search(String query, {int limit = 10}) async {
-  Map<String, dynamic> queryParams = {
-    "limit": limit.toString(),
-    "search_string": query,
-  };
-
-  Uri url =
-      Uri.https('data-api.cryptocompare.com', "/asset/v1/search", queryParams);
-
-  http.Request request = http.Request("get", url);
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  List elements = response["Data"]["LIST"];
+  List elements = response["coins"];
 
   List<Crypto> results = [];
 
   for (var i = 0; i < elements.length; i++) {
     results.add(Crypto(
-      name: elements[i]["NAME"],
-      symbol: elements[i]["SYMBOL"],
-      logoUrl: elements[i]["LOGO_URL"],
+      id: elements[i]["id"],
+      name: elements[i]["name"],
+      symbol: elements[i]["symbol"],
+      logoUrl: elements[i]["thumb"],
     ));
   }
   return results;
