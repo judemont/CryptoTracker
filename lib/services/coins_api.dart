@@ -77,6 +77,47 @@ Future<List<CoinPrice>> getPricesHistory(String symbol, int limit,
   return pricesHistory;
 }
 
-// void main() {
-//   getListing();
-// }
+Future getPrices(List<String> symbols, {bool? localTest}) async {
+  Map<String, dynamic> queryParams = {
+    "fsyms": symbols.join(","),
+    "tsyms": "USD",
+  };
+
+  Uri url =
+      Uri.https('min-api.cryptocompare.com', "/data/pricemulti", queryParams);
+  print(url.toString());
+  http.Request request = http.Request("get", url);
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = json.decode(await responseJson.stream.bytesToString());
+  return response;
+}
+
+Future<List<Crypto>> search(String query, {int limit = 10}) async {
+  Map<String, dynamic> queryParams = {
+    "limit": limit.toString(),
+    "search_string": query,
+  };
+
+  Uri url =
+      Uri.https('data-api.cryptocompare.com', "/asset/v1/search", queryParams);
+
+  http.Request request = http.Request("get", url);
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = json.decode(await responseJson.stream.bytesToString());
+  List elements = response["Data"]["LIST"];
+
+  List<Crypto> results = [];
+
+  for (var i = 0; i < elements.length; i++) {
+    results.add(Crypto(
+      name: elements[i]["NAME"],
+      symbol: elements[i]["SYMBOL"],
+      logoUrl: elements[i]["LOGO_URL"],
+    ));
+  }
+  return results;
+}
