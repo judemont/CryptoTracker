@@ -30,9 +30,14 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () => setState(() {
-              showSearchField = !showSearchField;
-            }),
+            onPressed: () {
+              setState(() {
+                showSearchField = !showSearchField;
+              });
+              if (!showSearchField) {
+                loadListings();
+              }
+            },
           )
         ],
       ),
@@ -41,6 +46,10 @@ class _HomeState extends State<Home> {
           Visibility(
               visible: showSearchField,
               child: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Search',
+                ),
                 onChanged: (value) {
                   if (value.length >= 3) {
                     loadSearchResults(value);

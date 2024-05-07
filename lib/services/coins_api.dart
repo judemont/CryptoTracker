@@ -44,10 +44,7 @@ Future<List<Crypto>> getListings() async {
   return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(
-  String coinId,
-  int daysNum,
-) async {
+Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
   Map<String, dynamic> queryParams = {
     "vs_currency": "usd",
     "days": daysNum.toString()

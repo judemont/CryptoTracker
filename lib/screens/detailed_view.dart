@@ -1,3 +1,4 @@
+import 'package:cryptotracker/utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -137,7 +138,7 @@ class _DetailedViewState extends State<DetailedView> {
                         selectedTimePriceChartInterval = 4;
                         loadPriceHistory(365);
                       }),
-                    )
+                    ),
                   ],
                 ),
               )
@@ -146,9 +147,7 @@ class _DetailedViewState extends State<DetailedView> {
     );
   }
 
-  Future<void> loadPriceHistory(
-    int daysNum,
-  ) async {
+  Future<void> loadPriceHistory(int daysNum) async {
     getPricesHistory(widget.crypto.id!, daysNum).then((values) {
       setState(() {
         pricesHistory = values;
@@ -176,7 +175,7 @@ class _DetailedViewState extends State<DetailedView> {
 
       tooltipItems.add(LineTooltipItem("", const TextStyle(), children: [
         TextSpan(
-            text: "${lineBarSpot.y}\$",
+            text: "${roundPrice(lineBarSpot.y)}\$",
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const TextSpan(text: "\n"),
         TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
