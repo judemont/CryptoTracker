@@ -1,11 +1,17 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 
-const String apiKey = "CG-WLqjJpvFoq2XU2SXZEknL1aD";
+const List<String> apiKeys = [
+  "CG-WLqjJpvFoq2XU2SXZEknL1aD",
+  "CG-LjYqP1F8vpFF4SJyYxdVyDwZ",
+  "CG-jwFmM1F8Zn6NRPMqsGMpQY2Y",
+  "CG-LiRwwL2ZgQkaq9jJ5o5pGnKA",
+];
 
 Future<List<Crypto>> getListings() async {
   Map<String, dynamic> queryParams = {
@@ -18,7 +24,7 @@ Future<List<Crypto>> getListings() async {
 
   http.Request request = http.Request("get", url);
 
-  request.headers.addAll({"x-cg-demo-api-key": apiKey});
+  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -51,7 +57,7 @@ Future<List<CoinPrice>> getPricesHistory(
       'api.coingecko.com', "/api/v3/coins/$coinId/market_chart", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": apiKey});
+  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -71,23 +77,6 @@ Future<List<CoinPrice>> getPricesHistory(
   return pricesHistory;
 }
 
-// Future getPrices(List<String> symbols, {bool? localTest}) async {
-//   Map<String, dynamic> queryParams = {
-//     "fsyms": symbols.join(","),
-//     "tsyms": "USD",
-//   };
-
-//   Uri url =
-//       Uri.https('min-api.cryptocompare.com', "/data/pricemulti", queryParams);
-//   print(url.toString());
-//   http.Request request = http.Request("get", url);
-
-//   http.StreamedResponse responseJson = await request.send();
-
-//   var response = json.decode(await responseJson.stream.bytesToString());
-//   return response;
-// }
-
 Future<List<Crypto>> search(String query) async {
   Map<String, dynamic> queryParams = {
     "query": query,
@@ -96,7 +85,7 @@ Future<List<Crypto>> search(String query) async {
   Uri url = Uri.https('api.coingecko.com', "/api/v3/search", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": apiKey});
+  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -114,4 +103,9 @@ Future<List<Crypto>> search(String query) async {
     ));
   }
   return results;
+}
+
+String getApiKey() {
+  var random = new Random();
+  return apiKeys[random.nextInt(apiKeys.length)];
 }
