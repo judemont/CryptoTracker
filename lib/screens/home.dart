@@ -38,7 +38,15 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: [
-          Visibility(visible: showSearchField, child: TextField()),
+          Visibility(
+              visible: showSearchField,
+              child: TextField(
+                onChanged: (value) {
+                  if (value.length >= 3) {
+                    loadSearchResults(value);
+                  }
+                },
+              )),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
@@ -56,6 +64,14 @@ class _HomeState extends State<Home> {
 
   void loadListings() {
     getListings().then((values) {
+      setState(() {
+        listings = values;
+      });
+    });
+  }
+
+  void loadSearchResults(String query) {
+    search(query).then((values) {
       setState(() {
         listings = values;
       });

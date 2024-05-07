@@ -1,5 +1,4 @@
 import 'package:cryptotracker/screens/detailed_view.dart';
-import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../models/crypto.dart';
@@ -21,8 +20,7 @@ class _CoinsListState extends State<CoinsList> {
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             title: Text(widget.listings[index].name ?? ""),
-            subtitle:
-                Text("${roundPrice(widget.listings[index].price ?? 0.0)}\$"),
+            subtitle: Text("${widget.listings[index].price ?? 0.0}\$"),
             leading: Image.network(widget.listings[index].logoUrl ?? ""),
             onTap: () {
               Navigator.of(context).push(
