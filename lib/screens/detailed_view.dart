@@ -7,8 +7,8 @@ import '../models/crypto.dart';
 import '../services/coins_api.dart';
 
 class DetailedView extends StatefulWidget {
-  final Crypto crypto;
-  const DetailedView({super.key, required this.crypto});
+  final String cryptoId;
+  const DetailedView({super.key, required this.cryptoId});
 
   @override
   State<DetailedView> createState() => _DetailedViewState();
@@ -19,11 +19,16 @@ class _DetailedViewState extends State<DetailedView> {
   List<FlSpot> pricesHistoryChartData = [];
   List<ShowingTooltipIndicators> chartIndicators = [];
   int selectedTimePriceChartInterval = 1;
+  double priceChangePercentage = 0;
+
+  Crypto crypto = Crypto();
 
   @override
   void initState() {
-    loadPriceHistory(1);
-
+    loadCoinData().then((value) {
+      loadPriceHistory(1);
+      priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
+    });
     super.initState();
   }
 
@@ -43,20 +48,31 @@ class _DetailedViewState extends State<DetailedView> {
               Row(
                 children: [
                   Image.network(
-                    widget.crypto.logoUrl ?? "",
+                    crypto.logoUrl ?? "https://www.coingecko.com/favicon.ico",
                     width: 40.0,
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    widget.crypto.name ?? "",
+                    crypto.name ?? "",
                     style: const TextStyle(fontSize: 25),
                   ),
                   const SizedBox(
                     width: 20,
                   ),
-                  Text("${widget.crypto.price ?? 0.0}\$")
+                  Text("${crypto.price ?? 0.0}\$"),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    "$priceChangePercentage%",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: priceChangePercentage >= 0
+                            ? Colors.green
+                            : Colors.red),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -101,6 +117,8 @@ class _DetailedViewState extends State<DetailedView> {
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 1;
                         loadPriceHistory(1);
+                        priceChangePercentage =
+                            crypto.priceChangePercentageDay ?? 0;
                       }),
                     ),
                     TextButton(
@@ -113,6 +131,9 @@ class _DetailedViewState extends State<DetailedView> {
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 2;
                         loadPriceHistory(7);
+                        priceChangePercentage =
+                            crypto.priceChangePercentageWeek ?? 0;
+                        print(crypto.priceChangePercentageWeek);
                       }),
                     ),
                     TextButton(
@@ -125,6 +146,8 @@ class _DetailedViewState extends State<DetailedView> {
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 3;
                         loadPriceHistory(30);
+                        priceChangePercentage =
+                            crypto.priceChangePercentageMonth ?? 0;
                       }),
                     ),
                     TextButton(
@@ -137,6 +160,8 @@ class _DetailedViewState extends State<DetailedView> {
                       onPressed: () => setState(() {
                         selectedTimePriceChartInterval = 4;
                         loadPriceHistory(365);
+                        priceChangePercentage =
+                            crypto.priceChangePercentageYear ?? 0;
                       }),
                     ),
                   ],
@@ -148,11 +173,18 @@ class _DetailedViewState extends State<DetailedView> {
   }
 
   Future<void> loadPriceHistory(int daysNum) async {
-    getPricesHistory(widget.crypto.id!, daysNum).then((values) {
+    getPricesHistory(crypto.id!, daysNum).then((values) {
       setState(() {
         pricesHistory = values;
       });
       loadPricesHistoryChartData();
+    });
+  }
+
+  Future<void> loadCoinData() async {
+    var values = await getCoinData(widget.cryptoId);
+    setState(() {
+      crypto = values;
     });
   }
 

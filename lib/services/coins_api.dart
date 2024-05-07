@@ -38,6 +38,7 @@ Future<List<Crypto>> getListings() async {
       symbol: crypto["symbol"],
       price: crypto["current_price"].toDouble(),
       logoUrl: crypto["image"],
+      priceChangePercentageDay: crypto["price_change_percentage_24h"],
     ));
   }
 
@@ -102,7 +103,36 @@ Future<List<Crypto>> search(String query) async {
   return results;
 }
 
+Future<Crypto> getCoinData(String id) async {
+  Map<String, dynamic> queryParams = {};
+
+  Uri url = Uri.https('api.coingecko.com', "/api/v3/coins/$id", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = json.decode(await responseJson.stream.bytesToString());
+  // print(response["market_data"]["price_change_1y"]);
+  return Crypto(
+    id: response["id"],
+    name: response["name"],
+    symbol: response["symbol"],
+    price: response["market_data"]["current_price"]["usd"].toDouble(),
+    logoUrl: response["image"]["small"],
+    priceChangePercentageDay: response["market_data"]
+        ["price_change_percentage_24h"],
+    priceChangePercentageWeek: response["market_data"]
+        ["price_change_percentage_7d"],
+    priceChangePercentageMonth: response["market_data"]
+        ["price_change_percentage_30d"],
+    priceChangePercentageYear: response["market_data"]
+        ["price_change_percentage_1y"],
+  );
+}
+
 String getApiKey() {
-  var random = new Random();
+  var random = Random();
   return apiKeys[random.nextInt(apiKeys.length)];
 }

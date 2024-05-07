@@ -20,14 +20,29 @@ class _CoinsListState extends State<CoinsList> {
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             title: Text(widget.listings[index].name ?? ""),
-            subtitle: Text("${widget.listings[index].price ?? 0.0}\$"),
+            subtitle: Visibility(
+                visible: widget.listings[index].price != null,
+                child: Text("${widget.listings[index].price ?? 0.0}\$")),
             leading: Image.network(widget.listings[index].logoUrl ?? ""),
+            trailing: Visibility(
+              visible: widget.listings[index].priceChangePercentageDay != null,
+              child: Text(
+                "${widget.listings[index].priceChangePercentageDay ?? 0.0}%",
+                style: TextStyle(
+                    fontSize: 13,
+                    color: (widget.listings[index].priceChangePercentageDay ??
+                                0) >=
+                            0
+                        ? Colors.green
+                        : Colors.red),
+              ),
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PagesLayout(
                             child: DetailedView(
-                          crypto: widget.listings[index],
+                          cryptoId: widget.listings[index].id!,
                         ))),
               );
             },

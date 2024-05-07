@@ -4,6 +4,10 @@ class Crypto {
   String? symbol;
   double? price;
   String? logoUrl;
+  double? priceChangePercentageDay;
+  double? priceChangePercentageWeek;
+  double? priceChangePercentageMonth;
+  double? priceChangePercentageYear;
 
   Crypto({
     this.id,
@@ -11,25 +15,20 @@ class Crypto {
     this.symbol,
     this.price,
     this.logoUrl,
+    this.priceChangePercentageDay,
+    this.priceChangePercentageWeek,
+    this.priceChangePercentageMonth,
+    this.priceChangePercentageYear,
   });
 
-  Map<String, Object?> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'symbol': symbol,
-      'price': price,
-      'logoUrl': logoUrl,
-    };
-  }
-
-  static Crypto fromMap(Map<String, dynamic> map) {
-    return Crypto(
-      id: map["id"],
-      name: map["name"],
-      symbol: map['symbol'],
-      price: map['price'],
-      logoUrl: map['logoUrl'],
-    );
-  }
+  // Map<String, Object?> toMap() {
+  //   return {
+  //     'id': id,
+  //     'name': name,
+  //     'symbol': symbol,
+  //     'price': price,
+  //     'logoUrl': logoUrl,
+  //     'priceChangePercentageDay': priceChangePercentageDay,
+  //   };
+  // }
 }
