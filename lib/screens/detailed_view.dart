@@ -48,7 +48,7 @@ class _DetailedViewState extends State<DetailedView> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   if (crypto.logoUrl != null)
                     Image.network(
@@ -172,7 +172,7 @@ class _DetailedViewState extends State<DetailedView> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(right: 20),
+                margin: const EdgeInsets.only(right: 20),
                 child: CryptoMarketStats(crypto: crypto),
               )
             ],
