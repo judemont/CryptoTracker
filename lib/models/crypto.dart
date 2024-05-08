@@ -8,6 +8,16 @@ class Crypto {
   double? priceChangePercentageWeek;
   double? priceChangePercentageMonth;
   double? priceChangePercentageYear;
+  String? description;
+  List<String>? categories;
+  String? website;
+  double? ath;
+  double? marketCap;
+  int? marketCapRank;
+  double? dayHigh;
+  double? dayLow;
+  double? totalSupply;
+  double? circulatingSupply;
 
   Crypto({
     this.id,
@@ -19,6 +29,16 @@ class Crypto {
     this.priceChangePercentageWeek,
     this.priceChangePercentageMonth,
     this.priceChangePercentageYear,
+    this.description,
+    this.categories,
+    this.website,
+    this.ath,
+    this.marketCap,
+    this.marketCapRank,
+    this.dayHigh,
+    this.dayLow,
+    this.totalSupply,
+    this.circulatingSupply,
   });
 
   // Map<String, Object?> toMap() {
