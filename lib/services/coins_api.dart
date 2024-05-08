@@ -133,15 +133,16 @@ Future<Crypto> getCoinData(String id) async {
     description: response["description"]["en"],
     categories: response["categories"].cast<String>(),
     website: response["links"]["homepage"]?[0],
-    ath: response["market_data"]["ath"]["usd"].toDouble(),
+    ath: response["market_data"]["ath"]["usd"]?.toDouble(),
     athDate: DateTime.tryParse(response["market_data"]["ath_date"]["usd"]),
-    marketCap: response["market_data"]["market_cap"]["usd"].toDouble(),
+    marketCap: response["market_data"]["market_cap"]["usd"]?.toDouble(),
     marketCapRank: response["market_data"]["market_cap_rank"],
-    dayHigh: response["market_data"]["high_24h"]["usd"].toDouble(),
-    dayLow: response["market_data"]["low_24h"]["usd"].toDouble(),
-    totalSupply: response["market_data"]["total_supply"].toDouble(),
-    circulatingSupply: response["market_data"]["circulating_supply"].toDouble(),
-    volume: response["market_data"]["total_volume"]["usd"].toDouble(),
+    dayHigh: response["market_data"]["high_24h"]["usd"]?.toDouble(),
+    dayLow: response["market_data"]["low_24h"]["usd"]?.toDouble(),
+    totalSupply: response["market_data"]["total_supply"]?.toDouble(),
+    circulatingSupply:
+        response["market_data"]["circulating_supply"]?.toDouble(),
+    volume: response["market_data"]["total_volume"]["usd"]?.toDouble(),
   );
 }
 
