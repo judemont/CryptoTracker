@@ -12,6 +12,7 @@ class Crypto {
   List<String>? categories;
   String? website;
   double? ath;
+  DateTime? athDate;
   double? marketCap;
   int? marketCapRank;
   double? dayHigh;
@@ -33,6 +34,7 @@ class Crypto {
     this.categories,
     this.website,
     this.ath,
+    this.athDate,
     this.marketCap,
     this.marketCapRank,
     this.dayHigh,
