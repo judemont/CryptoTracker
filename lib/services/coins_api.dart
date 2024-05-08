@@ -13,10 +13,10 @@ const List<String> apiKeys = [
   "CG-LiRwwL2ZgQkaq9jJ5o5pGnKA",
 ];
 
-Future<List<Crypto>> getListings() async {
+Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
   Map<String, dynamic> queryParams = {
     "vs_currency": "usd",
-    "order": "market_cap_desk",
+    "order": order,
   };
 
   Uri url =
@@ -36,7 +36,7 @@ Future<List<Crypto>> getListings() async {
       id: crypto["id"],
       name: crypto["name"],
       symbol: crypto["symbol"],
-      price: crypto["current_price"].toDouble(),
+      price: crypto["current_price"]?.toDouble(),
       logoUrl: crypto["image"],
       priceChangePercentageDay: crypto["price_change_percentage_24h"],
     ));

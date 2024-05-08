@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Crypto> listings = [];
   bool showSearchField = false;
+  int selectedOrderDropdownItem = 0;
 
   @override
   void initState() {
@@ -57,7 +58,7 @@ class _HomeState extends State<Home> {
                           });
                           loadListings();
                         },
-                        icon: Icon(Icons.close))),
+                        icon: const Icon(Icons.close))),
                 onChanged: (value) {
                   if (value.isNotEmpty) {
                     loadSearchResults(value);
@@ -66,6 +67,41 @@ class _HomeState extends State<Home> {
                   }
                 },
               )),
+          Container(
+            margin: const EdgeInsets.only(left: 20, right: 10),
+            child: DropdownButton(
+              isExpanded: true,
+              value: selectedOrderDropdownItem,
+              items: [
+                DropdownMenuItem(
+                  value: 0,
+                  onTap: () => loadListings(order: "market_cap_desc"),
+                  child: const Text("Market Cap."),
+                ),
+                DropdownMenuItem(
+                  value: 1,
+                  onTap: () => loadListings(order: "volume_desc"),
+                  child: const Text("24h Volume"),
+                ),
+                DropdownMenuItem(
+                  value: 2,
+                  onTap: () => loadListings(order: "id_asc"),
+                  child: const Text("Name (A..Z)"),
+                ),
+                DropdownMenuItem(
+                  value: 3,
+                  onTap: () => loadListings(order: "id_desc"),
+                  child: const Text("Name (Z..A)"),
+                )
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedOrderDropdownItem = value ?? 0;
+                });
+              },
+              hint: const Text("Sort by"),
+            ),
+          ),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
@@ -81,8 +117,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void loadListings() {
-    getListings().then((values) {
+  void loadListings({order = "market_cap_desk"}) {
+    getListings(order: order).then((values) {
       setState(() {
         listings = values;
       });
