@@ -19,6 +19,7 @@ class Crypto {
   double? dayLow;
   double? totalSupply;
   double? circulatingSupply;
+  double? volume;
 
   Crypto({
     this.id,
@@ -41,6 +42,7 @@ class Crypto {
     this.dayLow,
     this.totalSupply,
     this.circulatingSupply,
+    this.volume,
   });
 
   // Map<String, Object?> toMap() {

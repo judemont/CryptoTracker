@@ -38,6 +38,8 @@ dependencies:
   catppuccin_flutter: ^1.0.0
   http: ^1.2.1
   fl_chart: ^0.67.0
+  intl: ^0.19.0
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:

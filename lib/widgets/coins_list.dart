@@ -1,4 +1,5 @@
 import 'package:cryptotracker/screens/detailed_view.dart';
+import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../models/crypto.dart';
@@ -22,7 +23,7 @@ class _CoinsListState extends State<CoinsList> {
             title: Text(widget.listings[index].name ?? ""),
             subtitle: Visibility(
                 visible: widget.listings[index].price != null,
-                child: Text("${widget.listings[index].price ?? 0.0}\$")),
+                child: Text(formatePrice(widget.listings[index].price))),
             leading: Image.network(widget.listings[index].logoUrl ?? ""),
             trailing: Visibility(
               visible: widget.listings[index].priceChangePercentageDay != null,

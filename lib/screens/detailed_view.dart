@@ -1,6 +1,8 @@
 import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../models/coin_price.dart';
 import '../models/crypto.dart';
@@ -40,17 +42,19 @@ class _DetailedViewState extends State<DetailedView> {
       ),
       body: Container(
           margin: const EdgeInsets.only(left: 10),
-          child: Column(
+          child: SingleChildScrollView(
+              child: Column(
             children: [
               const SizedBox(
                 height: 20,
               ),
               Row(
                 children: [
-                  Image.network(
-                    crypto.logoUrl ?? "https://www.coingecko.com/favicon.ico",
-                    width: 40.0,
-                  ),
+                  if (crypto.logoUrl != null)
+                    Image.network(
+                      crypto.logoUrl!,
+                      width: 40.0,
+                    ),
                   const SizedBox(
                     width: 10,
                   ),
@@ -61,7 +65,7 @@ class _DetailedViewState extends State<DetailedView> {
                   const SizedBox(
                     width: 20,
                   ),
-                  Text("${crypto.price ?? 0.0}\$"),
+                  Text(formatePrice(crypto.price)),
                   const SizedBox(
                     width: 20,
                   ),
@@ -166,9 +170,13 @@ class _DetailedViewState extends State<DetailedView> {
                     ),
                   ],
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 20),
+                child: CryptoMarketStats(crypto: crypto),
               )
             ],
-          )),
+          ))),
     );
   }
 
@@ -207,7 +215,7 @@ class _DetailedViewState extends State<DetailedView> {
 
       tooltipItems.add(LineTooltipItem("", const TextStyle(), children: [
         TextSpan(
-            text: "${roundPrice(lineBarSpot.y)}\$",
+            text: formatePrice(lineBarSpot.y),
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const TextSpan(text: "\n"),
         TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
