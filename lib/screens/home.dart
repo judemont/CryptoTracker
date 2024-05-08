@@ -34,9 +34,7 @@ class _HomeState extends State<Home> {
               setState(() {
                 showSearchField = !showSearchField;
               });
-              if (!showSearchField) {
-                loadListings();
-              }
+              if (!showSearchField) {}
             },
           )
         ],
@@ -46,13 +44,25 @@ class _HomeState extends State<Home> {
           Visibility(
               visible: showSearchField,
               child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Search',
-                ),
+                autofocus: true,
+                decoration: InputDecoration(
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                    hintText: 'Search',
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            showSearchField = false;
+                          });
+                          loadListings();
+                        },
+                        icon: Icon(Icons.close))),
                 onChanged: (value) {
-                  if (value.length >= 3) {
+                  if (value.isNotEmpty) {
                     loadSearchResults(value);
+                  } else {
+                    loadListings();
                   }
                 },
               )),
