@@ -1,6 +1,8 @@
 import 'package:cryptotracker/screens/detailed_view.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jovial_svg/jovial_svg.dart';
 
 import '../models/crypto.dart';
 import '../pages_layout.dart';
@@ -19,12 +21,26 @@ class _CoinsListState extends State<CoinsList> {
     return ListView.builder(
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
+          Widget logoImage;
+          if (widget.listings[index].logoUrl.toString().contains("svg")) {
+            logoImage = Container(
+                width: 40,
+                child: SvgPicture.network(
+                  widget.listings[index].logoUrl.toString(),
+                ));
+          } else {
+            logoImage = Image.network(
+              widget.listings[index].logoUrl.toString(),
+              width: 40,
+            );
+          }
+
           return ListTile(
             title: Text(widget.listings[index].name ?? ""),
             subtitle: Visibility(
                 visible: widget.listings[index].price != null,
                 child: Text(formatePrice(widget.listings[index].price))),
-            leading: Image.network(widget.listings[index].logoUrl ?? ""),
+            leading: logoImage,
             trailing: Visibility(
               visible: widget.listings[index].priceChangePercentageDay != null,
               child: Text(

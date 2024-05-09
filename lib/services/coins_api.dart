@@ -7,38 +7,45 @@ import 'package:http/http.dart' as http;
 import '../models/crypto.dart';
 
 const List<String> apiKeys = [
-  "CG-WLqjJpvFoq2XU2SXZEknL1aD",
-  "CG-LjYqP1F8vpFF4SJyYxdVyDwZ",
-  "CG-jwFmM1F8Zn6NRPMqsGMpQY2Y",
-  "CG-LiRwwL2ZgQkaq9jJ5o5pGnKA",
+  "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc"
 ];
 
-Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
+const apiBaseUrl = "api.coinranking.com";
+
+Future<List<Crypto>> getListings(
+    {String order = "marketCap",
+    String orderDirection = "desc",
+    String? search,
+    int limit = 100}) async {
   Map<String, dynamic> queryParams = {
     "vs_currency": "usd",
-    "order": order,
+    "orderBy": order,
   };
 
-  Uri url =
-      Uri.https('api.coingecko.com', "/api/v3/coins/markets", queryParams);
+  if (search != null) {
+    queryParams["search"] = search;
+  }
+
+  Uri url = Uri.https(apiBaseUrl, "/v2/coins", queryParams);
 
   http.Request request = http.Request("get", url);
 
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
-  var listing = json.decode(await responseJson.stream.bytesToString());
+  var response = json.decode(await responseJson.stream.bytesToString());
+  var listing = response["data"]["coins"];
 
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
     cryptoList.add(Crypto(
-      id: crypto["id"],
+      id: crypto["uuid"],
       name: crypto["name"],
       symbol: crypto["symbol"],
-      price: crypto["current_price"]?.toDouble(),
-      logoUrl: crypto["image"],
-      priceChangePercentageDay: crypto["price_change_percentage_24h"],
+      price: double.parse(crypto["price"]),
+      logoUrl: Uri.tryParse(crypto["iconUrl"]),
+      priceChangePercentageDay: double.parse(crypto["change"]),
     ));
   }
 

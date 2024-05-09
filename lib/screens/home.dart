@@ -75,7 +75,9 @@ class _HomeState extends State<Home> {
               items: [
                 DropdownMenuItem(
                   value: 0,
-                  onTap: () => loadListings(order: "market_cap_desc"),
+                  onTap: () => loadListings(
+                    order: "marketCap",
+                  ),
                   child: const Text("Market Cap."),
                 ),
                 DropdownMenuItem(
@@ -117,7 +119,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void loadListings({order = "market_cap_desk"}) {
+  void loadListings({order = "marketCap"}) {
     getListings(order: order).then((values) {
       setState(() {
         listings = values;

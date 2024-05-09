@@ -3,7 +3,7 @@ class Crypto {
   String? name;
   String? symbol;
   double? price;
-  String? logoUrl;
+  Uri? logoUrl;
   double? priceChangePercentageDay;
   double? priceChangePercentageWeek;
   double? priceChangePercentageMonth;

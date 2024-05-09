@@ -51,13 +51,13 @@ class _DetailedViewState extends State<DetailedView> {
               Wrap(
                 children: [
                   if (crypto.logoUrl != null)
-                    Image.network(
-                      crypto.logoUrl!,
-                      width: 40.0,
+                    // Image.network(
+                    //   crypto.logoUrl!,
+                    //   width: 40.0,
+                    // ),
+                    const SizedBox(
+                      width: 10,
                     ),
-                  const SizedBox(
-                    width: 10,
-                  ),
                   Text(
                     crypto.name ?? "",
                     style: const TextStyle(fontSize: 25),
