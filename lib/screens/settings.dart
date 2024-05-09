@@ -13,10 +13,13 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   Preferences preferences = Preferences();
-
+  List<String> availableCurrencies = [];
   @override
   void initState() {
     loadSettingsValues();
+    getAvailableCurrencies().then((currs) {
+      availableCurrencies = currs;
+    });
     super.initState();
   }
 
@@ -30,28 +33,27 @@ class _SettingsState extends State<Settings> {
           children: [
             ListTile(
                 title: const Text("Currency"),
+                leading: Icon(Icons.attach_money),
                 subtitle: Text(preferences.currency?.toUpperCase() ?? ""),
                 onTap: () {
-                  getAvailableCurrencies().then((curr) {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return ListView(
-                          children: curr
-                              .map((e) => ListTile(
-                                    title: Text(e.toUpperCase()),
-                                    onTap: () {
-                                      Database.setValue(
-                                          "settings", "currency", e);
-                                      loadSettingsValues();
-                                      Navigator.of(context).pop();
-                                    },
-                                  ))
-                              .toList(),
-                        );
-                      },
-                    );
-                  });
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return ListView(
+                        children: availableCurrencies
+                            .map((e) => ListTile(
+                                  title: Text(e.toUpperCase()),
+                                  onTap: () {
+                                    Database.setValue(
+                                        "settings", "currency", e);
+                                    loadSettingsValues();
+                                    Navigator.of(context).pop();
+                                  },
+                                ))
+                            .toList(),
+                      );
+                    },
+                  );
                 })
           ],
         ));
