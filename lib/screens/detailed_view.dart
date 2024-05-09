@@ -88,6 +88,8 @@ class _DetailedViewState extends State<DetailedView> {
                   child: LineChart(LineChartData(
                       lineTouchData: LineTouchData(
                           touchTooltipData: LineTouchTooltipData(
+                              fitInsideHorizontally: true,
+                              fitInsideVertically: true,
                               getTooltipItems: getTooltipItems)),
                       borderData: FlBorderData(show: true),
                       gridData: const FlGridData(show: false),
