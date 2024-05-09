@@ -1,4 +1,5 @@
 import 'package:cryptotracker/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,6 +47,10 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
             "Circulating Supply",
             Text(formatePrice(widget.crypto.circulatingSupply,
                 symbol: widget.crypto.symbol))),
+        statRow(
+            "% of supply in circulation",
+            Text(
+                "${((widget.crypto.circulatingSupply ?? 0) / (widget.crypto.totalSupply ?? 0) * 100).toStringAsFixed(2)}%")),
         Visibility(
           visible: homePageUri != null,
           child: statRow(
@@ -81,9 +86,19 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
                       showAllDescriptions ? "less" : "more",
                     ))
               ],
-            ))
+            )),
       ],
     );
+  }
+
+  List<Widget> getCategoriesElements() {
+    List<Widget> categoriesElements = [];
+
+    for (var category in widget.crypto.categories ?? []) {
+      categoriesElements.add(Chip(label: Text(category)));
+    }
+
+    return categoriesElements;
   }
 
   Widget statRow(String name, Widget value) {
