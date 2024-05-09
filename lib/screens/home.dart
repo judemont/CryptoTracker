@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
           Visibility(
               visible: showSearchField,
               child: TextField(
-                autofocus: true,
+                autofocus: showSearchField,
                 decoration: InputDecoration(
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2.0),
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
                         },
                         icon: const Icon(Icons.close))),
                 onChanged: (value) {
-                  if (value.isNotEmpty) {
+                  if (value.length >= 2) {
                     loadSearchResults(value);
                   } else {
                     loadListings();
