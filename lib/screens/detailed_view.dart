@@ -40,162 +40,168 @@ class _DetailedViewState extends State<DetailedView> {
       appBar: AppBar(
         title: const Text("Details"),
       ),
-      body: Container(
-          margin: const EdgeInsets.only(left: 10),
-          child: SingleChildScrollView(
-              child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Wrap(
+      body: RefreshIndicator(
+          onRefresh: () => loadCoinData().then((value) {
+                loadPriceHistory(1);
+                priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
+              }),
+          child: Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: SingleChildScrollView(
+                  child: Column(
                 children: [
-                  if (crypto.logoUrl != null)
-                    Image.network(
-                      crypto.logoUrl!,
-                      width: 40.0,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Wrap(
+                    children: [
+                      if (crypto.logoUrl != null)
+                        Image.network(
+                          crypto.logoUrl!,
+                          width: 40.0,
+                        ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        crypto.name ?? "",
+                        style: const TextStyle(fontSize: 25),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(formatePrice(crypto.price)),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "$priceChangePercentage%",
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: priceChangePercentage >= 0
+                                ? Colors.green
+                                : Colors.red),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      height: 300,
+                      child: LineChart(LineChartData(
+                          lineTouchData: LineTouchData(
+                              touchTooltipData: LineTouchTooltipData(
+                                  fitInsideHorizontally: true,
+                                  fitInsideVertically: true,
+                                  getTooltipItems: getTooltipItems)),
+                          borderData: FlBorderData(show: true),
+                          gridData: const FlGridData(show: false),
+                          titlesData: const FlTitlesData(show: false),
+                          lineBarsData: [
+                            LineChartBarData(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              dotData: const FlDotData(show: false),
+                              spots: pricesHistoryChartData,
+                            )
+                          ]))),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        border: Border.all(),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    child: ButtonBar(
+                      alignment: MainAxisAlignment.start,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  selectedTimePriceChartInterval == 1
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Colors.transparent)),
+                          child: const Text("1D"),
+                          onPressed: () => setState(() {
+                            selectedTimePriceChartInterval = 1;
+                            loadPriceHistory(1);
+                            priceChangePercentage =
+                                crypto.priceChangePercentageDay ?? 0;
+                          }),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  selectedTimePriceChartInterval == 2
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Colors.transparent)),
+                          child: const Text("1W"),
+                          onPressed: () => setState(() {
+                            selectedTimePriceChartInterval = 2;
+                            loadPriceHistory(7);
+                            priceChangePercentage =
+                                crypto.priceChangePercentageWeek ?? 0;
+                            print(crypto.priceChangePercentageWeek);
+                          }),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  selectedTimePriceChartInterval == 3
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Colors.transparent)),
+                          child: const Text("30D"),
+                          onPressed: () => setState(() {
+                            selectedTimePriceChartInterval = 3;
+                            loadPriceHistory(30);
+                            priceChangePercentage =
+                                crypto.priceChangePercentageMonth ?? 0;
+                          }),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  selectedTimePriceChartInterval == 4
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Colors.transparent)),
+                          child: const Text("1Y"),
+                          onPressed: () => setState(() {
+                            selectedTimePriceChartInterval = 4;
+                            loadPriceHistory(365);
+                            priceChangePercentage =
+                                crypto.priceChangePercentageYear ?? 0;
+                          }),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  selectedTimePriceChartInterval == 5
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Colors.transparent)),
+                          child: const Text("5Y"),
+                          onPressed: () => setState(() {
+                            selectedTimePriceChartInterval = 5;
+                            loadMaxPriceHistory();
+                            priceChangePercentage =
+                                crypto.priceChangePercentageYear ?? 0;
+                          }),
+                        ),
+                      ],
                     ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    crypto.name ?? "",
-                    style: const TextStyle(fontSize: 25),
                   ),
                   const SizedBox(
-                    width: 20,
+                    height: 20,
                   ),
-                  Text(formatePrice(crypto.price)),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    "$priceChangePercentage%",
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: priceChangePercentage >= 0
-                            ? Colors.green
-                            : Colors.red),
-                  ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: CryptoMarketStats(crypto: crypto),
+                  )
                 ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  height: 300,
-                  child: LineChart(LineChartData(
-                      lineTouchData: LineTouchData(
-                          touchTooltipData: LineTouchTooltipData(
-                              fitInsideHorizontally: true,
-                              fitInsideVertically: true,
-                              getTooltipItems: getTooltipItems)),
-                      borderData: FlBorderData(show: true),
-                      gridData: const FlGridData(show: false),
-                      titlesData: const FlTitlesData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          dotData: const FlDotData(show: false),
-                          spots: pricesHistoryChartData,
-                        )
-                      ]))),
-              const SizedBox(
-                height: 5,
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    border: Border.all(),
-                    borderRadius: const BorderRadius.all(Radius.circular(20))),
-                child: ButtonBar(
-                  alignment: MainAxisAlignment.start,
-                  children: [
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 1
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("1D"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 1;
-                        loadPriceHistory(1);
-                        priceChangePercentage =
-                            crypto.priceChangePercentageDay ?? 0;
-                      }),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 2
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("1W"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 2;
-                        loadPriceHistory(7);
-                        priceChangePercentage =
-                            crypto.priceChangePercentageWeek ?? 0;
-                        print(crypto.priceChangePercentageWeek);
-                      }),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 3
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("30D"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 3;
-                        loadPriceHistory(30);
-                        priceChangePercentage =
-                            crypto.priceChangePercentageMonth ?? 0;
-                      }),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 4
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("1Y"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 4;
-                        loadPriceHistory(365);
-                        priceChangePercentage =
-                            crypto.priceChangePercentageYear ?? 0;
-                      }),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              selectedTimePriceChartInterval == 5
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Colors.transparent)),
-                      child: const Text("5Y"),
-                      onPressed: () => setState(() {
-                        selectedTimePriceChartInterval = 5;
-                        loadMaxPriceHistory();
-                        priceChangePercentage =
-                            crypto.priceChangePercentageYear ?? 0;
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 20),
-                child: CryptoMarketStats(crypto: crypto),
-              )
-            ],
-          ))),
+              )))),
     );
   }
 
