@@ -171,6 +171,9 @@ class _DetailedViewState extends State<DetailedView> {
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
               Container(
                 margin: const EdgeInsets.only(right: 20),
                 child: CryptoMarketStats(crypto: crypto),
