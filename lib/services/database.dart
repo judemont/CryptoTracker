@@ -7,7 +7,7 @@ class Database {
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
-    const List<String> hiveBoxsNames = ["settings"];
+    const List<String> hiveBoxsNames = ["settings", "portfolio"];
 
     for (var boxName in hiveBoxsNames) {
       await Hive.openBox(boxName);
@@ -21,6 +21,10 @@ class Database {
     }
     if (settingsBox.get("theme") == null) {
       settingsBox.put("theme", "system");
+    }
+    Box portfolioBox = Hive.box("portfolio");
+    if (portfolioBox.get("favorites") == null) {
+      portfolioBox.put("favorites", []);
     }
   }
 
@@ -38,5 +42,10 @@ class Database {
     Box box = Hive.box(boxName);
     var value = box.get(key);
     return value;
+  }
+
+  static void removeValue(String boxName, String key) {
+    Box box = Hive.box(boxName);
+    box.delete(key);
   }
 }

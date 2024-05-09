@@ -23,6 +23,7 @@ class _DetailedViewState extends State<DetailedView> {
   List<ShowingTooltipIndicators> chartIndicators = [];
   int selectedTimePriceChartInterval = 1;
   double priceChangePercentage = 0;
+  List favorites = [];
 
   Crypto crypto = Crypto();
 
@@ -32,6 +33,7 @@ class _DetailedViewState extends State<DetailedView> {
       loadPriceHistory(1);
       priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
     });
+    loadFavorites();
     super.initState();
   }
 
@@ -40,6 +42,27 @@ class _DetailedViewState extends State<DetailedView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                if (!favorites.contains(crypto.id)) {
+                  setState(() {
+                    favorites.add(crypto.id);
+                  });
+                } else {
+                  setState(() {
+                    favorites.remove(crypto.id);
+                  });
+                }
+
+                Database.setValue("portfolio", "favorites", favorites);
+                print(favorites);
+                loadFavorites();
+              },
+              icon: Icon(favorites.contains(crypto.id)
+                  ? Icons.star
+                  : Icons.star_border))
+        ],
       ),
       body: RefreshIndicator(
           onRefresh: () => loadCoinData().then((value) {
@@ -244,6 +267,12 @@ class _DetailedViewState extends State<DetailedView> {
               pricesHistory[i].price!));
         }
       }
+    });
+  }
+
+  void loadFavorites() {
+    setState(() {
+      favorites = Database.getValue("portfolio", "favorites") ?? [];
     });
   }
 
