@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:catppuccin_flutter/catppuccin_flutter.dart';
+import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
 
@@ -8,6 +12,9 @@ import 'theme.dart';
 Future<void> main() async {
   // sqfliteFfiInit();
   // databaseFactory = databaseFactoryFfi;
+  Database.initBoxs().then((value) {
+    Database.addDefaultValues();
+  });
 
   runApp(const MyApp());
 }

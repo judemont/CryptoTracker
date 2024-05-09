@@ -197,6 +197,15 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
+Future<List<String>> getAvailableCurrencies() async {
+  Uri url =
+      Uri.https('api.coingecko.com', "/api/v3/simple/supported_vs_currencies");
+
+  var response = await http.get(url);
+  List currencies = jsonDecode(response.body);
+  return currencies.cast<String>();
+}
+
 String getApiKey() {
   var random = Random();
   return apiKeys[random.nextInt(apiKeys.length)];

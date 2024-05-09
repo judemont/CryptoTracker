@@ -1,3 +1,4 @@
+import 'package:cryptotracker/screens/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
@@ -24,7 +25,7 @@ class _PagesLayoutState extends State<PagesLayout> {
   List<Widget> pages = [
     const Home(),
     const Text("Work in progress"),
-    const Placeholder(),
+    const Settings(),
   ];
 
   @override
