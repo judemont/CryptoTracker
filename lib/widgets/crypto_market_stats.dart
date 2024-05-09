@@ -59,22 +59,28 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
                 ),
               )),
         ),
-        const Text(
-          "Description :",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 20),
-        Text(showAllDescriptions
-            ? cryptoDescriptionText
-            : (cryptoDescriptionText.length > 200
-                ? "${cryptoDescriptionText.substring(0, 200)}..."
-                : cryptoDescriptionText)),
-        TextButton(
-            onPressed: () => setState(() {
-                  showAllDescriptions = !showAllDescriptions;
-                }),
-            child: Text(
-              showAllDescriptions ? "less" : "more",
+        Visibility(
+            visible: (widget.crypto.description ?? "").isNotEmpty,
+            child: Column(
+              children: [
+                const Text(
+                  "Description :",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Text(showAllDescriptions
+                    ? cryptoDescriptionText
+                    : (cryptoDescriptionText.length > 200
+                        ? "${cryptoDescriptionText.substring(0, 200)}..."
+                        : cryptoDescriptionText)),
+                TextButton(
+                    onPressed: () => setState(() {
+                          showAllDescriptions = !showAllDescriptions;
+                        }),
+                    child: Text(
+                      showAllDescriptions ? "less" : "more",
+                    ))
+              ],
             ))
       ],
     );
