@@ -12,7 +12,7 @@ import 'theme.dart';
 Future<void> main() async {
   // sqfliteFfiInit();
   // databaseFactory = databaseFactoryFfi;
-  Database.initBoxs().then((value) {
+  Database.init().then((value) {
     Database.addDefaultValues();
     runApp(const MyApp());
   });
