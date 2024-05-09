@@ -43,25 +43,27 @@ class _DetailedViewState extends State<DetailedView> {
       appBar: AppBar(
         title: const Text("Details"),
         actions: [
-          IconButton(
-              onPressed: () {
-                if (!favorites.contains(crypto.id)) {
-                  setState(() {
-                    favorites.add(crypto.id);
-                  });
-                } else {
-                  setState(() {
-                    favorites.remove(crypto.id);
-                  });
-                }
+          Visibility(
+              visible: crypto.id != null,
+              child: IconButton(
+                  onPressed: () {
+                    if (!favorites.contains(crypto.id)) {
+                      setState(() {
+                        favorites.add(crypto.id);
+                      });
+                    } else {
+                      setState(() {
+                        favorites.remove(crypto.id);
+                      });
+                    }
 
-                Database.setValue("portfolio", "favorites", favorites);
-                print(favorites);
-                loadFavorites();
-              },
-              icon: Icon(favorites.contains(crypto.id)
-                  ? Icons.star
-                  : Icons.star_border))
+                    Database.setValue("portfolio", "favorites", favorites);
+                    print(favorites);
+                    loadFavorites();
+                  },
+                  icon: Icon(favorites.contains(crypto.id)
+                      ? Icons.star
+                      : Icons.star_border)))
         ],
       ),
       body: RefreshIndicator(

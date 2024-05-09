@@ -20,7 +20,8 @@ const coinrankingApiKeys = [
   "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740"
 ];
 
-Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
+Future<List<Crypto>> getListings(
+    {order = "market_cap_desk", List<String>? ids}) async {
   String currency = Database.getValue("settings", "currency");
 
   print(Database.getValue("settings", "currency"));
@@ -28,6 +29,9 @@ Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
     "vs_currency": currency,
     "order": order,
   };
+  if (ids != null) {
+    queryParams["ids"] = ids.join(",");
+  }
 
   Uri url =
       Uri.https('api.coingecko.com', "/api/v3/coins/markets", queryParams);
