@@ -13,6 +13,12 @@ const List<String> apiKeys = [
   "CG-LiRwwL2ZgQkaq9jJ5o5pGnKA",
 ];
 
+const coinrankingApiKeys = [
+  "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
+  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
+  "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740"
+];
+
 Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
   Map<String, dynamic> queryParams = {
     "vs_currency": "usd",
@@ -70,6 +76,51 @@ Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
       dateTime: DateTime.fromMillisecondsSinceEpoch(data[0]),
       price: data[1],
     ));
+  }
+
+  return pricesHistory;
+}
+
+Future<String> getCoinRankingId(String coinSymbol) async {
+  Map<String, dynamic> queryParams = {"symbols": coinSymbol};
+
+  Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = json.decode(await responseJson.stream.bytesToString());
+  return response["data"]["coins"][0]["uuid"];
+}
+
+Future<List<CoinPrice>> getMaxPricesHistory(String coinSymbol) async {
+  String uuid = await getCoinRankingId(coinSymbol);
+
+  Map<String, dynamic> queryParams = {"timePeriod": "5y"};
+
+  Uri url =
+      Uri.https('api.coinranking.com', "/v2/coin/$uuid/history", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = json.decode(await responseJson.stream.bytesToString());
+  print(response);
+  var pricesHistoryData = response["data"]["history"];
+
+  List<CoinPrice> pricesHistory = [];
+  double? lastPrice;
+  for (var data in pricesHistoryData) {
+    pricesHistory.add(CoinPrice(
+      dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] * 1000),
+      price:
+          double.tryParse(data["price"] ?? lastPrice.toString()) ?? lastPrice,
+    ));
+    lastPrice = double.tryParse(data["price"] ?? "");
   }
 
   return pricesHistory;
@@ -149,4 +200,9 @@ Future<Crypto> getCoinData(String id) async {
 String getApiKey() {
   var random = Random();
   return apiKeys[random.nextInt(apiKeys.length)];
+}
+
+String getCoinRankingApiKey() {
+  var random = Random();
+  return apiKeys[random.nextInt(coinrankingApiKeys.length)];
 }

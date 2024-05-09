@@ -168,6 +168,20 @@ class _DetailedViewState extends State<DetailedView> {
                             crypto.priceChangePercentageYear ?? 0;
                       }),
                     ),
+                    TextButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              selectedTimePriceChartInterval == 5
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Colors.transparent)),
+                      child: const Text("5Y"),
+                      onPressed: () => setState(() {
+                        selectedTimePriceChartInterval = 5;
+                        loadMaxPriceHistory();
+                        priceChangePercentage =
+                            crypto.priceChangePercentageYear ?? 0;
+                      }),
+                    ),
                   ],
                 ),
               ),
@@ -183,8 +197,18 @@ class _DetailedViewState extends State<DetailedView> {
     );
   }
 
-  Future<void> loadPriceHistory(int daysNum) async {
+  Future<void> loadPriceHistory(int daysNum, {bool max = false}) async {
     getPricesHistory(crypto.id!, daysNum).then((values) {
+      setState(() {
+        pricesHistory = values;
+      });
+      loadPricesHistoryChartData();
+    });
+  }
+
+  Future<void> loadMaxPriceHistory() async {
+    print("BABABA");
+    getMaxPricesHistory(crypto.symbol!).then((values) {
       setState(() {
         pricesHistory = values;
       });
