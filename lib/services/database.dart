@@ -15,7 +15,9 @@ class Database {
 
   static void addDefaultValues() {
     Box settingsBox = Hive.box("settings");
-    settingsBox.put("currency", "usd");
+    if (settingsBox.get("currency") == null) {
+      settingsBox.put("currency", "usd");
+    }
   }
 
   static void resetAll(String boxName) {

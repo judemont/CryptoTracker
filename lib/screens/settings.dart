@@ -39,7 +39,7 @@ class _SettingsState extends State<Settings> {
                         return ListView(
                           children: curr
                               .map((e) => ListTile(
-                                    title: Text(e),
+                                    title: Text(e.toUpperCase()),
                                     onTap: () {
                                       Database.setValue(
                                           "settings", "currency", e);
