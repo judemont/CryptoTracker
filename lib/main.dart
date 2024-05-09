@@ -9,24 +9,55 @@ import 'screens/home.dart';
 
 import 'theme.dart';
 
-Future<void> main() async {
-  // sqfliteFfiInit();
-  // databaseFactory = databaseFactoryFfi;
+void main() {
   Database.init().then((value) {
     Database.addDefaultValues();
-    runApp(const MyApp());
+    runApp(MyApp());
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 
-  // This widget is the root of your application.
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  @override
+  void initState() {
+    updateTheme();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'CryptoTracker',
-        theme: catppuccinTheme(catppuccin.macchiato),
+        themeMode: _themeMode,
+        theme: catppuccinTheme(catppuccin.latte),
+        darkTheme: catppuccinTheme(catppuccin.macchiato),
         home: const PagesLayout(child: Home()));
+  }
+
+  void updateTheme() {
+    String dataThemeMode = Database.getValue("settings", "theme");
+    switch (dataThemeMode) {
+      case "dark":
+        setState(() {
+          _themeMode = ThemeMode.dark;
+        });
+      case "light":
+        setState(() {
+          _themeMode = ThemeMode.light;
+        });
+      case "system":
+        setState(() {
+          _themeMode = ThemeMode.system;
+        });
+    }
   }
 }

@@ -19,6 +19,9 @@ class Database {
     if (settingsBox.get("currency") == null) {
       settingsBox.put("currency", "usd");
     }
+    if (settingsBox.get("theme") == null) {
+      settingsBox.put("theme", "system");
+    }
   }
 
   static void resetAll(String boxName) {

@@ -253,16 +253,18 @@ class _DetailedViewState extends State<DetailedView> {
       DateTime date =
           DateTime.fromMillisecondsSinceEpoch(lineBarSpot.x.toInt());
 
-      tooltipItems.add(LineTooltipItem("", const TextStyle(), children: [
-        TextSpan(
-            text: formatePrice(
-                lineBarSpot.y, Database.getValue("settings", "currency")),
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        const TextSpan(text: "\n"),
-        TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
-        const TextSpan(text: "\n"),
-        TextSpan(text: "${date.month}/${date.day}/${date.year}"),
-      ]));
+      tooltipItems.add(LineTooltipItem(
+          "", TextStyle(color: Theme.of(context).primaryColor),
+          children: [
+            TextSpan(
+                text: formatePrice(
+                    lineBarSpot.y, Database.getValue("settings", "currency")),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            const TextSpan(text: "\n"),
+            TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
+            const TextSpan(text: "\n"),
+            TextSpan(text: "${date.month}/${date.day}/${date.year}"),
+          ]));
     }
 
     return tooltipItems;
