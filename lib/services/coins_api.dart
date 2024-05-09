@@ -43,71 +43,42 @@ Future<List<Crypto>> getListings(
       id: crypto["uuid"],
       name: crypto["name"],
       symbol: crypto["symbol"],
-      price: double.parse(crypto["price"]),
+      price: double.tryParse(crypto["price"]),
       logoUrl: Uri.tryParse(crypto["iconUrl"]),
-      priceChangePercentageDay: double.parse(crypto["change"]),
+      priceChangePercentageDay: double.tryParse(crypto["change"]),
     ));
   }
 
   return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
+Future<List<CoinPrice>> getPricesHistory(
+    String coinId, String timePeriod) async {
   Map<String, dynamic> queryParams = {
-    "vs_currency": "usd",
-    "days": daysNum.toString()
+    "timePeriod": timePeriod,
   };
 
-  Uri url = Uri.https(
-      'api.coingecko.com', "/api/v3/coins/$coinId/market_chart", queryParams);
+  Uri url = Uri.https(apiBaseUrl, "/v2/coin/$coinId/history", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
 
-  var pricesHistoryData = response["prices"];
+  var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
 
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
-      dateTime: DateTime.fromMillisecondsSinceEpoch(data[0]),
-      price: data[1],
+      dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"]),
+      price: double.tryParse(data["price"]),
     ));
   }
 
   return pricesHistory;
-}
-
-Future<List<Crypto>> search(String query) async {
-  Map<String, dynamic> queryParams = {
-    "query": query,
-  };
-
-  Uri url = Uri.https('api.coingecko.com', "/api/v3/search", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  List elements = response["coins"];
-
-  List<Crypto> results = [];
-
-  for (var i = 0; i < elements.length; i++) {
-    results.add(Crypto(
-      id: elements[i]["id"],
-      name: elements[i]["name"],
-      symbol: elements[i]["symbol"],
-      logoUrl: elements[i]["thumb"],
-    ));
-  }
-  return results;
 }
 
 Future<Crypto> getCoinData(String id) async {
