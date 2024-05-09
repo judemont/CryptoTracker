@@ -30,7 +30,7 @@ class _SettingsState extends State<Settings> {
           children: [
             ListTile(
                 title: const Text("Currency"),
-                trailing: Text(preferences.currency ?? ""),
+                trailing: Text(preferences.currency?.toUpperCase() ?? ""),
                 onTap: () {
                   getAvailableCurrencies().then((curr) {
                     showModalBottomSheet(
