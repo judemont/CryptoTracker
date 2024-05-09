@@ -109,7 +109,7 @@ Future<List<CoinPrice>> getMaxPricesHistory(String coinSymbol) async {
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-  print(response);
+
   var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
