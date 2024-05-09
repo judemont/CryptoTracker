@@ -1,3 +1,4 @@
+import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
 
   @override
   Widget build(BuildContext context) {
+    String currency = Database.getValue("settings", "currency");
     Uri? homePageUri = Uri.tryParse(widget.crypto.website ?? "");
 
     String cryptoDescriptionText = (widget.crypto.description ?? "")
@@ -34,19 +36,22 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
         const SizedBox(height: 20),
         statRow(
             "Market cap. Rank", Text(widget.crypto.marketCapRank.toString())),
-        statRow("Market Cap.", Text(formatePrice(widget.crypto.marketCap))),
-        statRow("Volume", Text(formatePrice(widget.crypto.volume))),
-        statRow("24h High", Text(formatePrice(widget.crypto.dayHigh))),
-        statRow("24h Low", Text(formatePrice(widget.crypto.dayLow))),
-        statRow("All Time High", Text(formatePrice(widget.crypto.ath))),
+        statRow("Market Cap.",
+            Text(formatePrice(widget.crypto.marketCap, currency))),
+        statRow("Volume", Text(formatePrice(widget.crypto.volume, currency))),
+        statRow(
+            "24h High", Text(formatePrice(widget.crypto.dayHigh, currency))),
+        statRow("24h Low", Text(formatePrice(widget.crypto.dayLow, currency))),
+        statRow(
+            "All Time High", Text(formatePrice(widget.crypto.ath, currency))),
         statRow(
             "Total Supply",
-            Text(formatePrice(widget.crypto.totalSupply,
-                symbol: widget.crypto.symbol))),
+            Text(formatePrice(
+                widget.crypto.totalSupply, widget.crypto.symbol ?? ""))),
         statRow(
             "Circulating Supply",
-            Text(formatePrice(widget.crypto.circulatingSupply,
-                symbol: widget.crypto.symbol))),
+            Text(formatePrice(
+                widget.crypto.circulatingSupply, widget.crypto.symbol ?? ""))),
         statRow(
             "% of supply in circulation",
             Text(

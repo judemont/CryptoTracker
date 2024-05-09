@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:intl/intl.dart';
 
-String formatePrice(double? price, {String? symbol = "USD"}) {
+String formatePrice(double? price, String symbol) {
   int priceLength = (price ?? 0.0).floor().toString().length;
   int priceTotalLength = 5;
 

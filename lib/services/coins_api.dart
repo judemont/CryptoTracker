@@ -5,6 +5,7 @@ import 'package:cryptotracker/models/coin_price.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
+import 'database.dart';
 
 const List<String> apiKeys = [
   "CG-WLqjJpvFoq2XU2SXZEknL1aD",
@@ -20,8 +21,11 @@ const coinrankingApiKeys = [
 ];
 
 Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
+  String currency = Database.getValue("settings", "currency");
+
+  print(Database.getValue("settings", "currency"));
   Map<String, dynamic> queryParams = {
-    "vs_currency": "usd",
+    "vs_currency": currency,
     "order": order,
   };
 
@@ -52,8 +56,10 @@ Future<List<Crypto>> getListings({order = "market_cap_desk"}) async {
 }
 
 Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
+  String currency = Database.getValue("settings", "currency");
+
   Map<String, dynamic> queryParams = {
-    "vs_currency": "usd",
+    "vs_currency": currency,
     "days": daysNum.toString()
   };
 
@@ -155,6 +161,8 @@ Future<List<Crypto>> search(String query) async {
 }
 
 Future<Crypto> getCoinData(String id) async {
+  String currency = Database.getValue("settings", "currency");
+
   Map<String, dynamic> queryParams = {};
 
   Uri url = Uri.https('api.coingecko.com', "/api/v3/coins/$id", queryParams);
@@ -171,7 +179,7 @@ Future<Crypto> getCoinData(String id) async {
     id: response["id"],
     name: response["name"],
     symbol: response["symbol"],
-    price: response["market_data"]["current_price"]["usd"].toDouble(),
+    price: response["market_data"]["current_price"][currency].toDouble(),
     logoUrl: response["image"]["small"],
     priceChangePercentageDay: response["market_data"]
         ["price_change_percentage_24h"],
@@ -184,16 +192,16 @@ Future<Crypto> getCoinData(String id) async {
     description: response["description"]["en"],
     categories: response["categories"].cast<String>(),
     website: response["links"]["homepage"]?[0],
-    ath: response["market_data"]["ath"]["usd"]?.toDouble(),
-    athDate: DateTime.tryParse(response["market_data"]["ath_date"]["usd"]),
-    marketCap: response["market_data"]["market_cap"]["usd"]?.toDouble(),
+    ath: response["market_data"]["ath"][currency]?.toDouble(),
+    athDate: DateTime.tryParse(response["market_data"]["ath_date"][currency]),
+    marketCap: response["market_data"]["market_cap"][currency]?.toDouble(),
     marketCapRank: response["market_data"]["market_cap_rank"],
-    dayHigh: response["market_data"]["high_24h"]["usd"]?.toDouble(),
-    dayLow: response["market_data"]["low_24h"]["usd"]?.toDouble(),
+    dayHigh: response["market_data"]["high_24h"][currency]?.toDouble(),
+    dayLow: response["market_data"]["low_24h"][currency]?.toDouble(),
     totalSupply: response["market_data"]["total_supply"]?.toDouble(),
     circulatingSupply:
         response["market_data"]["circulating_supply"]?.toDouble(),
-    volume: response["market_data"]["total_volume"]["usd"]?.toDouble(),
+    volume: response["market_data"]["total_volume"][currency]?.toDouble(),
   );
 }
 

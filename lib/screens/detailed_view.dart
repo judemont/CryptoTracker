@@ -1,3 +1,4 @@
+import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -70,7 +71,8 @@ class _DetailedViewState extends State<DetailedView> {
                       const SizedBox(
                         width: 20,
                       ),
-                      Text(formatePrice(crypto.price)),
+                      Text(formatePrice(crypto.price,
+                          Database.getValue("settings", "currency"))),
                       const SizedBox(
                         width: 20,
                       ),
@@ -253,7 +255,8 @@ class _DetailedViewState extends State<DetailedView> {
 
       tooltipItems.add(LineTooltipItem("", const TextStyle(), children: [
         TextSpan(
-            text: formatePrice(lineBarSpot.y),
+            text: formatePrice(
+                lineBarSpot.y, Database.getValue("settings", "currency")),
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const TextSpan(text: "\n"),
         TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),

@@ -14,9 +14,8 @@ Future<void> main() async {
   // databaseFactory = databaseFactoryFfi;
   Database.initBoxs().then((value) {
     Database.addDefaultValues();
+    runApp(const MyApp());
   });
-
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
