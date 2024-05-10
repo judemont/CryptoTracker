@@ -44,7 +44,8 @@ class _CoinsListState extends State<CoinsList> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PagesLayout(
-                            child: DetailedView(
+                        displayNavBar: false,
+                        child: DetailedView(
                           cryptoId: widget.listings[index].id!,
                         ))),
               );
