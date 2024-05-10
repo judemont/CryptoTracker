@@ -1,5 +1,5 @@
-Crypto Tracker is the ultimate tool for cryptocurrency enthusiasts and investors alike. With its intuitive interface and beautiful Material 3 design, keeping track of your favorite cryptocurrencies has never been easier. 
+CryptoTracker is the ultimate tool for cryptocurrency enthusiasts and investors alike. With its intuitive interface and beautiful Material 3 design, keeping track of your favorite cryptocurrencies has never been easier. 
 
-Whether you're a seasoned trader or just starting out, Crypto Tracker provides real-time price updates, detailed statistics, and insightful charts to keep you informed and knowledgeable about the cryptocurrency market. 
+Whether you're a seasoned trader or just starting out, CryptoTracker provides real-time price updates, detailed statistics, and insightful charts to keep you informed and knowledgeable about the cryptocurrency market. 
 
-Say goodbye to intrusive ads, as Crypto Tracker is completely ad-free, ensuring a seamless user experience. Best of all, it's open-source, meaning you can trust the transparency and security of the app.
+Say goodbye to intrusive ads, as CryptoTracker is completely ad-free, ensuring a seamless user experience. Best of all, it's open-source, meaning you can trust the transparency and security of the app.
