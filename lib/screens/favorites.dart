@@ -29,9 +29,13 @@ class _FavoritesState extends State<Favorites> {
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
-                  child: CoinsList(
-                    listings: listings,
-                  ),
+                  child: listings.isNotEmpty
+                      ? CoinsList(
+                          listings: listings,
+                        )
+                      : const Center(
+                          child: Text("No favorites yet"),
+                        ),
                   onRefresh: () async {
                     loadListings();
                     return Future<void>.delayed(const Duration(seconds: 2));
