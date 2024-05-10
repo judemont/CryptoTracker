@@ -1,6 +1,6 @@
 # CryptoTracker
 
-<img src="https://github.com/judemont/CryptoTracker/assets/96385330/826f0ed5-6ab3-4bbb-8b4c-0e339fcd95ed" width=200/>
+<img src="https://github.com/judemont/CryptoTracker/assets/96385330/8ea88829-fb4c-4490-99c4-a725ac9669e2" width=200/>
 
 
 An Android app to track crypto-currency prices in real time.
