@@ -121,6 +121,14 @@ class _SettingsState extends State<Settings> {
               onTap: () => launchUrl(
                   Uri.parse("https://github.com/judemont/CryptoTracker")),
             ),
+            ListTile(
+              title: const Text("Rate CryptoTracker on Google Play"),
+              leading: const Icon(Icons.star),
+              subtitle: const Text(
+                  "play.google.com/store/apps/details?id=jdm.apps.cryptotracker"),
+              onTap: () => launchUrl(Uri.parse(
+                  "https://play.google.com/store/apps/details?id=jdm.apps.cryptotracker")),
+            ),
             const ListTile(
               title: Text("Data provided by CoinGecko API"),
               leading: Icon(Icons.cloud),
