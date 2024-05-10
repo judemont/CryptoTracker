@@ -4,6 +4,7 @@ import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 import '../models/coin_price.dart';
 import '../models/crypto.dart';
@@ -26,6 +27,10 @@ class _DetailedViewState extends State<DetailedView> {
   List favorites = [];
 
   Crypto crypto = Crypto();
+
+  double touchedPrice = 0.0;
+  DateTime touchedTime = DateTime.now();
+  bool isTouchingChart = false;
 
   @override
   void initState() {
@@ -122,34 +127,82 @@ class _DetailedViewState extends State<DetailedView> {
                     ],
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Visibility(
+                      visible: isTouchingChart,
+                      child: Column(
+                        children: [
+                          Text(formatePrice(touchedPrice,
+                              Database.getValue("settings", "currency"))),
+                          Text(DateFormat('MM/dd/yyyy hh:mm')
+                              .format(touchedTime))
+                        ],
+                      )),
+                  const SizedBox(
+                    height: 10,
                   ),
                   pricesHistoryChartData.isNotEmpty
                       ? Container(
                           margin: const EdgeInsets.only(right: 10),
                           height: 300,
-                          child: LineChart(LineChartData(
-                            lineTouchData: LineTouchData(
-                                touchTooltipData: LineTouchTooltipData(
-                                    fitInsideHorizontally: true,
-                                    fitInsideVertically: true,
-                                    getTooltipItems: getTooltipItems)),
-                            borderData: FlBorderData(show: true),
-                            gridData: const FlGridData(show: false),
-                            titlesData: const FlTitlesData(show: false),
-                            lineBarsData: [
-                              LineChartBarData(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  dotData: const FlDotData(show: false),
-                                  spots: pricesHistoryChartData,
-                                  belowBarData: BarAreaData(
-                                      show: true,
+                          child: Listener(
+                              onPointerDown: (event) => setState(() {
+                                    isTouchingChart = true;
+                                  }),
+                              onPointerUp: (event) => setState(() {
+                                    isTouchingChart = false;
+                                  }),
+                              child: LineChart(LineChartData(
+                                lineTouchData: LineTouchData(
+                                  touchTooltipData: LineTouchTooltipData(
+                                      tooltipBgColor: Colors.white.withAlpha(0),
+                                      getTooltipItems: (lineBarSpots) {
+                                        return [
+                                          LineTooltipItem("", TextStyle())
+                                        ];
+                                      }),
+                                  touchCallback: (touchEvent,
+                                      LineTouchResponse? touchResponse) {
+                                    if (touchResponse?.lineBarSpots != null) {
+                                      setState(() {
+                                        touchedTime =
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                touchResponse!
+                                                    .lineBarSpots!.first.x
+                                                    .round());
+
+                                        touchedPrice =
+                                            touchResponse.lineBarSpots!.first.y;
+                                        // isTouchingChart = true;
+                                      });
+                                      if (touchEvent is FlLongPressEnd ||
+                                          touchEvent is FlPanCancelEvent ||
+                                          touchEvent is FlTapUpEvent) {
+                                        setState(() {
+                                          isTouchingChart = false;
+                                        });
+                                      }
+                                    }
+                                  },
+                                ),
+                                borderData: FlBorderData(show: true),
+                                gridData: FlGridData(show: false),
+                                titlesData: FlTitlesData(show: false),
+                                lineBarsData: [
+                                  LineChartBarData(
                                       color: Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.6)))
-                            ],
-                          )))
+                                          .colorScheme
+                                          .onPrimary,
+                                      dotData: FlDotData(show: false),
+                                      spots: pricesHistoryChartData,
+                                      belowBarData: BarAreaData(
+                                          show: true,
+                                          color: Theme.of(context)
+                                              .primaryColor
+                                              .withOpacity(0.6)))
+                                ],
+                              ))))
                       : Center(
                           child: CircularProgressIndicator(
                           color: Theme.of(context).colorScheme.onPrimary,
