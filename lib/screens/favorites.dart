@@ -1,6 +1,7 @@
 import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/coins_list.dart';
@@ -22,6 +23,7 @@ class _FavoritesState extends State<Favorites> {
 
   @override
   Widget build(BuildContext context) {
+    LocalNotificationService().showNotificationAndroid("Title", "Value");
     return Scaffold(
       appBar: AppBar(title: const Text("Favorites")),
       body: Column(

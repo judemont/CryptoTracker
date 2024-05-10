@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
 
+import 'services/notifications.dart';
 import 'theme.dart';
 
 void main() {
   Database.init().then((value) {
     Database.addDefaultValues();
-    runApp(MyApp());
+    LocalNotificationService().init().then((value) {
+      runApp(MyApp());
+    });
   });
 }
 
