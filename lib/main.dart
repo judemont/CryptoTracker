@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:catppuccin_flutter/catppuccin_flutter.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
 
