@@ -2,6 +2,8 @@ import 'package:cryptotracker/main.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -30,8 +32,13 @@ class _SettingsState extends State<Settings> {
         appBar: AppBar(
           title: const Text("Settings"),
         ),
-        body: ListView(
+        body: Column(
           children: [
+            const SizedBox(height: 20),
+            const Text(
+              "Options",
+              style: TextStyle(fontSize: 20),
+            ),
             ListTile(
               title: const Text("Theme"),
               leading: const Icon(Icons.color_lens),
@@ -41,7 +48,7 @@ class _SettingsState extends State<Settings> {
                     elevation: 0,
                     context: context,
                     builder: (context) {
-                      return Wrap(
+                      return ListView(
                         children: [
                           ListTile(
                             title: const Text("Light"),
@@ -103,6 +110,21 @@ class _SettingsState extends State<Settings> {
                     },
                   );
                 }),
+            const Text(
+              "About",
+              style: TextStyle(fontSize: 20),
+            ),
+            ListTile(
+              title: const Text("Source Code"),
+              leading: const Icon(Icons.code),
+              subtitle: const Text("github.com/judemont/CryptoTracker"),
+              onTap: () => launchUrl(
+                  Uri.parse("https://github.com/judemont/CryptoTracker")),
+            ),
+            const ListTile(
+              title: Text("Data provided by CoinGecko API"),
+              leading: Icon(Icons.cloud),
+            ),
           ],
         ));
   }
