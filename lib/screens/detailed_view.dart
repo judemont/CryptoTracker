@@ -83,6 +83,16 @@ class _DetailedViewState extends State<DetailedView> {
                     children: [
                       if (crypto.logoUrl != null)
                         Image.network(
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            );
+                          },
                           crypto.logoUrl!,
                           width: 40.0,
                         ),
@@ -114,25 +124,31 @@ class _DetailedViewState extends State<DetailedView> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Container(
-                      margin: const EdgeInsets.only(right: 10),
-                      height: 300,
-                      child: LineChart(LineChartData(
-                          lineTouchData: LineTouchData(
-                              touchTooltipData: LineTouchTooltipData(
-                                  fitInsideHorizontally: true,
-                                  fitInsideVertically: true,
-                                  getTooltipItems: getTooltipItems)),
-                          borderData: FlBorderData(show: true),
-                          gridData: const FlGridData(show: false),
-                          titlesData: const FlTitlesData(show: false),
-                          lineBarsData: [
-                            LineChartBarData(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              dotData: const FlDotData(show: false),
-                              spots: pricesHistoryChartData,
-                            )
-                          ]))),
+                  pricesHistoryChartData.isNotEmpty
+                      ? Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          height: 300,
+                          child: LineChart(LineChartData(
+                              lineTouchData: LineTouchData(
+                                  touchTooltipData: LineTouchTooltipData(
+                                      fitInsideHorizontally: true,
+                                      fitInsideVertically: true,
+                                      getTooltipItems: getTooltipItems)),
+                              borderData: FlBorderData(show: true),
+                              gridData: const FlGridData(show: false),
+                              titlesData: const FlTitlesData(show: false),
+                              lineBarsData: [
+                                LineChartBarData(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  dotData: const FlDotData(show: false),
+                                  spots: pricesHistoryChartData,
+                                )
+                              ])))
+                      : Center(
+                          child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        )),
                   const SizedBox(
                     height: 5,
                   ),

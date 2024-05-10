@@ -26,7 +26,19 @@ class _CoinsListState extends State<CoinsList> {
                 visible: widget.listings[index].price != null,
                 child: Text(formatePrice(widget.listings[index].price,
                     Database.getValue("settings", "currency")))),
-            leading: Image.network(widget.listings[index].logoUrl ?? ""),
+            leading: Image.network(
+              widget.listings[index].logoUrl ?? "",
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                );
+              },
+            ),
             trailing: Visibility(
               visible: widget.listings[index].priceChangePercentageDay != null,
               child: Text(

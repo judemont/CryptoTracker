@@ -105,9 +105,14 @@ class _HomeState extends State<Home> {
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
-                  child: CoinsList(
-                    listings: listings,
-                  ),
+                  child: listings.isNotEmpty
+                      ? CoinsList(
+                          listings: listings,
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        )),
                   onRefresh: () async {
                     loadListings();
                     return Future<void>.delayed(const Duration(seconds: 2));
