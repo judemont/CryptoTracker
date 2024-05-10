@@ -129,22 +129,27 @@ class _DetailedViewState extends State<DetailedView> {
                           margin: const EdgeInsets.only(right: 10),
                           height: 300,
                           child: LineChart(LineChartData(
-                              lineTouchData: LineTouchData(
-                                  touchTooltipData: LineTouchTooltipData(
-                                      fitInsideHorizontally: true,
-                                      fitInsideVertically: true,
-                                      getTooltipItems: getTooltipItems)),
-                              borderData: FlBorderData(show: true),
-                              gridData: const FlGridData(show: false),
-                              titlesData: const FlTitlesData(show: false),
-                              lineBarsData: [
-                                LineChartBarData(
+                            lineTouchData: LineTouchData(
+                                touchTooltipData: LineTouchTooltipData(
+                                    fitInsideHorizontally: true,
+                                    fitInsideVertically: true,
+                                    getTooltipItems: getTooltipItems)),
+                            borderData: FlBorderData(show: true),
+                            gridData: const FlGridData(show: false),
+                            titlesData: const FlTitlesData(show: false),
+                            lineBarsData: [
+                              LineChartBarData(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
                                   dotData: const FlDotData(show: false),
                                   spots: pricesHistoryChartData,
-                                )
-                              ])))
+                                  belowBarData: BarAreaData(
+                                      show: true,
+                                      color: Theme.of(context)
+                                          .primaryColor
+                                          .withOpacity(0.6)))
+                            ],
+                          )))
                       : Center(
                           child: CircularProgressIndicator(
                           color: Theme.of(context).colorScheme.onPrimary,
