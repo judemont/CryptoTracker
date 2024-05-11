@@ -1,0 +1,43 @@
+name: Build and Package Flutter Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '2.x'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build APK for Android
+      run: flutter build apk
+
+    - name: Build Linux
+      run: flutter build linux
+
+    - name: Build Windows
+      run: flutter build windows
+
+    - name: Package artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: flutter-build
+        path: |
+          build/app/outputs/flutter-apk/app-release.apk
+          build/linux/release/bundle
+          build/windows/runner/Release
