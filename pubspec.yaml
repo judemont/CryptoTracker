@@ -100,6 +100,3 @@ flutter_launcher_icons:
   android: "launcher_icon"
   image_path: "asset/icon.png"
   ios: true
-
-executables:
-  flutter_distributor: 0.4.0
