@@ -1,0 +1,11 @@
+# The value of AppId uniquely identifies this application.
+# Do not use the same AppId value in installers for other applications.
+app_id: 8B592538-42B1-4826-A479-AF079F21A65D
+publisher: judemont
+publisher_url: https://github.com/judemont/CryptoTracker
+display_name: CryptoTracker
+create_desktop_icon: true
+# See: https://jrsoftware.org/ishelp/index.php?topic=setup_defaultdirname
+# install_dir_name: "D:\\HELLO-WORLD"
+locales:
+  - en
