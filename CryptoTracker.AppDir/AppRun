@@ -1,0 +1,2 @@
+#!/bin/shcd "$(dirname "$0")"
+exec ./cryptotracker

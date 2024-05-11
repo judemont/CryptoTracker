@@ -49,3 +49,4 @@ buildProd.gradle
 *.hive
 settings.lock
 /dist
+*.appimage
