@@ -5,6 +5,8 @@ maintainer:
   name: judemont
   email: julien@rmbi.ch
 
+Description:
+
 priority: optional
 section: x11
 installed_size: 15700
