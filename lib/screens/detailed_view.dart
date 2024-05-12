@@ -129,16 +129,18 @@ class _DetailedViewState extends State<DetailedView> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Visibility(
-                      visible: isTouchingChart,
-                      child: Column(
-                        children: [
-                          Text(formatePrice(touchedPrice,
-                              Database.getValue("settings", "currency"))),
-                          Text(DateFormat('MM/dd/yyyy hh:mm')
-                              .format(touchedTime))
-                        ],
-                      )),
+                  isTouchingChart
+                      ? Column(
+                          children: [
+                            Text(formatePrice(touchedPrice,
+                                Database.getValue("settings", "currency"))),
+                            Text(DateFormat('MM/dd/yyyy hh:mm')
+                                .format(touchedTime))
+                          ],
+                        )
+                      : const SizedBox(
+                          height: 40,
+                        ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -159,7 +161,7 @@ class _DetailedViewState extends State<DetailedView> {
                                       tooltipBgColor: Colors.white.withAlpha(0),
                                       getTooltipItems: (lineBarSpots) {
                                         return [
-                                          LineTooltipItem("", TextStyle())
+                                          LineTooltipItem("", const TextStyle())
                                         ];
                                       }),
                                   touchCallback: (touchEvent,

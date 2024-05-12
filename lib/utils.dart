@@ -9,7 +9,8 @@ String formatePrice(double? price, String symbol) {
   String formattedPrice;
 
   if ((price ?? 0.0) < (1 / pow(10, priceTotalLength - 1))) {
-    formattedPrice = (price ?? 0).toStringAsFixed(8);
+    formattedPrice =
+        "${(price ?? 0).toStringAsFixed(8)} ${symbol.toUpperCase()}";
   } else {
     int decimalDigits =
         priceLength > priceTotalLength ? 0 : (priceTotalLength - priceLength);
