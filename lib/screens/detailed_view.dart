@@ -219,8 +219,8 @@ class _DetailedViewState extends State<DetailedView> {
                         border: Border.all(),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
-                    child: ButtonBar(
-                      alignment: MainAxisAlignment.start,
+                    child: Wrap(
+                      // alignment: MainAxisAlignment.start,
                       children: [
                         TextButton(
                           style: ButtonStyle(
