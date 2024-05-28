@@ -98,6 +98,7 @@ class _SettingsState extends State<Settings> {
                         children: availableCurrencies
                             .map((e) => ListTile(
                                   title: Text(e.toUpperCase()),
+                                  leading: const Icon(Icons.monetization_on),
                                   onTap: () {
                                     Database.setValue(
                                         "settings", "currency", e);
