@@ -95,7 +95,6 @@ class _DetailedViewState extends State<DetailedView> {
                                   ? loadingProgress.cumulativeBytesLoaded /
                                       loadingProgress.expectedTotalBytes!
                                   : null,
-                              color: Theme.of(context).colorScheme.onPrimary,
                             );
                           },
                           crypto.logoUrl!,
@@ -193,16 +192,13 @@ class _DetailedViewState extends State<DetailedView> {
                                 titlesData: FlTitlesData(show: false),
                                 lineBarsData: [
                                   LineChartBarData(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
+                                      color: Colors.purple,
                                       dotData: FlDotData(show: false),
                                       spots: pricesHistoryChartData,
                                       belowBarData: BarAreaData(
                                           show: true,
-                                          color: Theme.of(context)
-                                              .primaryColor
-                                              .withOpacity(0.6)))
+                                          color:
+                                              Colors.purple.withOpacity(0.6)))
                                 ],
                               ))))
                       : Center(
@@ -215,7 +211,7 @@ class _DetailedViewState extends State<DetailedView> {
                   Container(
                     margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         border: Border.all(),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
@@ -226,9 +222,16 @@ class _DetailedViewState extends State<DetailedView> {
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   selectedTimePriceChartInterval == 1
-                                      ? Theme.of(context).colorScheme.secondary
+                                      ? Theme.of(context).primaryColor
                                       : Colors.transparent)),
-                          child: const Text("1D"),
+                          child: Text("1D",
+                              style: TextStyle(
+                                  color: selectedTimePriceChartInterval == 1
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color)),
                           onPressed: () => setState(() {
                             selectedTimePriceChartInterval = 1;
                             loadPriceHistory(1);
@@ -240,24 +243,37 @@ class _DetailedViewState extends State<DetailedView> {
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   selectedTimePriceChartInterval == 2
-                                      ? Theme.of(context).colorScheme.secondary
+                                      ? Theme.of(context).primaryColor
                                       : Colors.transparent)),
-                          child: const Text("1W"),
+                          child: Text("1W",
+                              style: TextStyle(
+                                  color: selectedTimePriceChartInterval == 2
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color)),
                           onPressed: () => setState(() {
                             selectedTimePriceChartInterval = 2;
                             loadPriceHistory(7);
                             priceChangePercentage =
                                 crypto.priceChangePercentageWeek ?? 0;
-                            print(crypto.priceChangePercentageWeek);
                           }),
                         ),
                         TextButton(
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   selectedTimePriceChartInterval == 3
-                                      ? Theme.of(context).colorScheme.secondary
+                                      ? Theme.of(context).primaryColor
                                       : Colors.transparent)),
-                          child: const Text("30D"),
+                          child: Text("30D",
+                              style: TextStyle(
+                                  color: selectedTimePriceChartInterval == 3
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color)),
                           onPressed: () => setState(() {
                             selectedTimePriceChartInterval = 3;
                             loadPriceHistory(30);
@@ -269,9 +285,16 @@ class _DetailedViewState extends State<DetailedView> {
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   selectedTimePriceChartInterval == 4
-                                      ? Theme.of(context).colorScheme.secondary
+                                      ? Theme.of(context).primaryColor
                                       : Colors.transparent)),
-                          child: const Text("1Y"),
+                          child: Text("1Y",
+                              style: TextStyle(
+                                  color: selectedTimePriceChartInterval == 4
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color)),
                           onPressed: () => setState(() {
                             selectedTimePriceChartInterval = 4;
                             loadPriceHistory(365);
@@ -283,9 +306,16 @@ class _DetailedViewState extends State<DetailedView> {
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   selectedTimePriceChartInterval == 5
-                                      ? Theme.of(context).colorScheme.secondary
+                                      ? Theme.of(context).primaryColor
                                       : Colors.transparent)),
-                          child: const Text("5Y"),
+                          child: Text("5Y",
+                              style: TextStyle(
+                                  color: selectedTimePriceChartInterval == 5
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color)),
                           onPressed: () => setState(() {
                             selectedTimePriceChartInterval = 5;
                             loadMaxPriceHistory();
@@ -352,28 +382,5 @@ class _DetailedViewState extends State<DetailedView> {
     setState(() {
       favorites = Database.getValue("portfolio", "favorites") ?? [];
     });
-  }
-
-  List<LineTooltipItem> getTooltipItems(List<LineBarSpot> lineBarSpots) {
-    List<LineTooltipItem> tooltipItems = [];
-    for (var lineBarSpot in lineBarSpots) {
-      DateTime date =
-          DateTime.fromMillisecondsSinceEpoch(lineBarSpot.x.toInt());
-
-      tooltipItems.add(LineTooltipItem(
-          "", TextStyle(color: Theme.of(context).primaryColor),
-          children: [
-            TextSpan(
-                text: formatePrice(
-                    lineBarSpot.y, Database.getValue("settings", "currency")),
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            const TextSpan(text: "\n"),
-            TextSpan(text: "${date.hour}:${date.minute}:${date.second}"),
-            const TextSpan(text: "\n"),
-            TextSpan(text: "${date.month}/${date.day}/${date.year}"),
-          ]));
-    }
-
-    return tooltipItems;
   }
 }

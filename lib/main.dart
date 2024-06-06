@@ -1,10 +1,7 @@
-import 'package:catppuccin_flutter/catppuccin_flutter.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
-
-import 'theme.dart';
 
 void main() {
   Database.init().then((value) {
@@ -36,8 +33,11 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'CryptoTracker',
         themeMode: _themeMode,
-        theme: catppuccinTheme(catppuccin.latte),
-        darkTheme: catppuccinTheme(catppuccin.macchiato),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData.dark(),
         home: const PagesLayout(child: Home()));
   }
 
