@@ -2,6 +2,7 @@ import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 void main() {
   Database.init().then((value) {
@@ -33,11 +34,41 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'CryptoTracker',
         themeMode: _themeMode,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        theme: FlexThemeData.light(
+          scheme: FlexScheme.materialBaseline,
+          surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+          blendLevel: 7,
+          subThemesData: const FlexSubThemesData(
+            blendOnLevel: 10,
+            blendOnColors: false,
+            useTextTheme: true,
+            useM2StyleDividerInM3: true,
+            alignedDropdown: true,
+            useInputDecoratorThemeInDialogs: true,
+          ),
+          visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
+          swapLegacyOnMaterial3: true,
+          // To use the Playground font, add GoogleFonts package and uncomment
+          // fontFamily: GoogleFonts.notoSans().fontFamily,
         ),
-        darkTheme: ThemeData.dark(),
+        darkTheme: FlexThemeData.dark(
+          scheme: FlexScheme.materialBaseline,
+          surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+          blendLevel: 13,
+          subThemesData: const FlexSubThemesData(
+            blendOnLevel: 20,
+            useTextTheme: true,
+            useM2StyleDividerInM3: true,
+            alignedDropdown: true,
+            useInputDecoratorThemeInDialogs: true,
+          ),
+          visualDensity: FlexColorScheme.comfortablePlatformDensity,
+          useMaterial3: true,
+          swapLegacyOnMaterial3: true,
+          // To use the Playground font, add GoogleFonts package and uncomment
+          // fontFamily: GoogleFonts.notoSans().fontFamily,
+        ),
         home: const PagesLayout(child: Home()));
   }
 

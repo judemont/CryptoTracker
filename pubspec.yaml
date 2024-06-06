@@ -43,6 +43,7 @@ dependencies:
   hive: ^2.2.3
   path: ^1.9.0
   hive_flutter: ^1.1.0
+  flex_color_scheme: ^7.3.1
 
 dev_dependencies:
   flutter_test:
