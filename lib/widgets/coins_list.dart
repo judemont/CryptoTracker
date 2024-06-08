@@ -23,9 +23,9 @@ class _CoinsListState extends State<CoinsList> {
           return ListTile(
             title: Text(widget.listings[index].name ?? ""),
             subtitle: Visibility(
-                visible: widget.listings[index].price != null,
-                child: Text(formatePrice(widget.listings[index].price,
-                    Database.getValue("settings", "currency")))),
+                visible: widget.listings[index].symbol != null,
+                child:
+                    Text(widget.listings[index].symbol?.toUpperCase() ?? "")),
             leading: Image.network(
               widget.listings[index].logoUrl ?? "",
               loadingBuilder: (context, child, loadingProgress) {
@@ -39,19 +39,27 @@ class _CoinsListState extends State<CoinsList> {
                 );
               },
             ),
-            trailing: Visibility(
-              visible: widget.listings[index].priceChangePercentageDay != null,
-              child: Text(
-                "${widget.listings[index].priceChangePercentageDay ?? 0.0}%",
-                style: TextStyle(
-                    fontSize: 13,
-                    color: (widget.listings[index].priceChangePercentageDay ??
-                                0) >=
-                            0
-                        ? Colors.green
-                        : Colors.red),
+            trailing:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Visibility(
+                  visible: widget.listings[index].price != null,
+                  child: Text(formatePrice(widget.listings[index].price,
+                      Database.getValue("settings", "currency")))),
+              Visibility(
+                visible:
+                    widget.listings[index].priceChangePercentageDay != null,
+                child: Text(
+                  "${widget.listings[index].priceChangePercentageDay ?? 0.0}%",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: (widget.listings[index].priceChangePercentageDay ??
+                                  0) >=
+                              0
+                          ? Colors.green
+                          : Colors.red),
+                ),
               ),
-            ),
+            ]),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
