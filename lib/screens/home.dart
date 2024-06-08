@@ -15,6 +15,10 @@ class _HomeState extends State<Home> {
   List<Crypto> listings = [];
   bool showSearchField = false;
   int selectedOrderDropdownItem = 0;
+  List<Widget> sortByButtonChildren = [
+    const Text("Market Cap"),
+    const Icon(Icons.bar_chart_rounded)
+  ];
 
   @override
   void initState() {
@@ -68,40 +72,105 @@ class _HomeState extends State<Home> {
                 },
               )),
           Container(
-            margin: const EdgeInsets.only(left: 20, right: 10),
-            child: DropdownButton(
-              isExpanded: true,
-              value: selectedOrderDropdownItem,
-              items: [
-                DropdownMenuItem(
-                  value: 0,
-                  onTap: () => loadListings(order: "market_cap_desc"),
-                  child: const Text("Market Cap."),
+              margin: const EdgeInsets.only(left: 20, right: 10),
+              child: ElevatedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: sortByButtonChildren,
                 ),
-                DropdownMenuItem(
-                  value: 1,
-                  onTap: () => loadListings(order: "volume_desc"),
-                  child: const Text("24h Volume"),
-                ),
-                DropdownMenuItem(
-                  value: 2,
-                  onTap: () => loadListings(order: "id_asc"),
-                  child: const Text("Name (A..Z)"),
-                ),
-                DropdownMenuItem(
-                  value: 3,
-                  onTap: () => loadListings(order: "id_desc"),
-                  child: const Text("Name (Z..A)"),
-                )
-              ],
-              onChanged: (value) {
-                setState(() {
-                  selectedOrderDropdownItem = value ?? 0;
-                });
-              },
-              hint: const Text("Sort by"),
-            ),
-          ),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return ListView(
+                        children: [
+                          ListTile(
+                            title: const Text("Market Cap"),
+                            leading: const Icon(Icons.bar_chart_rounded),
+                            onTap: () {
+                              loadListings(order: "market_cap_desc");
+                              sortByButtonChildren = [
+                                const Text("Market Cap"),
+                                const Icon(Icons.bar_chart_rounded)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("24h Volume"),
+                            leading: const Icon(Icons.currency_exchange),
+                            onTap: () {
+                              loadListings(order: "volume_desc");
+                              sortByButtonChildren = [
+                                const Text("24h Volume"),
+                                const Icon(Icons.currency_exchange)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Name (A..Z)"),
+                            leading: const Icon(Icons.abc),
+                            onTap: () {
+                              loadListings(order: "id_asc");
+                              sortByButtonChildren = [
+                                const Text("Name (A..Z)"),
+                                const Icon(Icons.abc)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Name (Z..A)"),
+                            leading: const Icon(Icons.abc),
+                            onTap: () {
+                              loadListings(order: "id_desc");
+                              sortByButtonChildren = [
+                                const Text("Name (Z..A)"),
+                                const Icon(Icons.abc)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              )
+              // DropdownButton(
+              //   isExpanded: true,
+              //   value: selectedOrderDropdownItem,
+              //   items: [
+              //     DropdownMenuItem(
+              //       value: 0,
+              //       onTap: () => loadListings(order: "market_cap_desc"),
+              //       child: const Text("Market Cap."),
+              //     ),
+              //     DropdownMenuItem(
+              //       value: 1,
+              //       onTap: () => loadListings(order: "volume_desc"),
+              //       child: const Text("24h Volume"),
+              //     ),
+              //     DropdownMenuItem(
+              //       value: 2,
+              //       onTap: () => loadListings(order: "id_asc"),
+              //       child: const Text("Name (A..Z)"),
+              //     ),
+              //     DropdownMenuItem(
+              //       value: 3,
+              //       onTap: () => loadListings(order: "id_desc"),
+              //       child: const Text("Name (Z..A)"),
+              //     )
+              //   ],
+              //   onChanged: (value) {
+              //     setState(() {
+              //       selectedOrderDropdownItem = value ?? 0;
+              //     });
+              //   },
+              //   hint: const Text("Sort by"),
+              // ),
+              ),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
