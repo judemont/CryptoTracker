@@ -62,7 +62,7 @@ class _DetailedViewState extends State<DetailedView> {
                       });
                     }
 
-                    Database.setValue("portfolio", "favorites", favorites);
+                    Database.setValue("portfolio", "favs", favorites);
                     print(favorites);
                     loadFavorites();
                   },
@@ -380,7 +380,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   void loadFavorites() {
     setState(() {
-      favorites = Database.getValue("portfolio", "favorites") ?? [];
+      favorites = Database.getValue("portfolio", "favs") ?? [];
     });
   }
 }

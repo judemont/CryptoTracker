@@ -22,8 +22,8 @@ class Database {
       settingsBox.put("theme", "system");
     }
     Box portfolioBox = Hive.box("portfolio");
-    if (portfolioBox.get("favorites") == null) {
-      portfolioBox.put("favorites", []);
+    if (portfolioBox.get("favs") == null) {
+      portfolioBox.put("favs", []);
     }
   }
 
