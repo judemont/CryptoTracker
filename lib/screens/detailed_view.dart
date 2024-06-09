@@ -75,7 +75,6 @@ class _DetailedViewState extends State<DetailedView> {
           onPressed: () => setState(() {
             selectedTimePriceChartInterval = timePeriod;
             loadPriceHistory(timePeriod);
-            priceChangePercentage = crypto.priceChangePercentageWeek ?? 0;
           }),
         ),
       );
@@ -270,16 +269,6 @@ class _DetailedViewState extends State<DetailedView> {
 
   Future<void> loadPriceHistory(String timePeriod, {bool max = false}) async {
     getPricesHistory(crypto.id!, timePeriod).then((values) {
-      setState(() {
-        pricesHistory = values;
-      });
-      loadPricesHistoryChartData();
-    });
-  }
-
-  Future<void> loadMaxPriceHistory() async {
-    print("BABABA");
-    getMaxPricesHistory(crypto.symbol!).then((values) {
       setState(() {
         pricesHistory = values;
       });

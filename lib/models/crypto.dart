@@ -5,9 +5,6 @@ class Crypto {
   double? price;
   String? logoUrl;
   double? priceChangePercentageDay;
-  double? priceChangePercentageWeek;
-  double? priceChangePercentageMonth;
-  double? priceChangePercentageYear;
   String? description;
   List<String>? categories;
   String? website;
@@ -28,9 +25,6 @@ class Crypto {
     this.price,
     this.logoUrl,
     this.priceChangePercentageDay,
-    this.priceChangePercentageWeek,
-    this.priceChangePercentageMonth,
-    this.priceChangePercentageYear,
     this.description,
     this.categories,
     this.website,

@@ -70,14 +70,13 @@ Future<List<CoinPrice>> getPricesHistory(
 
   Uri url = Uri.https(
       'api.coinranking.com', "/v2/coin/${coinId}/history", queryParams);
-
+  print(url);
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-
   var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
@@ -85,7 +84,7 @@ Future<List<CoinPrice>> getPricesHistory(
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
       dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] * 1000),
-      price: data["price"],
+      price: double.tryParse(data["price"] ?? ""),
     ));
   }
 
@@ -123,45 +122,41 @@ Future<List<Crypto>> search(String query) async {
 Future<Crypto> getCoinData(String id) async {
   String currency = Database.getValue("settings", "currency");
 
-  Map<String, dynamic> queryParams = {};
+  Map<String, dynamic> queryParams = {
+    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+  };
 
-  Uri url = Uri.https('api.coingecko.com', "/api/v3/coins/$id", queryParams);
-
+  Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
+  print(url);
+  print("AAAAAAA");
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
+  var responseData = response["data"]["coin"];
   // print(response["market_data"]["price_change_1y"]);
 
   return Crypto(
-    id: response["id"],
-    name: response["name"],
-    symbol: response["symbol"],
-    price: response["market_data"]["current_price"][currency].toDouble(),
-    logoUrl: response["image"]["small"],
-    priceChangePercentageDay: response["market_data"]
-        ["price_change_percentage_24h"],
-    priceChangePercentageWeek: response["market_data"]
-        ["price_change_percentage_7d"],
-    priceChangePercentageMonth: response["market_data"]
-        ["price_change_percentage_30d"],
-    priceChangePercentageYear: response["market_data"]
-        ["price_change_percentage_1y"],
-    description: response["description"]["en"],
-    categories: response["categories"].cast<String>(),
-    website: response["links"]["homepage"]?[0],
-    ath: response["market_data"]["ath"][currency]?.toDouble(),
-    athDate: DateTime.tryParse(response["market_data"]["ath_date"][currency]),
-    marketCap: response["market_data"]["market_cap"][currency]?.toDouble(),
-    marketCapRank: response["market_data"]["market_cap_rank"],
-    dayHigh: response["market_data"]["high_24h"][currency]?.toDouble(),
-    dayLow: response["market_data"]["low_24h"][currency]?.toDouble(),
-    totalSupply: response["market_data"]["total_supply"]?.toDouble(),
+    id: responseData["uuid"],
+    name: responseData["name"],
+    symbol: responseData["symbol"],
+    price: double.tryParse(responseData["price"]),
+    logoUrl: responseData["iconUrl"],
+    priceChangePercentageDay: double.tryParse(responseData["change"]),
+    description: responseData["description"],
+    categories: responseData["tags"].cast<String>(),
+    website: responseData["websiteUrl"],
+    ath: double.tryParse(responseData["allTimeHigh"]["price"]),
+    athDate: DateTime.fromMillisecondsSinceEpoch(
+        responseData["allTimeHigh"]["timestamp"] * 1000),
+    marketCap: double.tryParse(responseData["marketCap"]),
+    totalSupply: double.tryParse(
+        responseData["supply"]["max"] ?? responseData["supply"]["total"] ?? ""),
     circulatingSupply:
-        response["market_data"]["circulating_supply"]?.toDouble(),
-    volume: response["market_data"]["total_volume"][currency]?.toDouble(),
+        double.tryParse(responseData["supply"]["circulating"] ?? ""),
+    volume: double.tryParse(responseData["24hVolume"]),
   );
 }
 
