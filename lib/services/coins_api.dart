@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cryptotracker/models/coin_price.dart';
+import 'package:cryptotracker/models/currency.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
@@ -103,7 +104,7 @@ Future<Crypto> getCoinData(String id) async {
   Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -132,12 +133,32 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
-Future<List<String>> getAvailableCurrencies() async {
-  Uri url = Uri.https('api.coinranking.com', "/v2/reference-currencies");
+Future<List<Currency>> getAvailableCurrencies() async {
+  Map<String, dynamic> queryParams = {"limit": "100"};
 
-  var response = await http.get(url);
-  List currencies = jsonDecode(response.body);
-  return currencies.cast<String>();
+  Uri url =
+      Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-access-token": getApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = jsonDecode(await responseJson.stream.bytesToString());
+  var data = response["data"];
+  List<Currency> currencies = [];
+
+  for (var currency in data["currencies"]) {
+    currencies.add(Currency(
+      type: currency["type"],
+      name: currency["name"],
+      symbol: currency["symbol"],
+      iconUrl: currency["iconUrl"],
+      sign: currency["sign"],
+    ));
+  }
+
+  return currencies;
 }
 
 Future<String> getCurrencyUuid(String symbol) async {

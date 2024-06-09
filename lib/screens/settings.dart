@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/currency.dart';
+
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -16,7 +18,7 @@ class _SettingsState extends State<Settings> {
   String currency = "";
   String theme = "";
 
-  List<String> availableCurrencies = [];
+  List<Currency> availableCurrencies = [];
   @override
   void initState() {
     loadSettingsValues();
@@ -97,11 +99,11 @@ class _SettingsState extends State<Settings> {
                       return ListView(
                         children: availableCurrencies
                             .map((e) => ListTile(
-                                  title: Text(e.toUpperCase()),
+                                  title: Text(e.name ?? ""),
                                   leading: const Icon(Icons.monetization_on),
                                   onTap: () {
                                     Database.setValue(
-                                        "settings", "currency", e);
+                                        "settings", "currency", e.symbol);
                                     loadSettingsValues();
                                     Navigator.of(context).pop();
                                   },
