@@ -20,7 +20,7 @@ const coinrankingApiKeys = [
 ];
 
 Future<List<Crypto>> getListings(
-    {order = "marketCap", List<String>? ids}) async {
+    {order = "marketCap", List<String>? ids, String? search}) async {
   String currency = Database.getValue("settings", "currency");
 
   print(Database.getValue("settings", "currency"));
@@ -33,8 +33,11 @@ Future<List<Crypto>> getListings(
     queryParams["uuids"] = ids.join(",");
   }
 
+  if (search != null) {
+    queryParams["search"] = search;
+  }
+
   Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
-  print(url);
   http.Request request = http.Request("get", url);
 
   request.headers.addAll({"x-access-token": getApiKey()});
@@ -46,7 +49,6 @@ Future<List<Crypto>> getListings(
 
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
-    print(crypto["price"]);
     cryptoList.add(Crypto(
       id: crypto["uuid"],
       name: crypto["name"],
@@ -71,7 +73,6 @@ Future<List<CoinPrice>> getPricesHistory(
 
   Uri url = Uri.https(
       'api.coinranking.com', "/v2/coin/${coinId}/history", queryParams);
-  print(url);
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
@@ -92,34 +93,6 @@ Future<List<CoinPrice>> getPricesHistory(
   return pricesHistory;
 }
 
-Future<List<Crypto>> search(String query) async {
-  Map<String, dynamic> queryParams = {
-    "query": query,
-  };
-
-  Uri url = Uri.https('api.coingecko.com', "/api/v3/search", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  List elements = response["coins"];
-
-  List<Crypto> results = [];
-
-  for (var i = 0; i < elements.length; i++) {
-    results.add(Crypto(
-      id: elements[i]["id"],
-      name: elements[i]["name"],
-      symbol: elements[i]["symbol"],
-      logoUrl: elements[i]["thumb"],
-    ));
-  }
-  return results;
-}
-
 Future<Crypto> getCoinData(String id) async {
   String currency = Database.getValue("settings", "currency");
 
@@ -128,8 +101,7 @@ Future<Crypto> getCoinData(String id) async {
   };
 
   Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
-  print(url);
-  print("AAAAAAA");
+
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
 
@@ -137,7 +109,6 @@ Future<Crypto> getCoinData(String id) async {
 
   var response = json.decode(await responseJson.stream.bytesToString());
   var responseData = response["data"]["coin"];
-  // print(response["market_data"]["price_change_1y"]);
 
   return Crypto(
     id: responseData["uuid"],
@@ -162,8 +133,7 @@ Future<Crypto> getCoinData(String id) async {
 }
 
 Future<List<String>> getAvailableCurrencies() async {
-  Uri url =
-      Uri.https('api.coingecko.com', "/api/v3/simple/supported_vs_currencies");
+  Uri url = Uri.https('api.coinranking.com', "/v2/reference-currencies");
 
   var response = await http.get(url);
   List currencies = jsonDecode(response.body);
@@ -192,9 +162,4 @@ Future<String> getCurrencyUuid(String symbol) async {
 String getApiKey() {
   var random = Random();
   return apiKeys[random.nextInt(apiKeys.length)];
-}
-
-String getCoinRankingApiKey() {
-  var random = Random();
-  return apiKeys[random.nextInt(coinrankingApiKeys.length)];
 }

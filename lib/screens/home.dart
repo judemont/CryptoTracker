@@ -176,7 +176,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadSearchResults(String query) {
-    search(query).then((values) {
+    getListings(search: query).then((values) {
       setState(() {
         listings = values;
       });

@@ -99,7 +99,6 @@ class _DetailedViewState extends State<DetailedView> {
                     }
 
                     Database.setValue("portfolio", "favoritesIds", favorites);
-                    print(favorites);
                     loadFavorites();
                   },
                   icon: Icon(favorites.contains(crypto.id)
