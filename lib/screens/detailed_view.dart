@@ -49,16 +49,16 @@ class _DetailedViewState extends State<DetailedView> {
         title: const Text("Details"),
         actions: [
           Visibility(
-              visible: crypto.id != null,
+              visible: crypto.symbol != null,
               child: IconButton(
                   onPressed: () {
-                    if (!favorites.contains(crypto.id)) {
+                    if (!favorites.contains(crypto.symbol)) {
                       setState(() {
-                        favorites.add(crypto.id);
+                        favorites.add(crypto.symbol);
                       });
                     } else {
                       setState(() {
-                        favorites.remove(crypto.id);
+                        favorites.remove(crypto.symbol);
                       });
                     }
 
@@ -66,7 +66,7 @@ class _DetailedViewState extends State<DetailedView> {
                     print(favorites);
                     loadFavorites();
                   },
-                  icon: Icon(favorites.contains(crypto.id)
+                  icon: Icon(favorites.contains(crypto.symbol)
                       ? Icons.star
                       : Icons.star_border)))
         ],

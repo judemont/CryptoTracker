@@ -2,6 +2,7 @@ import 'package:cryptotracker/screens/detailed_view.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../models/crypto.dart';
 import '../pages_layout.dart';
@@ -26,18 +27,10 @@ class _CoinsListState extends State<CoinsList> {
                 visible: widget.listings[index].symbol != null,
                 child:
                     Text(widget.listings[index].symbol?.toUpperCase() ?? "")),
-            leading: Image.network(
-              widget.listings[index].logoUrl ?? "",
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                );
-              },
+            leading: Container(
+              child: getCoinLogoWidget(widget.listings[index].logoUrl ?? ""),
+              width: 50,
+              height: 50,
             ),
             trailing:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -72,5 +65,27 @@ class _CoinsListState extends State<CoinsList> {
             },
           );
         });
+  }
+
+  Widget getCoinLogoWidget(String logoUrl) {
+    if (logoUrl.contains(".svg")) {
+      return SvgPicture.network(
+        logoUrl,
+      );
+    } else {
+      return Image.network(
+        logoUrl,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                : null,
+            color: Theme.of(context).colorScheme.onPrimary,
+          );
+        },
+      );
+    }
   }
 }
