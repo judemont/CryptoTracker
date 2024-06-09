@@ -59,62 +59,20 @@ Future<List<Crypto>> getListings(
   return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
+Future<List<CoinPrice>> getPricesHistory(
+    String coinId, String timePeriod) async {
   String currency = Database.getValue("settings", "currency");
 
   Map<String, dynamic> queryParams = {
-    "vs_currency": currency,
-    "days": daysNum.toString()
+    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "timePeriod": timePeriod
   };
 
   Uri url = Uri.https(
-      'api.coingecko.com', "/api/v3/coins/$coinId/market_chart", queryParams);
+      'api.coinranking.com', "/v2/coin/${coinId}/history", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-
-  var pricesHistoryData = response["prices"];
-
-  List<CoinPrice> pricesHistory = [];
-
-  for (var data in pricesHistoryData) {
-    pricesHistory.add(CoinPrice(
-      dateTime: DateTime.fromMillisecondsSinceEpoch(data[0]),
-      price: data[1],
-    ));
-  }
-
-  return pricesHistory;
-}
-
-Future<String> getCoinRankingId(String coinSymbol) async {
-  Map<String, dynamic> queryParams = {"symbols": coinSymbol};
-
-  Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  return response["data"]["coins"][0]["uuid"];
-}
-
-Future<List<CoinPrice>> getMaxPricesHistory(String coinSymbol) async {
-  String uuid = await getCoinRankingId(coinSymbol);
-
-  Map<String, dynamic> queryParams = {"timePeriod": "5y"};
-
-  Uri url =
-      Uri.https('api.coinranking.com', "/v2/coin/$uuid/history", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
@@ -123,14 +81,12 @@ Future<List<CoinPrice>> getMaxPricesHistory(String coinSymbol) async {
   var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
-  double? lastPrice;
+
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
       dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] * 1000),
-      price:
-          double.tryParse(data["price"] ?? lastPrice.toString()) ?? lastPrice,
+      price: data["price"],
     ));
-    lastPrice = double.tryParse(data["price"] ?? "");
   }
 
   return pricesHistory;
