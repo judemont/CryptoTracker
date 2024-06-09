@@ -1,6 +1,7 @@
 import 'package:cryptotracker/main.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -99,8 +100,15 @@ class _SettingsState extends State<Settings> {
                       return ListView(
                         children: availableCurrencies
                             .map((e) => ListTile(
-                                  title: Text(e.name ?? ""),
-                                  leading: const Icon(Icons.monetization_on),
+                                  title: Text(
+                                      "${e.name ?? ""} (${e.symbol ?? ""})"),
+                                  leading: e.iconUrl == null
+                                      ? const Icon(Icons.monetization_on)
+                                      : Container(
+                                          width: 30,
+                                          height: 30,
+                                          child: getCoinLogoWidget(
+                                              e.iconUrl ?? "")),
                                   onTap: () {
                                     Database.setValue(
                                         "settings", "currency", e.symbol);
