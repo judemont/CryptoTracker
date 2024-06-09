@@ -85,24 +85,24 @@ class _DetailedViewState extends State<DetailedView> {
         title: const Text("Details"),
         actions: [
           Visibility(
-              visible: crypto.symbol != null,
+              visible: crypto.id != null,
               child: IconButton(
                   onPressed: () {
-                    if (!favorites.contains(crypto.symbol)) {
+                    if (!favorites.contains(crypto.id)) {
                       setState(() {
-                        favorites.add(crypto.symbol);
+                        favorites.add(crypto.id);
                       });
                     } else {
                       setState(() {
-                        favorites.remove(crypto.symbol);
+                        favorites.remove(crypto.id);
                       });
                     }
 
-                    Database.setValue("portfolio", "favs", favorites);
+                    Database.setValue("portfolio", "favoritesIds", favorites);
                     print(favorites);
                     loadFavorites();
                   },
-                  icon: Icon(favorites.contains(crypto.symbol)
+                  icon: Icon(favorites.contains(crypto.id)
                       ? Icons.star
                       : Icons.star_border)))
         ],
@@ -122,20 +122,10 @@ class _DetailedViewState extends State<DetailedView> {
                   ),
                   Wrap(
                     children: [
-                      if (crypto.logoUrl != null)
-                        Image.network(
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            );
-                          },
-                          crypto.logoUrl!,
-                          width: 40.0,
-                        ),
+                      Container(
+                          width: 50,
+                          height: 50,
+                          child: getCoinLogoWidget(crypto.logoUrl ?? "")),
                       const SizedBox(
                         width: 10,
                       ),
@@ -299,7 +289,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   void loadFavorites() {
     setState(() {
-      favorites = Database.getValue("portfolio", "favs") ?? [];
+      favorites = Database.getValue("portfolio", "favoritesIds") ?? [];
     });
   }
 }

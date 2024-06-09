@@ -30,7 +30,7 @@ Future<List<Crypto>> getListings(
   };
 
   if (ids != null) {
-    queryParams["symbols"] = ids.join(",");
+    queryParams["uuids"] = ids.join(",");
   }
 
   Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
@@ -46,6 +46,7 @@ Future<List<Crypto>> getListings(
 
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
+    print(crypto["price"]);
     cryptoList.add(Crypto(
       id: crypto["uuid"],
       name: crypto["name"],
