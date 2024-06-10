@@ -16,8 +16,6 @@ class CryptoMarketStats extends StatefulWidget {
 }
 
 class _CryptoMarketStatsState extends State<CryptoMarketStats> {
-  bool showAllDescriptions = false;
-
   @override
   Widget build(BuildContext context) {
     String currency = Database.getValue("settings", "currency");
@@ -34,18 +32,13 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 20),
-        statRow(
-            "Market cap. Rank", Text(widget.crypto.marketCapRank.toString())),
         statRow("Market Cap.",
             Text(formatePrice(widget.crypto.marketCap, currency))),
         statRow("Volume", Text(formatePrice(widget.crypto.volume, currency))),
         statRow(
-            "24h High", Text(formatePrice(widget.crypto.dayHigh, currency))),
-        statRow("24h Low", Text(formatePrice(widget.crypto.dayLow, currency))),
-        statRow(
             "All Time High", Text(formatePrice(widget.crypto.ath, currency))),
         statRow(
-            "Total Supply",
+            "Max Supply",
             Text(formatePrice(
                 widget.crypto.totalSupply, widget.crypto.symbol ?? ""))),
         statRow(
@@ -70,28 +63,19 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
               )),
         ),
         Visibility(
-            visible: (widget.crypto.description ?? "").isNotEmpty,
-            child: Column(
-              children: [
-                const Text(
-                  "Description :",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Text(showAllDescriptions
-                    ? cryptoDescriptionText
-                    : (cryptoDescriptionText.length > 200
-                        ? "${cryptoDescriptionText.substring(0, 200)}..."
-                        : cryptoDescriptionText)),
-                TextButton(
-                    onPressed: () => setState(() {
-                          showAllDescriptions = !showAllDescriptions;
-                        }),
-                    child: Text(
-                      showAllDescriptions ? "less" : "more",
-                    ))
-              ],
-            )),
+          visible: (widget.crypto.description ?? "").isNotEmpty,
+          child: Column(
+            children: [
+              const Text(
+                "Description :",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Text(cryptoDescriptionText),
+              const SizedBox(height: 50),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -1,9 +1,12 @@
 import 'package:cryptotracker/main.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../models/currency.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -16,7 +19,7 @@ class _SettingsState extends State<Settings> {
   String currency = "";
   String theme = "";
 
-  List<String> availableCurrencies = [];
+  List<Currency> availableCurrencies = [];
   @override
   void initState() {
     loadSettingsValues();
@@ -97,11 +100,18 @@ class _SettingsState extends State<Settings> {
                       return ListView(
                         children: availableCurrencies
                             .map((e) => ListTile(
-                                  title: Text(e.toUpperCase()),
-                                  leading: const Icon(Icons.monetization_on),
+                                  title: Text(
+                                      "${e.name ?? ""} (${e.symbol ?? ""})"),
+                                  leading: e.iconUrl == null
+                                      ? const Icon(Icons.monetization_on)
+                                      : Container(
+                                          width: 30,
+                                          height: 30,
+                                          child: getCoinLogoWidget(
+                                              e.iconUrl ?? "")),
                                   onTap: () {
                                     Database.setValue(
-                                        "settings", "currency", e);
+                                        "settings", "currency", e.symbol);
                                     loadSettingsValues();
                                     Navigator.of(context).pop();
                                   },
@@ -129,10 +139,6 @@ class _SettingsState extends State<Settings> {
                   "play.google.com/store/apps/details?id=jdm.apps.cryptotracker"),
               onTap: () => launchUrl(Uri.parse(
                   "https://play.google.com/store/apps/details?id=jdm.apps.cryptotracker")),
-            ),
-            const ListTile(
-              title: Text("Data provided by CoinGecko API"),
-              leading: Icon(Icons.cloud),
             ),
           ],
         ));

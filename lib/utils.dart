@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 String formatePrice(double? price, String symbol) {
@@ -24,4 +26,26 @@ String formatePrice(double? price, String symbol) {
   }
 
   return formattedPrice;
+}
+
+Widget getCoinLogoWidget(String logoUrl) {
+  if (logoUrl.contains(".svg")) {
+    return SvgPicture.network(
+      logoUrl,
+    );
+  } else {
+    return Image.network(
+      logoUrl,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return CircularProgressIndicator(
+          value: loadingProgress.expectedTotalBytes != null
+              ? loadingProgress.cumulativeBytesLoaded /
+                  loadingProgress.expectedTotalBytes!
+              : null,
+          color: Theme.of(context).colorScheme.onPrimary,
+        );
+      },
+    );
+  }
 }

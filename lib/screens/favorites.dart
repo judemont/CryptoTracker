@@ -47,7 +47,7 @@ class _FavoritesState extends State<Favorites> {
 
   void loadListings({order = "market_cap_desk"}) {
     List<String> favorites =
-        Database.getValue("portfolio", "favorites").cast<String>();
+        Database.getValue("portfolio", "favoritesIds").cast<String>();
     print(favorites);
     if (favorites.isNotEmpty) {
       getListings(ids: favorites).then((values) {

@@ -26,18 +26,10 @@ class _CoinsListState extends State<CoinsList> {
                 visible: widget.listings[index].symbol != null,
                 child:
                     Text(widget.listings[index].symbol?.toUpperCase() ?? "")),
-            leading: Image.network(
-              widget.listings[index].logoUrl ?? "",
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                );
-              },
+            leading: Container(
+              width: 50,
+              height: 50,
+              child: getCoinLogoWidget(widget.listings[index].logoUrl ?? ""),
             ),
             trailing:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [

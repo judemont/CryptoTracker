@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cryptotracker/models/coin_price.dart';
+import 'package:cryptotracker/models/currency.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 import 'database.dart';
 
 const List<String> apiKeys = [
-  "CG-WLqjJpvFoq2XU2SXZEknL1aD",
-  "CG-LjYqP1F8vpFF4SJyYxdVyDwZ",
-  "CG-jwFmM1F8Zn6NRPMqsGMpQY2Y",
-  "CG-LiRwwL2ZgQkaq9jJ5o5pGnKA",
+  "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
+  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
+  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
 ];
 
 const coinrankingApiKeys = [
@@ -21,209 +21,166 @@ const coinrankingApiKeys = [
 ];
 
 Future<List<Crypto>> getListings(
-    {order = "market_cap_desk", List<String>? ids}) async {
+    {order = "marketCap", List<String>? ids, String? search}) async {
   String currency = Database.getValue("settings", "currency");
 
   print(Database.getValue("settings", "currency"));
   Map<String, dynamic> queryParams = {
-    "vs_currency": currency,
-    "order": order,
+    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "orderBy": order,
   };
+
   if (ids != null) {
-    queryParams["ids"] = ids.join(",");
+    queryParams["uuids"] = ids.join(",");
   }
 
-  Uri url =
-      Uri.https('api.coingecko.com', "/api/v3/coins/markets", queryParams);
+  if (search != null) {
+    queryParams["search"] = search;
+  }
 
+  Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
   http.Request request = http.Request("get", url);
 
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
-  http.StreamedResponse responseJson = await request.send();
+  http.StreamedResponse response = await request.send();
 
-  var listing = json.decode(await responseJson.stream.bytesToString());
+  var responseJson = json.decode(await response.stream.bytesToString());
+  var listing = responseJson["data"]["coins"];
 
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
     cryptoList.add(Crypto(
-      id: crypto["id"],
+      id: crypto["uuid"],
       name: crypto["name"],
       symbol: crypto["symbol"],
-      price: crypto["current_price"]?.toDouble(),
-      logoUrl: crypto["image"],
-      priceChangePercentageDay: crypto["price_change_percentage_24h"],
+      price: double.tryParse(crypto["price"]),
+      logoUrl: crypto["iconUrl"],
+      priceChangePercentageDay: double.tryParse(crypto["change"]),
     ));
   }
 
   return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(String coinId, int daysNum) async {
+Future<List<CoinPrice>> getPricesHistory(
+    String coinId, String timePeriod) async {
   String currency = Database.getValue("settings", "currency");
 
   Map<String, dynamic> queryParams = {
-    "vs_currency": currency,
-    "days": daysNum.toString()
+    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "timePeriod": timePeriod
   };
 
   Uri url = Uri.https(
-      'api.coingecko.com', "/api/v3/coins/$coinId/market_chart", queryParams);
-
+      'api.coinranking.com', "/v2/coin/${coinId}/history", queryParams);
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-
-  var pricesHistoryData = response["prices"];
-
-  List<CoinPrice> pricesHistory = [];
-
-  for (var data in pricesHistoryData) {
-    pricesHistory.add(CoinPrice(
-      dateTime: DateTime.fromMillisecondsSinceEpoch(data[0]),
-      price: data[1],
-    ));
-  }
-
-  return pricesHistory;
-}
-
-Future<String> getCoinRankingId(String coinSymbol) async {
-  Map<String, dynamic> queryParams = {"symbols": coinSymbol};
-
-  Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  return response["data"]["coins"][0]["uuid"];
-}
-
-Future<List<CoinPrice>> getMaxPricesHistory(String coinSymbol) async {
-  String uuid = await getCoinRankingId(coinSymbol);
-
-  Map<String, dynamic> queryParams = {"timePeriod": "5y"};
-
-  Uri url =
-      Uri.https('api.coinranking.com', "/v2/coin/$uuid/history", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getCoinRankingApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-
   var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
-  double? lastPrice;
+
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
       dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] * 1000),
-      price:
-          double.tryParse(data["price"] ?? lastPrice.toString()) ?? lastPrice,
+      price: double.tryParse(data["price"] ?? ""),
     ));
-    lastPrice = double.tryParse(data["price"] ?? "");
   }
 
   return pricesHistory;
-}
-
-Future<List<Crypto>> search(String query) async {
-  Map<String, dynamic> queryParams = {
-    "query": query,
-  };
-
-  Uri url = Uri.https('api.coingecko.com', "/api/v3/search", queryParams);
-
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var response = json.decode(await responseJson.stream.bytesToString());
-  List elements = response["coins"];
-
-  List<Crypto> results = [];
-
-  for (var i = 0; i < elements.length; i++) {
-    results.add(Crypto(
-      id: elements[i]["id"],
-      name: elements[i]["name"],
-      symbol: elements[i]["symbol"],
-      logoUrl: elements[i]["thumb"],
-    ));
-  }
-  return results;
 }
 
 Future<Crypto> getCoinData(String id) async {
   String currency = Database.getValue("settings", "currency");
 
-  Map<String, dynamic> queryParams = {};
+  Map<String, dynamic> queryParams = {
+    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+  };
 
-  Uri url = Uri.https('api.coingecko.com', "/api/v3/coins/$id", queryParams);
+  Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-cg-demo-api-key": getApiKey()});
+  request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse responseJson = await request.send();
 
   var response = json.decode(await responseJson.stream.bytesToString());
-  // print(response["market_data"]["price_change_1y"]);
+  var responseData = response["data"]["coin"];
 
   return Crypto(
-    id: response["id"],
-    name: response["name"],
-    symbol: response["symbol"],
-    price: response["market_data"]["current_price"][currency].toDouble(),
-    logoUrl: response["image"]["small"],
-    priceChangePercentageDay: response["market_data"]
-        ["price_change_percentage_24h"],
-    priceChangePercentageWeek: response["market_data"]
-        ["price_change_percentage_7d"],
-    priceChangePercentageMonth: response["market_data"]
-        ["price_change_percentage_30d"],
-    priceChangePercentageYear: response["market_data"]
-        ["price_change_percentage_1y"],
-    description: response["description"]["en"],
-    categories: response["categories"].cast<String>(),
-    website: response["links"]["homepage"]?[0],
-    ath: response["market_data"]["ath"][currency]?.toDouble(),
-    athDate: DateTime.tryParse(response["market_data"]["ath_date"][currency]),
-    marketCap: response["market_data"]["market_cap"][currency]?.toDouble(),
-    marketCapRank: response["market_data"]["market_cap_rank"],
-    dayHigh: response["market_data"]["high_24h"][currency]?.toDouble(),
-    dayLow: response["market_data"]["low_24h"][currency]?.toDouble(),
-    totalSupply: response["market_data"]["total_supply"]?.toDouble(),
+    id: responseData["uuid"],
+    name: responseData["name"],
+    symbol: responseData["symbol"],
+    price: double.tryParse(responseData["price"]),
+    logoUrl: responseData["iconUrl"],
+    priceChangePercentageDay: double.tryParse(responseData["change"]),
+    description: responseData["description"],
+    categories: responseData["tags"].cast<String>(),
+    website: responseData["websiteUrl"],
+    ath: double.tryParse(responseData["allTimeHigh"]["price"]),
+    athDate: DateTime.fromMillisecondsSinceEpoch(
+        responseData["allTimeHigh"]["timestamp"] * 1000),
+    marketCap: double.tryParse(responseData["marketCap"]),
+    totalSupply: double.tryParse(
+        responseData["supply"]["max"] ?? responseData["supply"]["total"] ?? ""),
     circulatingSupply:
-        response["market_data"]["circulating_supply"]?.toDouble(),
-    volume: response["market_data"]["total_volume"][currency]?.toDouble(),
+        double.tryParse(responseData["supply"]["circulating"] ?? ""),
+    volume: double.tryParse(responseData["24hVolume"]),
   );
 }
 
-Future<List<String>> getAvailableCurrencies() async {
-  Uri url =
-      Uri.https('api.coingecko.com', "/api/v3/simple/supported_vs_currencies");
+Future<List<Currency>> getAvailableCurrencies() async {
+  Map<String, dynamic> queryParams = {"limit": "100"};
 
-  var response = await http.get(url);
-  List currencies = jsonDecode(response.body);
-  return currencies.cast<String>();
+  Uri url =
+      Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"x-access-token": getApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var response = jsonDecode(await responseJson.stream.bytesToString());
+  var data = response["data"];
+  List<Currency> currencies = [];
+
+  for (var currency in data["currencies"]) {
+    currencies.add(Currency(
+      type: currency["type"],
+      name: currency["name"],
+      symbol: currency["symbol"],
+      iconUrl: currency["iconUrl"],
+      sign: currency["sign"],
+    ));
+  }
+
+  return currencies;
+}
+
+Future<String> getCurrencyUuid(String symbol) async {
+  Map<String, dynamic> queryParams = {
+    "search": symbol,
+    "limit": "1",
+  };
+
+  Uri url =
+      Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
+
+  http.Request request = http.Request("get", url);
+
+  request.headers.addAll({"x-access-token": getApiKey()});
+
+  http.StreamedResponse responseJson = await request.send();
+
+  var results = json.decode(await responseJson.stream.bytesToString());
+  return results["data"]["currencies"][0]["uuid"];
 }
 
 String getApiKey() {
   var random = Random();
   return apiKeys[random.nextInt(apiKeys.length)];
-}
-
-String getCoinRankingApiKey() {
-  var random = Random();
-  return apiKeys[random.nextInt(coinrankingApiKeys.length)];
 }

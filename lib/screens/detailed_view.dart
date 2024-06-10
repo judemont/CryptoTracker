@@ -22,7 +22,7 @@ class _DetailedViewState extends State<DetailedView> {
   List<CoinPrice> pricesHistory = [];
   List<FlSpot> pricesHistoryChartData = [];
   List<ShowingTooltipIndicators> chartIndicators = [];
-  int selectedTimePriceChartInterval = 1;
+  String selectedTimePriceChartInterval = "24h";
   double priceChangePercentage = 0;
   List favorites = [];
 
@@ -35,7 +35,7 @@ class _DetailedViewState extends State<DetailedView> {
   @override
   void initState() {
     loadCoinData().then((value) {
-      loadPriceHistory(1);
+      loadPriceHistory("24h");
       priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
     });
     loadFavorites();
@@ -44,6 +44,34 @@ class _DetailedViewState extends State<DetailedView> {
 
   @override
   Widget build(BuildContext context) {
+    const timePeriods = ["1h", "24h", "7d", "30d", "1y", "5y"];
+
+    List<Widget> timePeriodsButtons = [];
+
+    for (var timePeriod in timePeriods) {
+      timePeriodsButtons.add(Container(
+        width: 40,
+        alignment: Alignment.center,
+        child: TextButton(
+          style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              backgroundColor: MaterialStateProperty.all(
+                  selectedTimePriceChartInterval == timePeriod
+                      ? Theme.of(context).primaryColor
+                      : Colors.transparent)),
+          child: Text(timePeriod,
+              style: TextStyle(
+                  color: selectedTimePriceChartInterval == timePeriod
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyMedium?.color)),
+          onPressed: () => setState(() {
+            selectedTimePriceChartInterval = timePeriod;
+            loadPriceHistory(timePeriod);
+          }),
+        ),
+      ));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details"),
@@ -62,8 +90,7 @@ class _DetailedViewState extends State<DetailedView> {
                       });
                     }
 
-                    Database.setValue("portfolio", "favorites", favorites);
-                    print(favorites);
+                    Database.setValue("portfolio", "favoritesIds", favorites);
                     loadFavorites();
                   },
                   icon: Icon(favorites.contains(crypto.id)
@@ -73,7 +100,7 @@ class _DetailedViewState extends State<DetailedView> {
       ),
       body: RefreshIndicator(
           onRefresh: () => loadCoinData().then((value) {
-                loadPriceHistory(1);
+                loadPriceHistory("24h");
                 priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
               }),
           child: Container(
@@ -86,20 +113,10 @@ class _DetailedViewState extends State<DetailedView> {
                   ),
                   Wrap(
                     children: [
-                      if (crypto.logoUrl != null)
-                        Image.network(
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            );
-                          },
-                          crypto.logoUrl!,
-                          width: 40.0,
-                        ),
+                      Container(
+                          width: 50,
+                          height: 50,
+                          child: getCoinLogoWidget(crypto.logoUrl ?? "")),
                       const SizedBox(
                         width: 10,
                       ),
@@ -215,116 +232,9 @@ class _DetailedViewState extends State<DetailedView> {
                         border: Border.all(),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
-                    child: Wrap(
-                      // alignment: MainAxisAlignment.start,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  selectedTimePriceChartInterval == 1
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.transparent)),
-                          child: Text("1D",
-                              style: TextStyle(
-                                  color: selectedTimePriceChartInterval == 1
-                                      ? Colors.white
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color)),
-                          onPressed: () => setState(() {
-                            selectedTimePriceChartInterval = 1;
-                            loadPriceHistory(1);
-                            priceChangePercentage =
-                                crypto.priceChangePercentageDay ?? 0;
-                          }),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  selectedTimePriceChartInterval == 2
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.transparent)),
-                          child: Text("1W",
-                              style: TextStyle(
-                                  color: selectedTimePriceChartInterval == 2
-                                      ? Colors.white
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color)),
-                          onPressed: () => setState(() {
-                            selectedTimePriceChartInterval = 2;
-                            loadPriceHistory(7);
-                            priceChangePercentage =
-                                crypto.priceChangePercentageWeek ?? 0;
-                          }),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  selectedTimePriceChartInterval == 3
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.transparent)),
-                          child: Text("30D",
-                              style: TextStyle(
-                                  color: selectedTimePriceChartInterval == 3
-                                      ? Colors.white
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color)),
-                          onPressed: () => setState(() {
-                            selectedTimePriceChartInterval = 3;
-                            loadPriceHistory(30);
-                            priceChangePercentage =
-                                crypto.priceChangePercentageMonth ?? 0;
-                          }),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  selectedTimePriceChartInterval == 4
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.transparent)),
-                          child: Text("1Y",
-                              style: TextStyle(
-                                  color: selectedTimePriceChartInterval == 4
-                                      ? Colors.white
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color)),
-                          onPressed: () => setState(() {
-                            selectedTimePriceChartInterval = 4;
-                            loadPriceHistory(365);
-                            priceChangePercentage =
-                                crypto.priceChangePercentageYear ?? 0;
-                          }),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  selectedTimePriceChartInterval == 5
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.transparent)),
-                          child: Text("5Y",
-                              style: TextStyle(
-                                  color: selectedTimePriceChartInterval == 5
-                                      ? Colors.white
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color)),
-                          onPressed: () => setState(() {
-                            selectedTimePriceChartInterval = 5;
-                            loadMaxPriceHistory();
-                            priceChangePercentage =
-                                crypto.priceChangePercentageYear ?? 0;
-                          }),
-                        ),
-                      ],
-                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: timePeriodsButtons),
                   ),
                   const SizedBox(
                     height: 20,
@@ -338,18 +248,8 @@ class _DetailedViewState extends State<DetailedView> {
     );
   }
 
-  Future<void> loadPriceHistory(int daysNum, {bool max = false}) async {
-    getPricesHistory(crypto.id!, daysNum).then((values) {
-      setState(() {
-        pricesHistory = values;
-      });
-      loadPricesHistoryChartData();
-    });
-  }
-
-  Future<void> loadMaxPriceHistory() async {
-    print("BABABA");
-    getMaxPricesHistory(crypto.symbol!).then((values) {
+  Future<void> loadPriceHistory(String timePeriod, {bool max = false}) async {
+    getPricesHistory(crypto.id!, timePeriod).then((values) {
       setState(() {
         pricesHistory = values;
       });
@@ -380,7 +280,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   void loadFavorites() {
     setState(() {
-      favorites = Database.getValue("portfolio", "favorites") ?? [];
+      favorites = Database.getValue("portfolio", "favoritesIds") ?? [];
     });
   }
 }

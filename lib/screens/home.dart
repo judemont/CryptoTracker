@@ -88,7 +88,7 @@ class _HomeState extends State<Home> {
                             title: const Text("Market Cap"),
                             leading: const Icon(Icons.bar_chart_rounded),
                             onTap: () {
-                              loadListings(order: "market_cap_desc");
+                              loadListings(order: "marketCap");
                               sortByButtonChildren = [
                                 const Text("Market Cap"),
                                 const Icon(Icons.bar_chart_rounded)
@@ -100,34 +100,10 @@ class _HomeState extends State<Home> {
                             title: const Text("24h Volume"),
                             leading: const Icon(Icons.currency_exchange),
                             onTap: () {
-                              loadListings(order: "volume_desc");
+                              loadListings(order: "24hVolume");
                               sortByButtonChildren = [
                                 const Text("24h Volume"),
                                 const Icon(Icons.currency_exchange)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Name (A..Z)"),
-                            leading: const Icon(Icons.abc),
-                            onTap: () {
-                              loadListings(order: "id_asc");
-                              sortByButtonChildren = [
-                                const Text("Name (A..Z)"),
-                                const Icon(Icons.abc)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Name (Z..A)"),
-                            leading: const Icon(Icons.abc),
-                            onTap: () {
-                              loadListings(order: "id_desc");
-                              sortByButtonChildren = [
-                                const Text("Name (Z..A)"),
-                                const Icon(Icons.abc)
                               ];
                               Navigator.pop(context);
                             },
@@ -191,7 +167,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void loadListings({order = "market_cap_desk"}) {
+  void loadListings({order = "marketCap"}) {
     getListings(order: order).then((values) {
       setState(() {
         listings = values;
@@ -200,7 +176,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadSearchResults(String query) {
-    search(query).then((values) {
+    getListings(search: query).then((values) {
       setState(() {
         listings = values;
       });
