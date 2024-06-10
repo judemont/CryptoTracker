@@ -22,7 +22,7 @@ class _DetailedViewState extends State<DetailedView> {
   List<CoinPrice> pricesHistory = [];
   List<FlSpot> pricesHistoryChartData = [];
   List<ShowingTooltipIndicators> chartIndicators = [];
-  String selectedTimePriceChartInterval = "1d";
+  String selectedTimePriceChartInterval = "24h";
   double priceChangePercentage = 0;
   List favorites = [];
 
@@ -44,27 +44,19 @@ class _DetailedViewState extends State<DetailedView> {
 
   @override
   Widget build(BuildContext context) {
-    const timePeriods = [
-      "1h",
-      "3h",
-      "12h",
-      "24h",
-      "7d",
-      "30d",
-      "3m",
-      "1y",
-      "3y",
-      "5y"
-    ];
+    const timePeriods = ["1h", "24h", "7d", "30d", "1y", "5y"];
 
     List<Widget> timePeriodsButtons = [];
 
     for (var timePeriod in timePeriods) {
-      timePeriodsButtons.add(
-        TextButton(
+      timePeriodsButtons.add(Container(
+        width: 40,
+        alignment: Alignment.center,
+        child: TextButton(
           style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
               backgroundColor: MaterialStateProperty.all(
-                  selectedTimePriceChartInterval == 2
+                  selectedTimePriceChartInterval == timePeriod
                       ? Theme.of(context).primaryColor
                       : Colors.transparent)),
           child: Text(timePeriod,
@@ -77,7 +69,7 @@ class _DetailedViewState extends State<DetailedView> {
             loadPriceHistory(timePeriod);
           }),
         ),
-      );
+      ));
     }
 
     return Scaffold(
@@ -108,7 +100,7 @@ class _DetailedViewState extends State<DetailedView> {
       ),
       body: RefreshIndicator(
           onRefresh: () => loadCoinData().then((value) {
-                loadPriceHistory("1d");
+                loadPriceHistory("24h");
                 priceChangePercentage = crypto.priceChangePercentageDay ?? 0;
               }),
           child: Container(
@@ -240,8 +232,8 @@ class _DetailedViewState extends State<DetailedView> {
                         border: Border.all(),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20))),
-                    child: Wrap(
-                        // alignment: MainAxisAlignment.start,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: timePeriodsButtons),
                   ),
                   const SizedBox(
