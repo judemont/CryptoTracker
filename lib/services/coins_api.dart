@@ -133,8 +133,12 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
-Future<List<Currency>> getAvailableCurrencies() async {
+Future<List<Currency>> getAvailableCurrencies({String? search}) async {
   Map<String, dynamic> queryParams = {"limit": "100"};
+
+  if (search != null) {
+    queryParams["search"] = search;
+  }
 
   Uri url =
       Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);

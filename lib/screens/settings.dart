@@ -18,15 +18,12 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   String currency = "";
   String theme = "";
-
   List<Currency> availableCurrencies = [];
+
   @override
   void initState() {
-    loadSettingsValues();
-    getAvailableCurrencies().then((currs) {
-      availableCurrencies = currs;
-    });
     super.initState();
+    loadSettingsValues();
   }
 
   @override
@@ -59,6 +56,7 @@ class _SettingsState extends State<Settings> {
                             onTap: () {
                               Database.setValue("settings", "theme", "light");
                               loadSettingsValues();
+
                               MyApp.of(context)!.updateTheme();
                               Navigator.of(context).pop();
                             },
@@ -70,7 +68,6 @@ class _SettingsState extends State<Settings> {
                               Database.setValue("settings", "theme", "dark");
                               loadSettingsValues();
                               MyApp.of(context)!.updateTheme();
-
                               Navigator.of(context).pop();
                             },
                           ),
@@ -90,37 +87,69 @@ class _SettingsState extends State<Settings> {
               },
             ),
             ListTile(
-                title: const Text("Currency"),
-                leading: const Icon(Icons.attach_money),
-                subtitle: Text(currency.toUpperCase()),
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return ListView(
-                        children: availableCurrencies
-                            .map((e) => ListTile(
+              title: const Text("Currency"),
+              leading: const Icon(Icons.attach_money),
+              subtitle: Text(currency.toUpperCase()),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    getAvailableCurrencies().then((value) => {
+                          setState(() {
+                            availableCurrencies = value;
+                          })
+                        });
+                    return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Column(
+                        children: [
+                          TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Search',
+                            ),
+                            onChanged: (value) {
+                              getAvailableCurrencies(search: value)
+                                  .then((value) => {
+                                        setState(() {
+                                          availableCurrencies = value;
+                                        })
+                                      });
+                            },
+                          ),
+                          Expanded(
+                            // Wrap ListView with Expanded
+                            child: ListView.builder(
+                              itemCount: availableCurrencies.length,
+                              itemBuilder: (context, index) {
+                                Currency currency = availableCurrencies[index];
+                                return ListTile(
                                   title: Text(
-                                      "${e.name ?? ""} (${e.symbol ?? ""})"),
-                                  leading: e.iconUrl == null
+                                      "${currency.name ?? ""} (${currency.symbol ?? ""})"),
+                                  leading: currency.iconUrl == null
                                       ? const Icon(Icons.monetization_on)
                                       : Container(
                                           width: 30,
                                           height: 30,
                                           child: getCoinLogoWidget(
-                                              e.iconUrl ?? "")),
+                                              currency.iconUrl ?? ""),
+                                        ),
                                   onTap: () {
-                                    Database.setValue(
-                                        "settings", "currency", e.symbol);
+                                    Database.setValue("settings", "currency",
+                                        currency.symbol);
                                     loadSettingsValues();
                                     Navigator.of(context).pop();
                                   },
-                                ))
-                            .toList(),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       );
-                    },
-                  );
-                }),
+                    });
+                  },
+                );
+              },
+            ),
             const Text(
               "About",
               style: TextStyle(fontSize: 20),
