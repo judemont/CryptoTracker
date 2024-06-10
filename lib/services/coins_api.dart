@@ -15,14 +15,20 @@ const List<String> apiKeys = [
   "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740",
 ];
 
-Future<List<Crypto>> getListings(
-    {order = "marketCap", List<String>? ids, String? search}) async {
+Future<List<Crypto>> getListings({
+  order = "marketCap",
+  List<String>? ids,
+  String? search,
+  String orderDirection = "desk",
+}) async {
   String currency = Database.getValue("settings", "currency");
 
   print(Database.getValue("settings", "currency"));
   Map<String, dynamic> queryParams = {
     "referenceCurrencyUuid": await getCurrencyUuid(currency),
     "orderBy": order,
+    "limit": "100",
+    "orderDirection": orderDirection,
   };
 
   if (ids != null) {
@@ -49,9 +55,9 @@ Future<List<Crypto>> getListings(
       id: crypto["uuid"],
       name: crypto["name"],
       symbol: crypto["symbol"],
-      price: double.tryParse(crypto["price"]),
+      price: double.tryParse(crypto["price"] ?? ""),
       logoUrl: crypto["iconUrl"],
-      priceChangePercentageDay: double.tryParse(crypto["change"]),
+      priceChangePercentageDay: double.tryParse(crypto["change"] ?? ""),
     ));
   }
 
@@ -110,21 +116,21 @@ Future<Crypto> getCoinData(String id) async {
     id: responseData["uuid"],
     name: responseData["name"],
     symbol: responseData["symbol"],
-    price: double.tryParse(responseData["price"]),
+    price: double.tryParse(responseData["price"] ?? ""),
     logoUrl: responseData["iconUrl"],
-    priceChangePercentageDay: double.tryParse(responseData["change"]),
+    priceChangePercentageDay: double.tryParse(responseData["change"] ?? ""),
     description: responseData["description"],
     categories: responseData["tags"].cast<String>(),
     website: responseData["websiteUrl"],
-    ath: double.tryParse(responseData["allTimeHigh"]["price"]),
+    ath: double.tryParse(responseData["allTimeHigh"]["price"] ?? ""),
     athDate: DateTime.fromMillisecondsSinceEpoch(
-        responseData["allTimeHigh"]["timestamp"] * 1000),
-    marketCap: double.tryParse(responseData["marketCap"]),
+        (responseData["allTimeHigh"]["timestamp"] ?? 0) * 1000),
+    marketCap: double.tryParse(responseData["marketCap"] ?? ""),
     totalSupply: double.tryParse(
         responseData["supply"]["max"] ?? responseData["supply"]["total"] ?? ""),
     circulatingSupply:
         double.tryParse(responseData["supply"]["circulating"] ?? ""),
-    volume: double.tryParse(responseData["24hVolume"]),
+    volume: double.tryParse(responseData["24hVolume"] ?? ""),
   );
 }
 

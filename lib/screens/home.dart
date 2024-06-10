@@ -86,12 +86,12 @@ class _HomeState extends State<Home> {
                         children: [
                           ListTile(
                             title: const Text("Market Cap"),
-                            leading: const Icon(Icons.bar_chart_rounded),
+                            leading: const Icon(Icons.pie_chart),
                             onTap: () {
                               loadListings(order: "marketCap");
                               sortByButtonChildren = [
                                 const Text("Market Cap"),
-                                const Icon(Icons.bar_chart_rounded)
+                                const Icon(Icons.pie_chart)
                               ];
                               Navigator.pop(context);
                             },
@@ -104,6 +104,42 @@ class _HomeState extends State<Home> {
                               sortByButtonChildren = [
                                 const Text("24h Volume"),
                                 const Icon(Icons.currency_exchange)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Price"),
+                            leading: const Icon(Icons.area_chart_outlined),
+                            onTap: () {
+                              loadListings(order: "price");
+                              sortByButtonChildren = [
+                                const Text("Price"),
+                                const Icon(Icons.currency_exchange)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Price Change 24h"),
+                            leading: const Icon(Icons.show_chart),
+                            onTap: () {
+                              loadListings(order: "change");
+                              sortByButtonChildren = [
+                                const Text("Price Change 24h"),
+                                const Icon(Icons.show_chart)
+                              ];
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Recently listed"),
+                            leading: const Icon(Icons.new_releases_outlined),
+                            onTap: () {
+                              loadListings(order: "listedAt");
+                              sortByButtonChildren = [
+                                const Text("Recently listed"),
+                                const Icon(Icons.new_releases_outlined)
                               ];
                               Navigator.pop(context);
                             },
