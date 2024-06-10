@@ -12,12 +12,7 @@ const List<String> apiKeys = [
   "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
   "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
   "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
-];
-
-const coinrankingApiKeys = [
-  "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
-  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
-  "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740"
+  "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740",
 ];
 
 Future<List<Crypto>> getListings(
