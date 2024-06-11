@@ -23,6 +23,9 @@ class _HomeState extends State<Home> {
   int listingOffset = 0;
   final int listingLimit = 50;
   String searchValue = "";
+
+  String listingOrderDirection = "desc";
+
   @override
   void initState() {
     loadListings();
@@ -73,88 +76,116 @@ class _HomeState extends State<Home> {
               )),
           Container(
               margin: const EdgeInsets.only(left: 20, right: 10),
-              child: ElevatedButton(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: sortByButtonChildren,
-                ),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return ListView(
-                        children: [
-                          ListTile(
-                            title: const Text("Market Cap"),
-                            leading: const Icon(Icons.pie_chart),
-                            onTap: () {
-                              listingOrder = "marketCap";
-                              loadListings(order: listingOrder);
-                              sortByButtonChildren = [
-                                const Text("Market Cap"),
-                                const Icon(Icons.pie_chart)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("24h Volume"),
-                            leading: const Icon(Icons.currency_exchange),
-                            onTap: () {
-                              listingOrder = "24hVolume";
-                              loadListings(order: "24hVolume");
-                              sortByButtonChildren = [
-                                const Text("24h Volume"),
-                                const Icon(Icons.currency_exchange)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Price"),
-                            leading: const Icon(Icons.area_chart_outlined),
-                            onTap: () {
-                              listingOrder = "price";
-                              loadListings(order: listingOrder);
-                              sortByButtonChildren = [
-                                const Text("Price"),
-                                const Icon(Icons.currency_exchange)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Price Change 24h"),
-                            leading: const Icon(Icons.show_chart),
-                            onTap: () {
-                              listingOrder = "change";
-                              loadListings(order: listingOrder);
-                              sortByButtonChildren = [
-                                const Text("Price Change 24h"),
-                                const Icon(Icons.show_chart)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Recently listed"),
-                            leading: const Icon(Icons.new_releases_outlined),
-                            onTap: () {
-                              listingOrder = "listedAt";
-                              loadListings(order: listingOrder);
-                              sortByButtonChildren = [
-                                const Text("Recently listed"),
-                                const Icon(Icons.new_releases_outlined)
-                              ];
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
+              child: Row(children: [
+                Expanded(
+                  child: ElevatedButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: sortByButtonChildren,
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return ListView(
+                            children: [
+                              ListTile(
+                                title: const Text("Market Cap"),
+                                leading: const Icon(Icons.pie_chart),
+                                onTap: () {
+                                  listingOrder = "marketCap";
+                                  loadListings(
+                                      order: listingOrder,
+                                      orderDirection: listingOrderDirection);
+                                  sortByButtonChildren = [
+                                    const Text("Market Cap"),
+                                    const Icon(Icons.pie_chart)
+                                  ];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("24h Volume"),
+                                leading: const Icon(Icons.currency_exchange),
+                                onTap: () {
+                                  listingOrder = "24hVolume";
+                                  loadListings(
+                                      order: listingOrder,
+                                      orderDirection: listingOrderDirection);
+                                  sortByButtonChildren = [
+                                    const Text("24h Volume"),
+                                    const Icon(Icons.currency_exchange)
+                                  ];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Price"),
+                                leading: const Icon(Icons.area_chart_outlined),
+                                onTap: () {
+                                  listingOrder = "price";
+                                  loadListings(
+                                      order: listingOrder,
+                                      orderDirection: listingOrderDirection);
+                                  sortByButtonChildren = [
+                                    const Text("Price"),
+                                    const Icon(Icons.currency_exchange)
+                                  ];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Price Change 24h"),
+                                leading: const Icon(Icons.show_chart),
+                                onTap: () {
+                                  listingOrder = "change";
+                                  loadListings(
+                                      order: listingOrder,
+                                      orderDirection: listingOrderDirection);
+                                  sortByButtonChildren = [
+                                    const Text("Price Change 24h"),
+                                    const Icon(Icons.show_chart)
+                                  ];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Recently listed"),
+                                leading:
+                                    const Icon(Icons.new_releases_outlined),
+                                onTap: () {
+                                  listingOrder = "listedAt";
+                                  loadListings(
+                                      order: listingOrder,
+                                      orderDirection: listingOrderDirection);
+                                  sortByButtonChildren = [
+                                    const Text("Recently listed"),
+                                    const Icon(Icons.new_releases_outlined)
+                                  ];
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              )),
+                  ),
+                ),
+                IconButton(
+                    onPressed: (() {
+                      setState(() {
+                        listingOrderDirection =
+                            listingOrderDirection == "desc" ? "asc" : "desc";
+                      });
+                      loadListings(
+                          order: listingOrder,
+                          orderDirection: listingOrderDirection);
+                    }),
+                    icon: Icon(listingOrderDirection == "desc"
+                        ? Icons.arrow_downward_sharp
+                        : Icons.arrow_upward_sharp))
+              ])),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
@@ -187,8 +218,14 @@ class _HomeState extends State<Home> {
     limit = 50,
     offset = 0,
     clearListings = true,
+    orderDirection = "desc",
   }) async {
-    var values = await getListings(order: order, limit: limit, offset: offset);
+    var values = await getListings(
+      order: order,
+      limit: limit,
+      offset: offset,
+      orderDirection: orderDirection,
+    );
     setState(() {
       if (clearListings) {
         listings = [];
