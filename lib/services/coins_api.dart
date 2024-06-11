@@ -20,6 +20,8 @@ Future<List<Crypto>> getListings({
   List<String>? ids,
   String? search,
   String orderDirection = "desc",
+  int offset = 0,
+  int limit = 50,
 }) async {
   String currency = Database.getValue("settings", "currency");
 
@@ -27,8 +29,9 @@ Future<List<Crypto>> getListings({
   Map<String, dynamic> queryParams = {
     "referenceCurrencyUuid": await getCurrencyUuid(currency),
     "orderBy": order,
-    "limit": "50",
+    "limit": limit.toString(),
     "orderDirection": orderDirection,
+    "offset": offset.toString()
   };
 
   if (ids != null) {
@@ -134,8 +137,12 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
-Future<List<Currency>> getAvailableCurrencies({String? search}) async {
-  Map<String, dynamic> queryParams = {"limit": "50"};
+Future<List<Currency>> getAvailableCurrencies(
+    {String? search, int? offset}) async {
+  Map<String, dynamic> queryParams = {
+    "limit": "50",
+    "offset": offset.toString()
+  };
 
   if (search != null) {
     queryParams["search"] = search;
