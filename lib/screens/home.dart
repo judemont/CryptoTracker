@@ -158,11 +158,11 @@ class _HomeState extends State<Home> {
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
-                  child: listings.isNotEmpty
+                  child: listings.isNotEmpty || searchValue.isNotEmpty
                       ? CoinsList(
                           listings: listings,
                           onScrollEnd: () {
-                            if (searchValue.length <= 0) {
+                            if (searchValue.isEmpty) {
                               listingOffset += listingLimit;
                               loadListings(
                                   clearListings: false,
