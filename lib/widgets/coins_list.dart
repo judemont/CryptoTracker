@@ -8,7 +8,8 @@ import '../pages_layout.dart';
 
 class CoinsList extends StatefulWidget {
   final List<Crypto> listings;
-  const CoinsList({super.key, required this.listings});
+  final Function? onScrollEnd;
+  const CoinsList({super.key, required this.listings, this.onScrollEnd});
 
   @override
   State<CoinsList> createState() => _CoinsListState();
@@ -20,6 +21,11 @@ class _CoinsListState extends State<CoinsList> {
     return ListView.builder(
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
+          if (index >= widget.listings.length - 1) {
+            if (widget.onScrollEnd != null) {
+              widget.onScrollEnd!();
+            }
+          }
           return ListTile(
             title: Text(widget.listings[index].name ?? ""),
             subtitle: Visibility(

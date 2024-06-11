@@ -15,10 +15,13 @@ class _HomeState extends State<Home> {
   List<Crypto> listings = [];
   bool showSearchField = false;
   int selectedOrderDropdownItem = 0;
+  String listingOrder = "marketCap";
   List<Widget> sortByButtonChildren = [
     const Text("Market Cap"),
     const Icon(Icons.bar_chart_rounded)
   ];
+  int listingOffset = 0;
+  final int listingLimit = 50;
 
   @override
   void initState() {
@@ -88,7 +91,8 @@ class _HomeState extends State<Home> {
                             title: const Text("Market Cap"),
                             leading: const Icon(Icons.pie_chart),
                             onTap: () {
-                              loadListings(order: "marketCap");
+                              listingOrder = "marketCap";
+                              loadListings(order: listingOrder);
                               sortByButtonChildren = [
                                 const Text("Market Cap"),
                                 const Icon(Icons.pie_chart)
@@ -100,6 +104,7 @@ class _HomeState extends State<Home> {
                             title: const Text("24h Volume"),
                             leading: const Icon(Icons.currency_exchange),
                             onTap: () {
+                              listingOrder = "24hVolume";
                               loadListings(order: "24hVolume");
                               sortByButtonChildren = [
                                 const Text("24h Volume"),
@@ -112,7 +117,8 @@ class _HomeState extends State<Home> {
                             title: const Text("Price"),
                             leading: const Icon(Icons.area_chart_outlined),
                             onTap: () {
-                              loadListings(order: "price");
+                              listingOrder = "price";
+                              loadListings(order: listingOrder);
                               sortByButtonChildren = [
                                 const Text("Price"),
                                 const Icon(Icons.currency_exchange)
@@ -124,7 +130,8 @@ class _HomeState extends State<Home> {
                             title: const Text("Price Change 24h"),
                             leading: const Icon(Icons.show_chart),
                             onTap: () {
-                              loadListings(order: "change");
+                              listingOrder = "change";
+                              loadListings(order: listingOrder);
                               sortByButtonChildren = [
                                 const Text("Price Change 24h"),
                                 const Icon(Icons.show_chart)
@@ -136,7 +143,8 @@ class _HomeState extends State<Home> {
                             title: const Text("Recently listed"),
                             leading: const Icon(Icons.new_releases_outlined),
                             onTap: () {
-                              loadListings(order: "listedAt");
+                              listingOrder = "listedAt";
+                              loadListings(order: listingOrder);
                               sortByButtonChildren = [
                                 const Text("Recently listed"),
                                 const Icon(Icons.new_releases_outlined)
@@ -156,6 +164,14 @@ class _HomeState extends State<Home> {
                   child: listings.isNotEmpty
                       ? CoinsList(
                           listings: listings,
+                          onScrollEnd: () {
+                            listingOffset += listingLimit;
+                            loadListings(
+                                clearListings: false,
+                                limit: listingLimit,
+                                offset: listingOffset,
+                                order: listingOrder);
+                          },
                         )
                       : Center(
                           child: CircularProgressIndicator(
@@ -174,10 +190,13 @@ class _HomeState extends State<Home> {
     order = "marketCap",
     limit = 50,
     offset = 0,
+    clearListings = true,
   }) async {
     var values = await getListings(order: order, limit: limit, offset: offset);
     setState(() {
-      listings = [];
+      if (clearListings) {
+        listings = [];
+      }
       listings.addAll(values);
     });
   }
