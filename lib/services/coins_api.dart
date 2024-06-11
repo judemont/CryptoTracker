@@ -19,7 +19,7 @@ Future<List<Crypto>> getListings({
   order = "marketCap",
   List<String>? ids,
   String? search,
-  String orderDirection = "desk",
+  String orderDirection = "desc",
 }) async {
   String currency = Database.getValue("settings", "currency");
 
@@ -41,7 +41,7 @@ Future<List<Crypto>> getListings({
 
   Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
   http.Request request = http.Request("get", url);
-
+  print(url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
   http.StreamedResponse response = await request.send();
