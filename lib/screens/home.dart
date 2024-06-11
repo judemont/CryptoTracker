@@ -173,10 +173,7 @@ class _HomeState extends State<Home> {
                                 order: listingOrder);
                           },
                         )
-                      : Center(
-                          child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        )),
+                      : const Center(child: CircularProgressIndicator()),
                   onRefresh: () async {
                     loadListings();
                     return Future<void>.delayed(const Duration(seconds: 2));
