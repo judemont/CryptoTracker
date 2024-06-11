@@ -203,11 +203,15 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void loadListings({order = "marketCap"}) {
-    getListings(order: order).then((values) {
-      setState(() {
-        listings = values;
-      });
+  Future<void> loadListings({
+    order = "marketCap",
+    limit = 50,
+    offset = 0,
+  }) async {
+    var values = await getListings(order: order, limit: limit, offset: offset);
+    setState(() {
+      listings = [];
+      listings.addAll(values);
     });
   }
 
