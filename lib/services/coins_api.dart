@@ -27,7 +27,7 @@ Future<List<Crypto>> getListings({
   Map<String, dynamic> queryParams = {
     "referenceCurrencyUuid": await getCurrencyUuid(currency),
     "orderBy": order,
-    "limit": "100",
+    "limit": "50",
     "orderDirection": orderDirection,
   };
 
@@ -135,7 +135,7 @@ Future<Crypto> getCoinData(String id) async {
 }
 
 Future<List<Currency>> getAvailableCurrencies({String? search}) async {
-  Map<String, dynamic> queryParams = {"limit": "100"};
+  Map<String, dynamic> queryParams = {"limit": "50"};
 
   if (search != null) {
     queryParams["search"] = search;

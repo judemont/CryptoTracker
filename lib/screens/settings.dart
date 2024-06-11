@@ -24,6 +24,11 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     loadSettingsValues();
+    getAvailableCurrencies().then((value) => {
+          setState(() {
+            availableCurrencies = value;
+          })
+        });
   }
 
   @override
@@ -94,11 +99,6 @@ class _SettingsState extends State<Settings> {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) {
-                    getAvailableCurrencies().then((value) => {
-                          setState(() {
-                            availableCurrencies = value;
-                          })
-                        });
                     return StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                       return Column(
