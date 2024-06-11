@@ -149,40 +149,7 @@ class _HomeState extends State<Home> {
                     },
                   );
                 },
-              )
-              // DropdownButton(
-              //   isExpanded: true,
-              //   value: selectedOrderDropdownItem,
-              //   items: [
-              //     DropdownMenuItem(
-              //       value: 0,
-              //       onTap: () => loadListings(order: "market_cap_desc"),
-              //       child: const Text("Market Cap."),
-              //     ),
-              //     DropdownMenuItem(
-              //       value: 1,
-              //       onTap: () => loadListings(order: "volume_desc"),
-              //       child: const Text("24h Volume"),
-              //     ),
-              //     DropdownMenuItem(
-              //       value: 2,
-              //       onTap: () => loadListings(order: "id_asc"),
-              //       child: const Text("Name (A..Z)"),
-              //     ),
-              //     DropdownMenuItem(
-              //       value: 3,
-              //       onTap: () => loadListings(order: "id_desc"),
-              //       child: const Text("Name (Z..A)"),
-              //     )
-              //   ],
-              //   onChanged: (value) {
-              //     setState(() {
-              //       selectedOrderDropdownItem = value ?? 0;
-              //     });
-              //   },
-              //   hint: const Text("Sort by"),
-              // ),
-              ),
+              )),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
