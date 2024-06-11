@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   ];
   int listingOffset = 0;
   final int listingLimit = 50;
-
+  String searchValue = "";
   @override
   void initState() {
     loadListings();
@@ -67,11 +67,8 @@ class _HomeState extends State<Home> {
                         },
                         icon: const Icon(Icons.close))),
                 onChanged: (value) {
-                  if (value.length >= 2) {
-                    loadSearchResults(value);
-                  } else {
-                    loadListings();
-                  }
+                  searchValue = value;
+                  loadSearchResults(value);
                 },
               )),
           Container(
@@ -165,12 +162,14 @@ class _HomeState extends State<Home> {
                       ? CoinsList(
                           listings: listings,
                           onScrollEnd: () {
-                            listingOffset += listingLimit;
-                            loadListings(
-                                clearListings: false,
-                                limit: listingLimit,
-                                offset: listingOffset,
-                                order: listingOrder);
+                            if (searchValue.length <= 0) {
+                              listingOffset += listingLimit;
+                              loadListings(
+                                  clearListings: false,
+                                  limit: listingLimit,
+                                  offset: listingOffset,
+                                  order: listingOrder);
+                            }
                           },
                         )
                       : const Center(child: CircularProgressIndicator()),

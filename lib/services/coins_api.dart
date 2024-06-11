@@ -137,10 +137,13 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
-Future<List<Currency>> getAvailableCurrencies(
-    {String? search, int? offset}) async {
+Future<List<Currency>> getAvailableCurrencies({
+  String? search,
+  int offset = 0,
+  int limit = 50,
+}) async {
   Map<String, dynamic> queryParams = {
-    "limit": "50",
+    "limit": limit.toString(),
     "offset": offset.toString()
   };
 
@@ -150,7 +153,7 @@ Future<List<Currency>> getAvailableCurrencies(
 
   Uri url =
       Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
-
+  print(url);
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
@@ -159,7 +162,6 @@ Future<List<Currency>> getAvailableCurrencies(
   var response = jsonDecode(await responseJson.stream.bytesToString());
   var data = response["data"];
   List<Currency> currencies = [];
-
   for (var currency in data["currencies"]) {
     currencies.add(Currency(
       type: currency["type"],

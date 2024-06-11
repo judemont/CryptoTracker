@@ -20,6 +20,9 @@ class _SettingsState extends State<Settings> {
   String theme = "";
   List<Currency> availableCurrencies = [];
 
+  final int currenciesLimit = 50;
+  int currenciesOffset = 0;
+
   @override
   void initState() {
     super.initState();
@@ -122,6 +125,20 @@ class _SettingsState extends State<Settings> {
                               itemCount: availableCurrencies.length,
                               itemBuilder: (context, index) {
                                 Currency currency = availableCurrencies[index];
+
+                                if (index >= availableCurrencies.length - 1) {
+                                  print(currenciesOffset);
+                                  getAvailableCurrencies(
+                                          limit: currenciesLimit,
+                                          offset: currenciesOffset)
+                                      .then((value) {
+                                    setState(() {
+                                      availableCurrencies.addAll(value);
+                                    });
+                                    currenciesOffset += currenciesLimit;
+                                  });
+                                }
+
                                 return ListTile(
                                   title: Text(
                                       "${currency.name ?? ""} (${currency.symbol ?? ""})"),
