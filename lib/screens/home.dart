@@ -59,9 +59,6 @@ class _HomeState extends State<Home> {
               child: TextField(
                 autofocus: showSearchField,
                 decoration: InputDecoration(
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2.0),
-                    ),
                     hintText: 'Search',
                     suffixIcon: IconButton(
                         onPressed: () {
