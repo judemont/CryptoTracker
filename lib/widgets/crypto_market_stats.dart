@@ -1,3 +1,4 @@
+import 'package:cryptotracker/models/currency.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,9 @@ class CryptoMarketStats extends StatefulWidget {
 class _CryptoMarketStatsState extends State<CryptoMarketStats> {
   @override
   Widget build(BuildContext context) {
-    String currency = Database.getValue("settings", "currency");
+    String currency = Database.getValue("settings", "currencyId");
+    String currencySymbol = Database.getValue("settings", "currencySymbol");
+
     Uri? homePageUri = Uri.tryParse(widget.crypto.website ?? "");
 
     String cryptoDescriptionText = (widget.crypto.description ?? "")
@@ -33,10 +36,11 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
         ),
         const SizedBox(height: 20),
         statRow("Market Cap.",
-            Text(formatePrice(widget.crypto.marketCap, currency))),
-        statRow("Volume", Text(formatePrice(widget.crypto.volume, currency))),
+            Text(formatePrice(widget.crypto.marketCap, currencySymbol))),
         statRow(
-            "All Time High", Text(formatePrice(widget.crypto.ath, currency))),
+            "Volume", Text(formatePrice(widget.crypto.volume, currencySymbol))),
+        statRow("All Time High",
+            Text(formatePrice(widget.crypto.ath, currencySymbol))),
         statRow(
             "Max Supply",
             Text(formatePrice(

@@ -39,14 +39,26 @@ class Crypto {
     this.volume,
   });
 
-  // Map<String, Object?> toMap() {
-  //   return {
-  //     'id': id,
-  //     'name': name,
-  //     'symbol': symbol,
-  //     'price': price,
-  //     'logoUrl': logoUrl,
-  //     'priceChangePercentageDay': priceChangePercentageDay,
-  //   };
-  // }
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'symbol': symbol,
+      'price': price,
+      'logoUrl': logoUrl,
+      'priceChangePercentageDay': priceChangePercentageDay,
+      'description': description,
+      'categories': categories,
+      'website': website,
+      'ath': ath,
+      'athDate': athDate?.toIso8601String(),
+      'marketCap': marketCap,
+      'marketCapRank': marketCapRank,
+      'dayHigh': dayHigh,
+      'dayLow': dayLow,
+      'totalSupply': totalSupply,
+      'circulatingSupply': circulatingSupply,
+      'volume': volume,
+    };
+  }
 }

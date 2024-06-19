@@ -1,3 +1,4 @@
+import 'package:cryptotracker/models/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
@@ -15,8 +16,11 @@ class Database {
 
   static void addDefaultValues() {
     Box settingsBox = Hive.box("settings");
-    if (settingsBox.get("currency") == null) {
-      settingsBox.put("currency", "usd");
+    if (settingsBox.get("currencyId") == null) {
+      settingsBox.put("currencyId", "yhjMzLPhuIDl");
+    }
+    if (settingsBox.get("currencySymbol") == null) {
+      settingsBox.put("currencySymbol", "USD");
     }
     if (settingsBox.get("theme") == null) {
       settingsBox.put("theme", "system");

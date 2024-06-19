@@ -42,7 +42,7 @@ class _CoinsListState extends State<CoinsList> {
               Visibility(
                   visible: widget.listings[index].price != null,
                   child: Text(formatePrice(widget.listings[index].price,
-                      Database.getValue("settings", "currency")))),
+                      Database.getValue("settings", "currencySymbol")))),
               Visibility(
                 visible:
                     widget.listings[index].priceChangePercentageDay != null,

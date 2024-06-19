@@ -25,6 +25,8 @@ class _HomeState extends State<Home> {
   String searchValue = "";
 
   String listingOrderDirection = "desc";
+  bool isLoading = false;
+  bool listingError = false;
 
   @override
   void initState() {
@@ -189,21 +191,30 @@ class _HomeState extends State<Home> {
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
-                  child: listings.isNotEmpty || searchValue.isNotEmpty
-                      ? CoinsList(
-                          listings: listings,
-                          onScrollEnd: () {
-                            if (searchValue.isEmpty) {
-                              listingOffset += listingLimit;
-                              loadListings(
-                                  clearListings: false,
-                                  limit: listingLimit,
-                                  offset: listingOffset,
-                                  order: listingOrder);
-                            }
-                          },
-                        )
-                      : const Center(child: CircularProgressIndicator()),
+                  child: !listingError
+                      ? (!isLoading
+                          ? CoinsList(
+                              listings: listings,
+                              onScrollEnd: () {
+                                if (searchValue.isEmpty) {
+                                  listingOffset += listingLimit;
+                                  loadListings(
+                                      clearListings: false,
+                                      limit: listingLimit,
+                                      offset: listingOffset,
+                                      order: listingOrder);
+                                }
+                              },
+                            )
+                          : const Center(child: CircularProgressIndicator()))
+                      : Center(
+                          child: ElevatedButton(
+                            child: const Text("Try again"),
+                            onPressed: () {
+                              loadListings();
+                            },
+                          ),
+                        ),
                   onRefresh: () async {
                     loadListings();
                     return Future<void>.delayed(const Duration(seconds: 2));
@@ -220,6 +231,10 @@ class _HomeState extends State<Home> {
     clearListings = true,
     orderDirection = "desc",
   }) async {
+    setState(() {
+      isLoading = true;
+      listingError = false;
+    });
     var values = await getListings(
       order: order,
       limit: limit,
@@ -227,17 +242,31 @@ class _HomeState extends State<Home> {
       orderDirection: orderDirection,
     );
     setState(() {
+      isLoading = false;
       if (clearListings) {
         listings = [];
       }
-      listings.addAll(values);
+      if (values != null) {
+        listings.addAll(values);
+      } else {
+        listingError = true;
+      }
     });
   }
 
   void loadSearchResults(String query) {
+    setState(() {
+      isLoading = true;
+      listingError = false;
+    });
     getListings(search: query).then((values) {
       setState(() {
-        listings = values;
+        isLoading = false;
+        if (values != null) {
+          listings = values;
+        } else {
+          listingError = true;
+        }
       });
     });
   }

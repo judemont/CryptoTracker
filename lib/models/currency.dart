@@ -1,4 +1,5 @@
 class Currency {
+  String? id;
   String? type;
   String? symbol;
   String? name;
@@ -6,6 +7,7 @@ class Currency {
   String? sign;
 
   Currency({
+    this.id,
     this.type,
     this.symbol,
     this.name,

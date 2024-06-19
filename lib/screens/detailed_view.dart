@@ -128,7 +128,7 @@ class _DetailedViewState extends State<DetailedView> {
                         width: 20,
                       ),
                       Text(formatePrice(crypto.price,
-                          Database.getValue("settings", "currency"))),
+                          Database.getValue("settings", "currencySymbol"))),
                       const SizedBox(
                         width: 20,
                       ),
@@ -148,8 +148,10 @@ class _DetailedViewState extends State<DetailedView> {
                   isTouchingChart
                       ? Column(
                           children: [
-                            Text(formatePrice(touchedPrice,
-                                Database.getValue("settings", "currency"))),
+                            Text(formatePrice(
+                                touchedPrice,
+                                Database.getValue(
+                                    "settings", "currencySymbol"))),
                             Text(DateFormat('MM/dd/yyyy hh:mm')
                                 .format(touchedTime))
                           ],

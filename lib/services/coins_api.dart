@@ -18,7 +18,7 @@ const List<String> apiKeys = [
   "coinrankingca05d3f372e62d80f679635853e5db9089ae28c6fd3e6660",
 ];
 
-Future<List<Crypto>> getListings({
+Future<List<Crypto>?> getListings({
   order = "marketCap",
   List<String>? ids,
   String? search,
@@ -26,11 +26,10 @@ Future<List<Crypto>> getListings({
   int offset = 0,
   int limit = 50,
 }) async {
-  String currency = Database.getValue("settings", "currency");
+  String currency = Database.getValue("settings", "currencyId");
 
-  print(Database.getValue("settings", "currency"));
   Map<String, dynamic> queryParams = {
-    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "referenceCurrencyUuid": currency,
     "orderBy": order,
     "limit": limit.toString(),
     "orderDirection": orderDirection,
@@ -53,29 +52,33 @@ Future<List<Crypto>> getListings({
   http.StreamedResponse response = await request.send();
 
   var responseJson = json.decode(await response.stream.bytesToString());
-  var listing = responseJson["data"]["coins"];
+  print(responseJson);
+  if (responseJson["status"] == "success") {
+    var listing = responseJson["data"]["coins"];
 
-  List<Crypto> cryptoList = [];
-  for (var crypto in listing) {
-    cryptoList.add(Crypto(
-      id: crypto["uuid"],
-      name: crypto["name"],
-      symbol: crypto["symbol"],
-      price: double.tryParse(crypto["price"] ?? ""),
-      logoUrl: crypto["iconUrl"],
-      priceChangePercentageDay: double.tryParse(crypto["change"] ?? ""),
-    ));
+    List<Crypto> cryptoList = [];
+    for (var crypto in listing) {
+      cryptoList.add(Crypto(
+        id: crypto["uuid"],
+        name: crypto["name"],
+        symbol: crypto["symbol"],
+        price: double.tryParse(crypto["price"] ?? ""),
+        logoUrl: crypto["iconUrl"],
+        priceChangePercentageDay: double.tryParse(crypto["change"] ?? ""),
+      ));
+    }
+
+    return cryptoList;
   }
-
-  return cryptoList;
+  return null;
 }
 
 Future<List<CoinPrice>> getPricesHistory(
     String coinId, String timePeriod) async {
-  String currency = Database.getValue("settings", "currency");
+  String currency = Database.getValue("settings", "currencyId");
 
   Map<String, dynamic> queryParams = {
-    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "referenceCurrencyUuid": currency,
     "timePeriod": timePeriod
   };
 
@@ -102,10 +105,10 @@ Future<List<CoinPrice>> getPricesHistory(
 }
 
 Future<Crypto> getCoinData(String id) async {
-  String currency = Database.getValue("settings", "currency");
+  Currency currency = Database.getValue("settings", "currencyId");
 
   Map<String, dynamic> queryParams = {
-    "referenceCurrencyUuid": await getCurrencyUuid(currency),
+    "referenceCurrencyUuid": currency,
   };
 
   Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
@@ -167,6 +170,7 @@ Future<List<Currency>> getAvailableCurrencies({
   List<Currency> currencies = [];
   for (var currency in data["currencies"]) {
     currencies.add(Currency(
+      id: currency["uuid"],
       type: currency["type"],
       name: currency["name"],
       symbol: currency["symbol"],
@@ -176,25 +180,6 @@ Future<List<Currency>> getAvailableCurrencies({
   }
 
   return currencies;
-}
-
-Future<String> getCurrencyUuid(String symbol) async {
-  Map<String, dynamic> queryParams = {
-    "search": symbol,
-    "limit": "1",
-  };
-
-  Uri url =
-      Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
-
-  http.Request request = http.Request("get", url);
-
-  request.headers.addAll({"x-access-token": getApiKey()});
-
-  http.StreamedResponse responseJson = await request.send();
-
-  var results = json.decode(await responseJson.stream.bytesToString());
-  return results["data"]["currencies"][0]["uuid"];
 }
 
 String getApiKey() {

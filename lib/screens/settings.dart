@@ -17,6 +17,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   String currency = "";
+  String currencySymbol = "";
   String theme = "";
   List<Currency> availableCurrencies = [];
 
@@ -97,7 +98,7 @@ class _SettingsState extends State<Settings> {
             ListTile(
               title: const Text("Currency"),
               leading: const Icon(Icons.attach_money),
-              subtitle: Text(currency.toUpperCase()),
+              subtitle: Text(currencySymbol),
               onTap: () {
                 showModalBottomSheet(
                   context: context,
@@ -151,8 +152,10 @@ class _SettingsState extends State<Settings> {
                                               currency.iconUrl ?? ""),
                                         ),
                                   onTap: () {
-                                    Database.setValue("settings", "currency",
-                                        currency.symbol);
+                                    Database.setValue(
+                                        "settings", "currencyId", currency.id);
+                                    Database.setValue("settings",
+                                        "currencySymbol", currency.symbol);
                                     loadSettingsValues();
                                     Navigator.of(context).pop();
                                   },
@@ -192,7 +195,8 @@ class _SettingsState extends State<Settings> {
 
   void loadSettingsValues() {
     setState(() {
-      currency = Database.getValue("settings", "currency") ?? "";
+      currency = Database.getValue("settings", "currencyId") ?? "";
+      currencySymbol = Database.getValue("settings", "currencySymbol") ?? "";
       theme = Database.getValue("settings", "theme") ?? "";
     });
   }

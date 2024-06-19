@@ -14,6 +14,9 @@ class Favorites extends StatefulWidget {
 
 class _FavoritesState extends State<Favorites> {
   List<Crypto> listings = [];
+  bool isLoading = false;
+  bool loadingError = false;
+
   @override
   void initState() {
     loadListings();
@@ -29,12 +32,22 @@ class _FavoritesState extends State<Favorites> {
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
-                  child: listings.isNotEmpty
-                      ? CoinsList(
-                          listings: listings,
-                        )
-                      : const Center(
-                          child: Text("No favorites yet"),
+                  child: !loadingError
+                      ? (!isLoading
+                          ? CoinsList(
+                              listings: listings,
+                            )
+                          : const Center(child: CircularProgressIndicator()))
+                      : Center(
+                          child: ElevatedButton(
+                            child: Text("Try again"),
+                            onPressed: () {
+                              setState(() {
+                                loadingError = false;
+                              });
+                              loadListings();
+                            },
+                          ),
                         ),
                   onRefresh: () async {
                     loadListings();
@@ -46,15 +59,22 @@ class _FavoritesState extends State<Favorites> {
   }
 
   void loadListings({order = "market_cap_desk"}) {
+    setState(() {
+      isLoading = true;
+    });
+
     List<String> favorites =
         Database.getValue("portfolio", "favoritesIds").cast<String>();
-    print(favorites);
-    if (favorites.isNotEmpty) {
-      getListings(ids: favorites).then((values) {
-        setState(() {
+
+    getListings(ids: favorites).then((values) {
+      setState(() {
+        isLoading = false;
+        if (values != null) {
           listings = values;
-        });
+        } else {
+          loadingError = true;
+        }
       });
-    }
+    });
   }
 }
