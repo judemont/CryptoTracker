@@ -9,13 +9,22 @@ import '../models/crypto.dart';
 import 'database.dart';
 
 const List<String> apiKeys = [
-  "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
-  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
-  "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
-  "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740",
-  "coinranking0b154d4543ba0d09eac0048404b08be69aca18bc90116bf8",
-  "coinranking1a4fb2bff8b38ab670bc606a5b3316d558bd4fa651366747",
-  "coinrankingca05d3f372e62d80f679635853e5db9089ae28c6fd3e6660",
+  // "coinranking4c11ba860e5e60cd651d33d572455c02d226f9c5fae2a0fc",
+  // "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
+  // "coinrankingbf6652d36b448473ae1fba8a722ae1833b23b80616331bb0",
+  // "coinranking07d435fd0b01815c688e99e21b5f63483f5bbc8a34ab5740",
+  // "coinranking0b154d4543ba0d09eac0048404b08be69aca18bc90116bf8",
+  // "coinranking1a4fb2bff8b38ab670bc606a5b3316d558bd4fa651366747",
+  // "coinrankingca05d3f372e62d80f679635853e5db9089ae28c6fd3e6660",
+  "coinranking26f4beafffc148b6dbc4efd8afedee382bb42df290f32b03",
+  "coinranking21a838917d0bf67e881b9b9b18a4259a518d22a33999b00e",
+  "coinranking475fe18d831fede622a850e02e002ff36a15968ed882b1c7",
+  "coinranking179e0cc0a98ed8bf3061a287a3818f6c94d97513b455b7d6",
+  "coinranking40270d23867c8bda870f0610e75445bc43e81f72655b7c98",
+  "coinrankingde2a6de705834797a3af7e5b15d2da70ede3c5974cf3613c",
+  "coinranking855aca4a7bd7fdef982d9026c82979765cecf875ced7adba",
+  "coinrankingffba8aa23e6d32339d885d02788e7a923a9699ec5bbb5673",
+  "coinrankinge5a0741f62b20821b1ef32b707b3d191d189675096ada0fb",
 ];
 
 Future<List<Crypto>?> getListings({
@@ -57,7 +66,6 @@ Future<List<Crypto>?> getListings({
   }
 
   var responseJson = json.decode(await response.stream.bytesToString());
-
   if (responseJson["status"] != "success") {
     return null;
   }

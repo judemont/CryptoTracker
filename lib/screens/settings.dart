@@ -30,6 +30,17 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     loadSettingsValues();
+
+    getAvailableCurrencies().then((value) => {
+          setState(() {
+            isLoading = false;
+            if (value != null) {
+              availableCurrencies = value;
+            } else {
+              loadingError = true;
+            }
+          })
+        });
   }
 
   @override
@@ -154,7 +165,7 @@ class _SettingsState extends State<Settings> {
                                               availableCurrencies[index];
 
                                           if (index >=
-                                              availableCurrencies.length - 1) {
+                                              availableCurrencies.length - 5) {
                                             print(currenciesOffset);
 
                                             loadCurrencies(

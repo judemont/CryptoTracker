@@ -21,7 +21,7 @@ class _CoinsListState extends State<CoinsList> {
     return ListView.builder(
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
-          if (index >= widget.listings.length - 1) {
+          if (index >= widget.listings.length - 5) {
             if (widget.onScrollEnd != null) {
               widget.onScrollEnd!();
             }
