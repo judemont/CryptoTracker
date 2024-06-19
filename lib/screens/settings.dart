@@ -23,16 +23,14 @@ class _SettingsState extends State<Settings> {
 
   final int currenciesLimit = 50;
   int currenciesOffset = 0;
+  bool isLoading = false;
+  bool loadingError = false;
 
   @override
   void initState() {
     super.initState();
     loadSettingsValues();
-    getAvailableCurrencies().then((value) => {
-          setState(() {
-            availableCurrencies = value;
-          })
-        });
+    loadCurrencies();
   }
 
   @override
@@ -105,6 +103,38 @@ class _SettingsState extends State<Settings> {
                   builder: (context) {
                     return StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
+                      void loadCurrencies({
+                        int offset = 0,
+                        int limit = 50,
+                        String? search,
+                        bool addAll = false,
+                      }) {
+                        setState(() {
+                          loadingError = false;
+                          isLoading = true;
+                        });
+
+                        getAvailableCurrencies(
+                          offset: offset,
+                          limit: limit,
+                          search: search,
+                        ).then((value) => {
+                              setState(() {
+                                isLoading = false;
+                                if (value != null) {
+                                  if (addAll) {
+                                    availableCurrencies.addAll(value);
+                                  } else {
+                                    availableCurrencies = value;
+                                    print(availableCurrencies);
+                                  }
+                                } else {
+                                  loadingError = true;
+                                }
+                              })
+                            });
+                      }
+
                       return Column(
                         children: [
                           TextField(
@@ -112,56 +142,64 @@ class _SettingsState extends State<Settings> {
                               hintText: 'Search',
                             ),
                             onChanged: (value) {
-                              getAvailableCurrencies(search: value)
-                                  .then((value) => {
-                                        setState(() {
-                                          availableCurrencies = value;
-                                        })
-                                      });
+                              loadCurrencies(search: value);
                             },
                           ),
                           Expanded(
                             // Wrap ListView with Expanded
-                            child: ListView.builder(
-                              itemCount: availableCurrencies.length,
-                              itemBuilder: (context, index) {
-                                Currency currency = availableCurrencies[index];
+                            child: !loadingError
+                                ? (!isLoading
+                                    ? ListView.builder(
+                                        itemCount: availableCurrencies.length,
+                                        itemBuilder: (context, index) {
+                                          Currency currency =
+                                              availableCurrencies[index];
 
-                                if (index >= availableCurrencies.length - 1) {
-                                  print(currenciesOffset);
-                                  getAvailableCurrencies(
-                                          limit: currenciesLimit,
-                                          offset: currenciesOffset)
-                                      .then((value) {
-                                    setState(() {
-                                      availableCurrencies.addAll(value);
-                                    });
-                                    currenciesOffset += currenciesLimit;
-                                  });
-                                }
+                                          if (index >=
+                                              availableCurrencies.length - 1) {
+                                            print(currenciesOffset);
 
-                                return ListTile(
-                                  title: Text(
-                                      "${currency.name ?? ""} (${currency.symbol ?? ""})"),
-                                  leading: currency.iconUrl == null
-                                      ? const Icon(Icons.monetization_on)
-                                      : Container(
-                                          width: 30,
-                                          height: 30,
-                                          child: getCoinLogoWidget(
-                                              currency.iconUrl ?? ""),
-                                        ),
-                                  onTap: () {
-                                    Database.setValue(
-                                        "settings", "currencyId", currency.id);
-                                    Database.setValue("settings",
-                                        "currencySymbol", currency.symbol);
-                                    loadSettingsValues();
-                                    Navigator.of(context).pop();
-                                  },
-                                );
-                              },
-                            ),
+                                            loadCurrencies(
+                                                limit: currenciesLimit,
+                                                offset: currenciesOffset,
+                                                addAll: true);
+                                            currenciesOffset += currenciesLimit;
+                                          }
+
+                                          return ListTile(
+                                            title: Text(
+                                                "${currency.name ?? ""} (${currency.symbol ?? ""})"),
+                                            leading: currency.iconUrl == null
+                                                ? const Icon(
+                                                    Icons.monetization_on)
+                                                : Container(
+                                                    width: 30,
+                                                    height: 30,
+                                                    child: getCoinLogoWidget(
+                                                        currency.iconUrl ?? ""),
+                                                  ),
+                                            onTap: () {
+                                              Database.setValue("settings",
+                                                  "currencyId", currency.id);
+                                              Database.setValue(
+                                                  "settings",
+                                                  "currencySymbol",
+                                                  currency.symbol);
+                                              loadSettingsValues();
+                                              Navigator.of(context).pop();
+                                            },
+                                          );
+                                        },
+                                      )
+                                    : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ))
+                                : Center(
+                                    child: ElevatedButton(
+                                      child: Text("Try again"),
+                                      onPressed: () => loadCurrencies(),
+                                    ),
+                                  ),
                           ),
                         ],
                       );
@@ -199,6 +237,38 @@ class _SettingsState extends State<Settings> {
       currencySymbol = Database.getValue("settings", "currencySymbol") ?? "";
       theme = Database.getValue("settings", "theme") ?? "";
     });
+  }
+
+  void loadCurrencies({
+    int offset = 0,
+    int limit = 50,
+    String? search,
+    bool addAll = false,
+  }) {
+    setState(() {
+      loadingError = false;
+      isLoading = true;
+    });
+
+    getAvailableCurrencies(
+      offset: offset,
+      limit: limit,
+      search: search,
+    ).then((value) => {
+          setState(() {
+            isLoading = false;
+            if (value != null) {
+              if (addAll) {
+                availableCurrencies.addAll(value);
+              } else {
+                availableCurrencies = value;
+                print(availableCurrencies);
+              }
+            } else {
+              loadingError = true;
+            }
+          })
+        });
   }
 }
 

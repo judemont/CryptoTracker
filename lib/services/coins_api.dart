@@ -46,34 +46,40 @@ Future<List<Crypto>?> getListings({
 
   Uri url = Uri.https('api.coinranking.com', "/v2/coins", queryParams);
   http.Request request = http.Request("get", url);
+
   print(url);
   request.headers.addAll({"x-access-token": getApiKey()});
-
-  http.StreamedResponse response = await request.send();
+  http.StreamedResponse response;
+  try {
+    response = await request.send();
+  } catch (e) {
+    return null;
+  }
 
   var responseJson = json.decode(await response.stream.bytesToString());
-  print(responseJson);
-  if (responseJson["status"] == "success") {
-    var listing = responseJson["data"]["coins"];
 
-    List<Crypto> cryptoList = [];
-    for (var crypto in listing) {
-      cryptoList.add(Crypto(
-        id: crypto["uuid"],
-        name: crypto["name"],
-        symbol: crypto["symbol"],
-        price: double.tryParse(crypto["price"] ?? ""),
-        logoUrl: crypto["iconUrl"],
-        priceChangePercentageDay: double.tryParse(crypto["change"] ?? ""),
-      ));
-    }
-
-    return cryptoList;
+  if (responseJson["status"] != "success") {
+    return null;
   }
-  return null;
+
+  var listing = responseJson["data"]["coins"];
+
+  List<Crypto> cryptoList = [];
+  for (var crypto in listing) {
+    cryptoList.add(Crypto(
+      id: crypto["uuid"],
+      name: crypto["name"],
+      symbol: crypto["symbol"],
+      price: double.tryParse(crypto["price"] ?? ""),
+      logoUrl: crypto["iconUrl"],
+      priceChangePercentageDay: double.tryParse(crypto["change"] ?? ""),
+    ));
+  }
+
+  return cryptoList;
 }
 
-Future<List<CoinPrice>> getPricesHistory(
+Future<List<CoinPrice>?> getPricesHistory(
     String coinId, String timePeriod) async {
   String currency = Database.getValue("settings", "currencyId");
 
@@ -87,9 +93,20 @@ Future<List<CoinPrice>> getPricesHistory(
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
-  http.StreamedResponse responseJson = await request.send();
+  http.StreamedResponse responseJson;
+  try {
+    responseJson = await request.send();
+  } catch (e) {
+    print(e);
+    return null;
+  }
 
   var response = json.decode(await responseJson.stream.bytesToString());
+
+  if (response["status"] != "success") {
+    return null;
+  }
+
   var pricesHistoryData = response["data"]["history"];
 
   List<CoinPrice> pricesHistory = [];
@@ -104,8 +121,8 @@ Future<List<CoinPrice>> getPricesHistory(
   return pricesHistory;
 }
 
-Future<Crypto> getCoinData(String id) async {
-  Currency currency = Database.getValue("settings", "currencyId");
+Future<Crypto?> getCoinData(String id) async {
+  String currency = Database.getValue("settings", "currencyId");
 
   Map<String, dynamic> queryParams = {
     "referenceCurrencyUuid": currency,
@@ -116,9 +133,18 @@ Future<Crypto> getCoinData(String id) async {
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
-  http.StreamedResponse responseJson = await request.send();
+  http.StreamedResponse responseJson;
+  try {
+    responseJson = await request.send();
+  } catch (e) {
+    print(e);
+    return null;
+  }
 
   var response = json.decode(await responseJson.stream.bytesToString());
+  if (response["status"] != "success") {
+    return null;
+  }
   var responseData = response["data"]["coin"];
 
   return Crypto(
@@ -143,7 +169,7 @@ Future<Crypto> getCoinData(String id) async {
   );
 }
 
-Future<List<Currency>> getAvailableCurrencies({
+Future<List<Currency>?> getAvailableCurrencies({
   String? search,
   int offset = 0,
   int limit = 50,
@@ -160,12 +186,23 @@ Future<List<Currency>> getAvailableCurrencies({
   Uri url =
       Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
   print(url);
+
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
-  http.StreamedResponse responseJson = await request.send();
+  http.StreamedResponse responseJson;
+  try {
+    responseJson = await request.send();
+  } catch (e) {
+    print(e);
+    return null;
+  }
 
   var response = jsonDecode(await responseJson.stream.bytesToString());
+  if (response["status"] != "success") {
+    return null;
+  }
+
   var data = response["data"];
   List<Currency> currencies = [];
   for (var currency in data["currencies"]) {
