@@ -30,7 +30,6 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     loadSettingsValues();
-    loadCurrencies();
   }
 
   @override
@@ -126,7 +125,6 @@ class _SettingsState extends State<Settings> {
                                     availableCurrencies.addAll(value);
                                   } else {
                                     availableCurrencies = value;
-                                    print(availableCurrencies);
                                   }
                                 } else {
                                   loadingError = true;
@@ -237,38 +235,6 @@ class _SettingsState extends State<Settings> {
       currencySymbol = Database.getValue("settings", "currencySymbol") ?? "";
       theme = Database.getValue("settings", "theme") ?? "";
     });
-  }
-
-  void loadCurrencies({
-    int offset = 0,
-    int limit = 50,
-    String? search,
-    bool addAll = false,
-  }) {
-    setState(() {
-      loadingError = false;
-      isLoading = true;
-    });
-
-    getAvailableCurrencies(
-      offset: offset,
-      limit: limit,
-      search: search,
-    ).then((value) => {
-          setState(() {
-            isLoading = false;
-            if (value != null) {
-              if (addAll) {
-                availableCurrencies.addAll(value);
-              } else {
-                availableCurrencies = value;
-                print(availableCurrencies);
-              }
-            } else {
-              loadingError = true;
-            }
-          })
-        });
   }
 }
 
