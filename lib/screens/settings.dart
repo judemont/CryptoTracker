@@ -119,10 +119,8 @@ class _SettingsState extends State<Settings> {
                         String? search,
                         bool addAll = false,
                       }) {
-                        setState(() {
-                          loadingError = false;
-                          isLoading = true;
-                        });
+                        loadingError = false;
+                        isLoading = true;
 
                         getAvailableCurrencies(
                           offset: offset,

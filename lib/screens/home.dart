@@ -228,16 +228,16 @@ class _HomeState extends State<Home> {
     clearListings = true,
     orderDirection = "desc",
   }) async {
-    setState(() {
-      isLoading = true;
-      listingError = false;
-    });
+    isLoading = true;
+    listingError = false;
+
     var values = await getListings(
       order: order,
       limit: limit,
       offset: offset,
       orderDirection: orderDirection,
     );
+
     setState(() {
       isLoading = false;
       if (clearListings) {
