@@ -43,9 +43,6 @@ app.*.map.json
 /android/app/release
 
 
-buildProd.gradle
-*.jks
-
 *.hive
 settings.lock
 /dist
