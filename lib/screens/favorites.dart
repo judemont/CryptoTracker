@@ -40,7 +40,7 @@ class _FavoritesState extends State<Favorites> {
                           : const Center(child: CircularProgressIndicator()))
                       : Center(
                           child: ElevatedButton(
-                            child: Text("Try again"),
+                            child: const Text("Try again"),
                             onPressed: () {
                               setState(() {
                                 loadingError = false;

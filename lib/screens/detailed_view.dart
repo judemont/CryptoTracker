@@ -3,7 +3,6 @@ import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../models/coin_price.dart';
@@ -56,8 +55,8 @@ class _DetailedViewState extends State<DetailedView> {
         alignment: Alignment.center,
         child: TextButton(
           style: ButtonStyle(
-              padding: MaterialStateProperty.all(EdgeInsets.zero),
-              backgroundColor: MaterialStateProperty.all(
+              padding: WidgetStateProperty.all(EdgeInsets.zero),
+              backgroundColor: WidgetStateProperty.all(
                   selectedTimePriceChartInterval == timePeriod
                       ? Theme.of(context).primaryColor
                       : Colors.transparent)),
@@ -117,7 +116,7 @@ class _DetailedViewState extends State<DetailedView> {
                           ),
                           Wrap(
                             children: [
-                              Container(
+                              SizedBox(
                                   width: 50,
                                   height: 50,
                                   child:
@@ -182,12 +181,14 @@ class _DetailedViewState extends State<DetailedView> {
                                   child: LineChart(LineChartData(
                                     lineTouchData: LineTouchData(
                                       touchTooltipData: LineTouchTooltipData(
-                                          tooltipBgColor:
+                                          // tooltipBgColor:
+                                          //     Colors.white.withAlpha(0),
+                                          getTooltipColor: (touchedSpot) =>
                                               Colors.white.withAlpha(0),
                                           getTooltipItems: (lineBarSpots) {
                                             return [
-                                              LineTooltipItem(
-                                                  "", const TextStyle())
+                                              const LineTooltipItem(
+                                                  "", TextStyle())
                                             ];
                                           }),
                                       touchCallback: (touchEvent,
@@ -216,12 +217,12 @@ class _DetailedViewState extends State<DetailedView> {
                                       },
                                     ),
                                     borderData: FlBorderData(show: true),
-                                    gridData: FlGridData(show: false),
-                                    titlesData: FlTitlesData(show: false),
+                                    gridData: const FlGridData(show: false),
+                                    titlesData: const FlTitlesData(show: false),
                                     lineBarsData: [
                                       LineChartBarData(
                                           color: Colors.purple,
-                                          dotData: FlDotData(show: false),
+                                          dotData: const FlDotData(show: false),
                                           spots: pricesHistoryChartData,
                                           belowBarData: BarAreaData(
                                               show: true,
@@ -257,7 +258,7 @@ class _DetailedViewState extends State<DetailedView> {
                     ))
               : Center(
                   child: ElevatedButton(
-                    child: Text("Try again"),
+                    child: const Text("Try again"),
                     onPressed: () {
                       loadCoinData().then((value) {
                         loadPriceHistory("24h");

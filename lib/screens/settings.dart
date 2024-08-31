@@ -3,7 +3,6 @@ import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/currency.dart';
@@ -179,7 +178,7 @@ class _SettingsState extends State<Settings> {
                                             leading: currency.iconUrl == null
                                                 ? const Icon(
                                                     Icons.monetization_on)
-                                                : Container(
+                                                : SizedBox(
                                                     width: 30,
                                                     height: 30,
                                                     child: getCoinLogoWidget(
@@ -203,7 +202,7 @@ class _SettingsState extends State<Settings> {
                                       ))
                                 : Center(
                                     child: ElevatedButton(
-                                      child: Text("Try again"),
+                                      child: const Text("Try again"),
                                       onPressed: () => loadCurrencies(),
                                     ),
                                   ),

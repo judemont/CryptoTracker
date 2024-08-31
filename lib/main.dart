@@ -7,11 +7,13 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 void main() {
   Database.init().then((value) {
     Database.addDefaultValues();
-    runApp(MyApp());
+    runApp(const MyApp());
   });
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 

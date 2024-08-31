@@ -1,7 +1,5 @@
-import 'package:cryptotracker/models/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hive/hive.dart';
 
 class Database {
   static Future<void> init() async {

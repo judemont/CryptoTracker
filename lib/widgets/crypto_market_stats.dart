@@ -1,16 +1,13 @@
-import 'package:cryptotracker/models/currency.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/crypto.dart';
 
 class CryptoMarketStats extends StatefulWidget {
   final Crypto crypto;
-  const CryptoMarketStats({Key? key, required this.crypto}) : super(key: key);
+  const CryptoMarketStats({super.key, required this.crypto});
 
   @override
   _CryptoMarketStatsState createState() => _CryptoMarketStatsState();

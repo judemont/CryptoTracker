@@ -32,7 +32,7 @@ class _CoinsListState extends State<CoinsList> {
                 visible: widget.listings[index].symbol != null,
                 child:
                     Text(widget.listings[index].symbol?.toUpperCase() ?? "")),
-            leading: Container(
+            leading: SizedBox(
               width: 50,
               height: 50,
               child: getCoinLogoWidget(widget.listings[index].logoUrl ?? ""),

@@ -97,7 +97,7 @@ Future<List<CoinPrice>?> getPricesHistory(
   };
 
   Uri url = Uri.https(
-      'api.coinranking.com', "/v2/coin/${coinId}/history", queryParams);
+      'api.coinranking.com', "/v2/coin/$coinId/history", queryParams);
   http.Request request = http.Request("get", url);
   request.headers.addAll({"x-access-token": getApiKey()});
 
