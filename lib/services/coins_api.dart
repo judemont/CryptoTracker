@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/currency.dart';
+import 'package:cryptotracker/models/news.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
@@ -181,6 +182,43 @@ Future<List<Currency>?> getAvailableCurrencies() async {
   }
 
   return currencies;
+}
+
+Future<List<News>?> getNews(bool type) async {
+  Uri url = Uri.https('openapiv1.coinstats.app', "/news/type/$type");
+  print(url);
+
+  http.Request request = http.Request("get", url);
+  request.headers.addAll({"X-API-KEY": getApiKey()});
+
+  http.StreamedResponse responseJson;
+  try {
+    responseJson = await request.send();
+  } catch (e) {
+    print(e);
+    return null;
+  }
+
+  var response = jsonDecode(await responseJson.stream.bytesToString());
+  if (responseJson.statusCode != 200) {
+    return null;
+  }
+
+  var data = response;
+
+  List<News> newsList = [];
+  for (var news in data) {
+    newsList.add(News(
+      title: news["title"],
+      source: news["source"],
+      imgUrl: news["imgUrl"],
+      feedDate: DateTime.fromMillisecondsSinceEpoch(news["feedDate"]),
+      url: news["link"],
+      description: news["description"],
+    ));
+  }
+
+  return newsList;
 }
 
 String getApiKey() {
