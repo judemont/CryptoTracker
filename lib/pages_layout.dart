@@ -1,4 +1,5 @@
 import 'package:cryptotracker/screens/favorites.dart';
+import 'package:cryptotracker/screens/news.dart';
 import 'package:cryptotracker/screens/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,7 @@ class _PagesLayoutState extends State<PagesLayout> {
   late Widget currentChild;
   List<Widget> pages = [
     const Home(),
+    const NewsPage(),
     const Favorites(),
     const Settings(),
   ];
@@ -49,6 +51,8 @@ class _PagesLayoutState extends State<PagesLayout> {
                 }),
                 destinations: const [
                   NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+                  NavigationDestination(
+                      icon: Icon(Icons.newspaper), label: "News"),
                   NavigationDestination(
                       icon: Icon(Icons.star), label: "Favorites"),
                   NavigationDestination(

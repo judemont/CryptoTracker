@@ -18,7 +18,7 @@ String formatePrice(double? price, String symbol) {
         priceLength > priceTotalLength ? 0 : (priceTotalLength - priceLength);
 
     NumberFormat formatter = NumberFormat.currency(
-        locale: "fr",
+        locale: "en",
         symbol: symbol.toUpperCase(),
         decimalDigits: decimalDigits);
 

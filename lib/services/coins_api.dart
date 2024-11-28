@@ -184,8 +184,12 @@ Future<List<Currency>?> getAvailableCurrencies() async {
   return currencies;
 }
 
-Future<List<News>?> getNews(bool type) async {
-  Uri url = Uri.https('openapiv1.coinstats.app', "/news/type/$type");
+Future<List<News>?> getNews({String? type, int page = 20}) async {
+  Map<String, dynamic> queryParams = {
+    'page': page.toString(),
+  };
+  Uri url =
+      Uri.https('openapiv1.coinstats.app', "/news/type/$type", queryParams);
   print(url);
 
   http.Request request = http.Request("get", url);
