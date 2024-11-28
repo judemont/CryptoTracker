@@ -43,7 +43,6 @@ Future<List<Crypto>?> getListings({
   }
 
   var responseJson = json.decode(await response.stream.bytesToString());
-  print(responseJson);
   if (response.statusCode != 200) {
     return null;
   }
@@ -148,26 +147,12 @@ Future<Crypto?> getCoinData(String coin) async {
   );
 }
 
-Future<List<Currency>?> getAvailableCurrencies({
-  String? search,
-  int offset = 0,
-  int limit = 50,
-}) async {
-  Map<String, dynamic> queryParams = {
-    "limit": limit.toString(),
-    "offset": offset.toString()
-  };
-
-  if (search != null) {
-    queryParams["search"] = search;
-  }
-
-  Uri url =
-      Uri.https('api.coinranking.com', "/v2/reference-currencies", queryParams);
+Future<List<Currency>?> getAvailableCurrencies() async {
+  Uri url = Uri.https('openapiv1.coinstats.app', "/fiats");
   print(url);
 
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-access-token": getApiKey()});
+  request.headers.addAll({"X-API-KEY": getApiKey()});
 
   http.StreamedResponse responseJson;
   try {
@@ -178,20 +163,18 @@ Future<List<Currency>?> getAvailableCurrencies({
   }
 
   var response = jsonDecode(await responseJson.stream.bytesToString());
-  if (response["status"] != "success") {
+  if (responseJson.statusCode != 200) {
     return null;
   }
 
-  var data = response["data"];
+  var data = response;
   List<Currency> currencies = [];
-  for (var currency in data["currencies"]) {
+  for (var currency in data) {
     currencies.add(Currency(
-      id: currency["uuid"],
-      type: currency["type"],
       name: currency["name"],
       symbol: currency["symbol"],
-      iconUrl: currency["iconUrl"],
-      sign: currency["sign"],
+      iconUrl: currency["imageUrl"],
+      rate: currency["rate"].toDouble(),
     ));
   }
 

@@ -1,18 +1,14 @@
 class Currency {
-  String? id;
-  String? type;
   String? symbol;
   String? name;
   String? iconUrl;
-  String? sign;
+  double? rate;
 
   Currency({
-    this.id,
-    this.type,
     this.symbol,
     this.name,
     this.iconUrl,
-    this.sign,
+    this.rate,
   });
 
   // Map<String, Object?> toMap() {

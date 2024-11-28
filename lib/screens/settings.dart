@@ -20,8 +20,6 @@ class _SettingsState extends State<Settings> {
   String theme = "";
   List<Currency> availableCurrencies = [];
 
-  final int currenciesLimit = 50;
-  int currenciesOffset = 0;
   bool isLoading = false;
   bool loadingError = false;
 
@@ -115,17 +113,12 @@ class _SettingsState extends State<Settings> {
                       void loadCurrencies({
                         int offset = 0,
                         int limit = 50,
-                        String? search,
                         bool addAll = false,
                       }) {
                         loadingError = false;
                         isLoading = true;
 
-                        getAvailableCurrencies(
-                          offset: offset,
-                          limit: limit,
-                          search: search,
-                        ).then((value) => {
+                        getAvailableCurrencies().then((value) => {
                               setState(() {
                                 isLoading = false;
                                 if (value != null) {
@@ -143,14 +136,6 @@ class _SettingsState extends State<Settings> {
 
                       return Column(
                         children: [
-                          TextField(
-                            decoration: const InputDecoration(
-                              hintText: 'Search',
-                            ),
-                            onChanged: (value) {
-                              loadCurrencies(search: value);
-                            },
-                          ),
                           Expanded(
                             // Wrap ListView with Expanded
                             child: !loadingError
@@ -160,17 +145,6 @@ class _SettingsState extends State<Settings> {
                                         itemBuilder: (context, index) {
                                           Currency currency =
                                               availableCurrencies[index];
-
-                                          if (index >=
-                                              availableCurrencies.length - 5) {
-                                            print(currenciesOffset);
-
-                                            loadCurrencies(
-                                                limit: currenciesLimit,
-                                                offset: currenciesOffset,
-                                                addAll: true);
-                                            currenciesOffset += currenciesLimit;
-                                          }
 
                                           return ListTile(
                                             title: Text(
@@ -185,8 +159,6 @@ class _SettingsState extends State<Settings> {
                                                         currency.iconUrl ?? ""),
                                                   ),
                                             onTap: () {
-                                              Database.setValue("settings",
-                                                  "currencyId", currency.id);
                                               Database.setValue(
                                                   "settings",
                                                   "currencySymbol",
