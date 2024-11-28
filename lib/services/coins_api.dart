@@ -14,7 +14,7 @@ Future<List<Crypto>?> getListings({
   order = "marketCap",
   String? search,
   String orderDirection = "desc",
-  int page = 0,
+  int page = 1,
   int limit = 50,
 }) async {
   String currency = "USD"; // TODO
@@ -34,7 +34,6 @@ Future<List<Crypto>?> getListings({
   Uri url = Uri.https('openapiv1.coinstats.app', "/coins", queryParams);
   http.Request request = http.Request("get", url);
 
-  print(url);
   request.headers.addAll({"X-API-KEY": getApiKey()});
   http.StreamedResponse response;
   try {
@@ -44,12 +43,12 @@ Future<List<Crypto>?> getListings({
   }
 
   var responseJson = json.decode(await response.stream.bytesToString());
+  print(responseJson);
   if (response.statusCode != 200) {
     return null;
   }
 
   var listing = responseJson["result"];
-
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
     cryptoList.add(Crypto(
