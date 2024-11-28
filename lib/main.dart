@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
-  Database.init().then((value) {
-    Database.addDefaultValues();
+  SettingsDb.init().then((value) {
+    SettingsDb.addDefaultValues();
     runApp(const MyApp());
   });
 }
@@ -32,6 +33,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'CryptoTracker',
@@ -73,7 +77,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void updateTheme() {
-    String dataThemeMode = Database.getValue("settings", "theme");
+    String dataThemeMode = SettingsDb.getValue("settings", "theme");
     switch (dataThemeMode) {
       case "dark":
         setState(() {

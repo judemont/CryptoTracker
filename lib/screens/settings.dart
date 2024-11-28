@@ -68,7 +68,7 @@ class _SettingsState extends State<Settings> {
                             title: const Text("Light"),
                             leading: const Icon(Icons.light_mode),
                             onTap: () {
-                              Database.setValue("settings", "theme", "light");
+                              SettingsDb.setValue("settings", "theme", "light");
                               loadSettingsValues();
 
                               MyApp.of(context)!.updateTheme();
@@ -79,7 +79,7 @@ class _SettingsState extends State<Settings> {
                             title: const Text("Dark"),
                             leading: const Icon(Icons.dark_mode),
                             onTap: () {
-                              Database.setValue("settings", "theme", "dark");
+                              SettingsDb.setValue("settings", "theme", "dark");
                               loadSettingsValues();
                               MyApp.of(context)!.updateTheme();
                               Navigator.of(context).pop();
@@ -89,7 +89,8 @@ class _SettingsState extends State<Settings> {
                             title: const Text("System"),
                             leading: const Icon(Icons.settings),
                             onTap: () {
-                              Database.setValue("settings", "theme", "system");
+                              SettingsDb.setValue(
+                                  "settings", "theme", "system");
                               loadSettingsValues();
                               MyApp.of(context)!.updateTheme();
                               Navigator.of(context).pop();
@@ -157,13 +158,13 @@ class _SettingsState extends State<Settings> {
                                                         currency.iconUrl ?? ""),
                                                   ),
                                             onTap: () {
-                                              Database.setValue(
+                                              SettingsDb.setValue(
                                                   "settings",
                                                   "currencySymbol",
                                                   currency.symbol);
-                                              Database.setValue("settings",
+                                              SettingsDb.setValue("settings",
                                                   "currency", currency.name);
-                                              Database.setValue(
+                                              SettingsDb.setValue(
                                                   "settings",
                                                   "currencyRate",
                                                   currency.rate);
@@ -215,9 +216,9 @@ class _SettingsState extends State<Settings> {
 
   void loadSettingsValues() {
     setState(() {
-      currency = Database.getValue("settings", "currency") ?? "";
-      currencySymbol = Database.getValue("settings", "currencySymbol") ?? "";
-      theme = Database.getValue("settings", "theme") ?? "";
+      currency = SettingsDb.getValue("settings", "currency") ?? "";
+      currencySymbol = SettingsDb.getValue("settings", "currencySymbol") ?? "";
+      theme = SettingsDb.getValue("settings", "theme") ?? "";
     });
   }
 }

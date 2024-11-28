@@ -1,5 +1,6 @@
 import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/services/coins_api.dart';
+import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:flutter/material.dart';
 
@@ -58,13 +59,31 @@ class _FavoritesState extends State<Favorites> {
     );
   }
 
-  void loadListings({order = "market_cap_desk"}) {
+  Future<void> loadListings({order = "market_cap_desk"}) async {
     setState(() {
       isLoading = true;
     });
+    try {
+      List<String> favorites = await DatabaseService.getFavorites();
+      List<Crypto> cryptoLists = [];
 
-    List<String> favorites =
-        Database.getValue("portfolio", "favoritesIds").cast<String>();
+      for (var i = 0; i < favorites.length; i++) {
+        Crypto? value = await getCoinData(favorites[i]);
+        if (value != null) {
+          cryptoLists.add(value);
+        }
+      }
+
+      setState(() {
+        listings = cryptoLists;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        loadingError = true;
+        isLoading = false;
+      });
+    }
 
     // getListings(ids: favorites).then((values) {  TODO
     //   setState(() {

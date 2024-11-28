@@ -46,6 +46,8 @@ dependencies:
   flex_color_scheme: ^7.3.1
   flutter_svg: ^2.0.10+1
   sqflite: ^2.3.3+1
+  path_provider: ^2.1.5
+  sqflite_common_ffi: ^2.3.3
 
 dev_dependencies:
   flutter_test:

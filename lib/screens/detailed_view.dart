@@ -1,3 +1,4 @@
+import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
@@ -85,13 +86,15 @@ class _DetailedViewState extends State<DetailedView> {
                       setState(() {
                         favorites.add(crypto.id);
                       });
+                      DatabaseService.newFavorite(crypto.id!);
                     } else {
                       setState(() {
                         favorites.remove(crypto.id);
+                        DatabaseService.removeFavoriteFromCrypto(crypto.id!);
                       });
                     }
 
-                    // Database.setValue("portfolio", "favoritesIds", favorites); // TODO
+                    // SettingsDb.setValue("portfolio", "favoritesIds", favorites); // TODO
                     loadFavorites();
                   },
                   icon: Icon(favorites.contains(crypto.id)
@@ -133,7 +136,7 @@ class _DetailedViewState extends State<DetailedView> {
                               ),
                               Text(formatePrice(
                                   crypto.price,
-                                  Database.getValue(
+                                  SettingsDb.getValue(
                                       "settings", "currencySymbol"))),
                               const SizedBox(
                                 width: 20,
@@ -156,7 +159,7 @@ class _DetailedViewState extends State<DetailedView> {
                                   children: [
                                     Text(formatePrice(
                                         touchedPrice,
-                                        Database.getValue(
+                                        SettingsDb.getValue(
                                             "settings", "currencySymbol"))),
                                     Text(DateFormat('MM/dd/yyyy hh:mm')
                                         .format(touchedTime))
@@ -320,9 +323,10 @@ class _DetailedViewState extends State<DetailedView> {
     });
   }
 
-  void loadFavorites() {
+  Future<void> loadFavorites() async {
+    favorites = await DatabaseService.getFavorites();
     setState(() {
-      // favorites = Database.getValue("portfolio", "favoritesIds") ?? []; // TODO
+      // favorites = SettingsDb.getValue("portfolio", "favoritesIds") ?? []; // TODO
     });
   }
 }

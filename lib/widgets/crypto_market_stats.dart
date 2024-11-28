@@ -16,8 +16,8 @@ class CryptoMarketStats extends StatefulWidget {
 class _CryptoMarketStatsState extends State<CryptoMarketStats> {
   @override
   Widget build(BuildContext context) {
-    // String currency = Database.getValue("settings", "currencyId");
-    String currencySymbol = Database.getValue("settings", "currencySymbol");
+    // String currency = SettingsDb.getValue("settings", "currencyId");
+    String currencySymbol = SettingsDb.getValue("settings", "currencySymbol");
 
     Uri? homePageUri = Uri.tryParse(widget.crypto.website ?? "");
 

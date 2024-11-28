@@ -17,7 +17,7 @@ Future<List<Crypto>?> getListings({
   int page = 1,
   int limit = 50,
 }) async {
-  String currency = Database.getValue("settings", "currency"); // TODO
+  String currency = SettingsDb.getValue("settings", "currency"); // TODO
 
   Map<String, dynamic> queryParams = {
     "currency": currency,
@@ -67,7 +67,7 @@ Future<List<Crypto>?> getListings({
 Future<List<CoinPrice>?> getPricesHistory(
     String coin, String timePeriod) async {
   double currencyRate =
-      Database.getValue("settings", "currencyRate").toDouble();
+      SettingsDb.getValue("settings", "currencyRate").toDouble();
 
   Map<String, dynamic> queryParams = {"period": timePeriod};
 
@@ -105,7 +105,7 @@ Future<List<CoinPrice>?> getPricesHistory(
 }
 
 Future<Crypto?> getCoinData(String coin) async {
-  String currency = Database.getValue("settings", "currency"); // TODO
+  String currency = SettingsDb.getValue("settings", "currency"); // TODO
 
   Map<String, dynamic> queryParams = {
     "currency": currency,
