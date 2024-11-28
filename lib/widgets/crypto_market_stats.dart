@@ -36,8 +36,10 @@ class _CryptoMarketStatsState extends State<CryptoMarketStats> {
             Text(formatePrice(widget.crypto.marketCap, currencySymbol))),
         statRow(
             "Volume", Text(formatePrice(widget.crypto.volume, currencySymbol))),
-        statRow("All Time High",
-            Text(formatePrice(widget.crypto.ath, currencySymbol))),
+        Visibility(
+            visible: widget.crypto.ath != null,
+            child: statRow("All Time High",
+                Text(formatePrice(widget.crypto.ath, currencySymbol)))),
         statRow(
             "Max Supply",
             Text(formatePrice(

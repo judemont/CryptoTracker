@@ -66,18 +66,15 @@ Future<List<Crypto>?> getListings({
 }
 
 Future<List<CoinPrice>?> getPricesHistory(
-    String coinId, String timePeriod) async {
-  String currency = Database.getValue("settings", "currencyId");
+    String coin, String timePeriod) async {
+  String currency = "USD";
 
-  Map<String, dynamic> queryParams = {
-    "referenceCurrencyUuid": currency,
-    "timePeriod": timePeriod
-  };
+  Map<String, dynamic> queryParams = {"period": timePeriod};
 
   Uri url =
-      Uri.https('api.coinranking.com', "/v2/coin/$coinId/history", queryParams);
+      Uri.https('openapiv1.coinstats.app', "/coins/$coin/charts", queryParams);
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-access-token": getApiKey()});
+  request.headers.addAll({"X-API-KEY": getApiKey()});
 
   http.StreamedResponse responseJson;
   try {
@@ -89,35 +86,34 @@ Future<List<CoinPrice>?> getPricesHistory(
 
   var response = json.decode(await responseJson.stream.bytesToString());
 
-  if (response["status"] != "success") {
+  if (responseJson.statusCode != 200) {
     return null;
   }
 
-  var pricesHistoryData = response["data"]["history"];
+  var pricesHistoryData = response;
 
   List<CoinPrice> pricesHistory = [];
 
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
-      dateTime: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] * 1000),
-      price: double.tryParse(data["price"] ?? ""),
+      dateTime: DateTime.fromMillisecondsSinceEpoch(data[0] * 1000),
+      price: data[1].toDouble(),
     ));
   }
 
   return pricesHistory;
 }
 
-Future<Crypto?> getCoinData(String id) async {
-  String currency = Database.getValue("settings", "currencyId");
+Future<Crypto?> getCoinData(String coin) async {
+  String currency = "USD"; // TODO
 
   Map<String, dynamic> queryParams = {
-    "referenceCurrencyUuid": currency,
+    "currency": currency,
   };
 
-  Uri url = Uri.https('api.coinranking.com', "/v2/coin/$id", queryParams);
-
+  Uri url = Uri.https('openapiv1.coinstats.app', "/coins/$coin", queryParams);
   http.Request request = http.Request("get", url);
-  request.headers.addAll({"x-access-token": getApiKey()});
+  request.headers.addAll({"X-API-KEY": getApiKey()});
 
   http.StreamedResponse responseJson;
   try {
@@ -128,30 +124,27 @@ Future<Crypto?> getCoinData(String id) async {
   }
 
   var response = json.decode(await responseJson.stream.bytesToString());
-  if (response["status"] != "success") {
+  if (responseJson.statusCode != 200) {
     return null;
   }
-  var responseData = response["data"]["coin"];
+  var responseData = response;
 
   return Crypto(
-    id: responseData["uuid"],
+    id: responseData["id"],
     name: responseData["name"],
     symbol: responseData["symbol"],
-    price: double.tryParse(responseData["price"] ?? ""),
-    logoUrl: responseData["iconUrl"],
-    priceChangePercentageDay: double.tryParse(responseData["change"] ?? ""),
-    description: responseData["description"],
-    categories: responseData["tags"].cast<String>(),
+    logoUrl: responseData["icon"],
+    priceChangePercentageDay: (responseData["priceChange1d"] ?? 0).toDouble(),
+    // description: responseData["description"],
+    // categories: responseData["tags"].cast<String>(),
     website: responseData["websiteUrl"],
-    ath: double.tryParse(responseData["allTimeHigh"]["price"] ?? ""),
-    athDate: DateTime.fromMillisecondsSinceEpoch(
-        (responseData["allTimeHigh"]["timestamp"] ?? 0) * 1000),
-    marketCap: double.tryParse(responseData["marketCap"] ?? ""),
-    totalSupply: double.tryParse(
-        responseData["supply"]["max"] ?? responseData["supply"]["total"] ?? ""),
-    circulatingSupply:
-        double.tryParse(responseData["supply"]["circulating"] ?? ""),
-    volume: double.tryParse(responseData["24hVolume"] ?? ""),
+    // ath: double.tryParse(responseData["allTimeHigh"]["price"] ?? ""),
+    // athDate: DateTime.fromMillisecondsSinceEpoch(
+    //     (responseData["allTimeHigh"]["timestamp"] ?? 0) * 1000),
+    marketCap: responseData["marketCap"].toDouble(),
+    totalSupply: responseData["totalSupply"].toDouble(),
+    circulatingSupply: responseData["availableSupply"].toDouble(),
+    volume: responseData["volume"].toDouble(),
   );
 }
 

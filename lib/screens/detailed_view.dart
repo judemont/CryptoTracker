@@ -45,7 +45,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   @override
   Widget build(BuildContext context) {
-    const timePeriods = ["1h", "24h", "7d", "30d", "1y", "5y"];
+    const timePeriods = ["24h", "1w", "1m", "3m", "6m", "1y", "all"];
 
     List<Widget> timePeriodsButtons = [];
 
