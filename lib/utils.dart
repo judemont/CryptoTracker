@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 String formatePrice(double? price, String symbol) {
   int priceLength = (price ?? 0.0).floor().toString().length;
@@ -12,7 +13,6 @@ String formatePrice(double? price, String symbol) {
   if ((price ?? 0.0) < (1 / pow(10, priceTotalLength - 1))) {
     formattedPrice =
         "${(price ?? 0).toStringAsFixed(8)} ${symbol.toUpperCase()}";
-    print(formattedPrice);
   } else {
     int decimalDigits =
         priceLength > priceTotalLength ? 0 : (priceTotalLength - priceLength);
@@ -48,4 +48,19 @@ Widget getCoinLogoWidget(String logoUrl) {
       },
     );
   }
+}
+
+Future<http.Response> httpGet(Uri url) async {
+  Uri requestURl =
+      Uri.https("futureofthe.tech", "/proxy", {"url": url.toString()});
+
+  var reponse = await http.get(requestURl);
+
+  return reponse;
+}
+
+String toProxyUrl(String url) {
+  Uri resultURL = Uri.https("futureofthe.tech", "/proxy", {"url": url});
+
+  return resultURL.toString();
 }

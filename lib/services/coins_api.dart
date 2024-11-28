@@ -4,12 +4,11 @@ import 'dart:math';
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/currency.dart';
 import 'package:cryptotracker/models/news.dart';
+import 'package:cryptotracker/utils.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 import 'settingsDB.dart';
-
-const List<String> apiKeys = ["RCOsRbJcp62Ns6gkiqy4a3WGX7aJq9vzHaMIjiHp998="];
 
 Future<List<Crypto>?> getListings({
   order = "marketCap",
@@ -34,21 +33,14 @@ Future<List<Crypto>?> getListings({
 
   Uri url = Uri.https('openapiv1.coinstats.app', "/coins", queryParams);
   print(url);
-  http.Request request = http.Request("get", url);
 
-  request.headers.addAll({"X-API-KEY": getApiKey()});
-  http.StreamedResponse response;
-  try {
-    response = await request.send();
-  } catch (e) {
-    return null;
-  }
+  var response = await httpGet(url);
 
-  var responseJson = json.decode(await response.stream.bytesToString());
   if (response.statusCode != 200) {
     return null;
   }
 
+  var responseJson = json.decode(response.body);
   var listing = responseJson["result"];
   List<Crypto> cryptoList = [];
   for (var crypto in listing) {
@@ -57,7 +49,7 @@ Future<List<Crypto>?> getListings({
       name: crypto["name"],
       symbol: crypto["symbol"],
       price: crypto["price"].toDouble(),
-      logoUrl: crypto["icon"],
+      logoUrl: toProxyUrl(crypto["icon"]),
       priceChangePercentageDay: (crypto["priceChange1d"] ?? 0).toDouble(),
     ));
   }
@@ -74,24 +66,14 @@ Future<List<CoinPrice>?> getPricesHistory(
 
   Uri url =
       Uri.https('openapiv1.coinstats.app', "/coins/$coin/charts", queryParams);
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"X-API-KEY": getApiKey()});
 
-  http.StreamedResponse responseJson;
-  try {
-    responseJson = await request.send();
-  } catch (e) {
-    print(e);
+  var response = await httpGet(url);
+
+  if (response.statusCode != 200) {
     return null;
   }
 
-  var response = json.decode(await responseJson.stream.bytesToString());
-
-  if (responseJson.statusCode != 200) {
-    return null;
-  }
-
-  var pricesHistoryData = response;
+  var pricesHistoryData = json.decode(response.body);
 
   List<CoinPrice> pricesHistory = [];
 
@@ -113,36 +95,23 @@ Future<Crypto?> getCoinData(String coin) async {
   };
 
   Uri url = Uri.https('openapiv1.coinstats.app', "/coins/$coin", queryParams);
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"X-API-KEY": getApiKey()});
 
-  http.StreamedResponse responseJson;
-  try {
-    responseJson = await request.send();
-  } catch (e) {
-    print(e);
+  var response = await httpGet(url);
+
+  if (response.statusCode != 200) {
     return null;
   }
 
-  var response = json.decode(await responseJson.stream.bytesToString());
-  if (responseJson.statusCode != 200) {
-    return null;
-  }
-  var responseData = response;
+  var responseData = json.decode(response.body);
 
   return Crypto(
     id: responseData["id"],
     name: responseData["name"],
     symbol: responseData["symbol"],
-    logoUrl: responseData["icon"],
+    logoUrl: toProxyUrl(responseData["icon"]),
     price: responseData["price"].toDouble(),
     priceChangePercentageDay: (responseData["priceChange1d"] ?? 0).toDouble(),
-    // description: responseData["description"],
-    // categories: responseData["tags"].cast<String>(),
     website: responseData["websiteUrl"],
-    // ath: double.tryParse(responseData["allTimeHigh"]["price"] ?? ""),
-    // athDate: DateTime.fromMillisecondsSinceEpoch(
-    //     (responseData["allTimeHigh"]["timestamp"] ?? 0) * 1000),
     marketCap: responseData["marketCap"].toDouble(),
     totalSupply: responseData["totalSupply"].toDouble(),
     circulatingSupply: responseData["availableSupply"].toDouble(),
@@ -154,29 +123,19 @@ Future<List<Currency>?> getAvailableCurrencies() async {
   Uri url = Uri.https('openapiv1.coinstats.app', "/fiats");
   print(url);
 
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"X-API-KEY": getApiKey()});
+  var response = await httpGet(url);
 
-  http.StreamedResponse responseJson;
-  try {
-    responseJson = await request.send();
-  } catch (e) {
-    print(e);
+  if (response.statusCode != 200) {
     return null;
   }
 
-  var response = jsonDecode(await responseJson.stream.bytesToString());
-  if (responseJson.statusCode != 200) {
-    return null;
-  }
-
-  var data = response;
+  var data = jsonDecode(response.body);
   List<Currency> currencies = [];
   for (var currency in data) {
     currencies.add(Currency(
       name: currency["name"],
       symbol: currency["symbol"],
-      iconUrl: currency["imageUrl"],
+      iconUrl: toProxyUrl(currency["imageUrl"]),
       rate: currency["rate"].toDouble(),
     ));
   }
@@ -192,30 +151,20 @@ Future<List<News>?> getNews({String? type, int page = 20}) async {
       Uri.https('openapiv1.coinstats.app', "/news/type/$type", queryParams);
   print(url);
 
-  http.Request request = http.Request("get", url);
-  request.headers.addAll({"X-API-KEY": getApiKey()});
+  var response = await httpGet(url);
 
-  http.StreamedResponse responseJson;
-  try {
-    responseJson = await request.send();
-  } catch (e) {
-    print(e);
+  if (response.statusCode != 200) {
     return null;
   }
 
-  var response = jsonDecode(await responseJson.stream.bytesToString());
-  if (responseJson.statusCode != 200) {
-    return null;
-  }
-
-  var data = response;
+  var data = jsonDecode(response.body);
 
   List<News> newsList = [];
   for (var news in data) {
     newsList.add(News(
       title: news["title"],
       source: news["source"],
-      imgUrl: news["imgUrl"],
+      imgUrl: toProxyUrl(news["imgUrl"]),
       feedDate: DateTime.fromMillisecondsSinceEpoch(news["feedDate"]),
       url: news["link"],
       description: news["description"],
@@ -223,9 +172,4 @@ Future<List<News>?> getNews({String? type, int page = 20}) async {
   }
 
   return newsList;
-}
-
-String getApiKey() {
-  var random = Random();
-  return apiKeys[random.nextInt(apiKeys.length)];
 }
