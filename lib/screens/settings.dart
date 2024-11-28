@@ -104,7 +104,7 @@ class _SettingsState extends State<Settings> {
             ListTile(
               title: const Text("Currency"),
               leading: const Icon(Icons.attach_money),
-              subtitle: Text(currencySymbol),
+              subtitle: Text(currency),
               onTap: () {
                 showModalBottomSheet(
                   context: context,
