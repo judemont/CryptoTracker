@@ -20,7 +20,7 @@ class _HomeState extends State<Home> {
     const Text("Market Cap"),
     const Icon(Icons.bar_chart_rounded)
   ];
-  int listingOffset = 0;
+  int listingPage = 1;
   final int listingLimit = 50;
   String searchValue = "";
 
@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
                                 title: const Text("24h Volume"),
                                 leading: const Icon(Icons.currency_exchange),
                                 onTap: () {
-                                  listingOrder = "24hVolume";
+                                  listingOrder = "volume";
                                   loadListings(
                                       order: listingOrder,
                                       orderDirection: listingOrderDirection);
@@ -137,7 +137,7 @@ class _HomeState extends State<Home> {
                                 title: const Text("Price Change 24h"),
                                 leading: const Icon(Icons.show_chart),
                                 onTap: () {
-                                  listingOrder = "change";
+                                  listingOrder = "priceChange1d";
                                   loadListings(
                                       order: listingOrder,
                                       orderDirection: listingOrderDirection);
@@ -148,22 +148,22 @@ class _HomeState extends State<Home> {
                                   Navigator.pop(context);
                                 },
                               ),
-                              ListTile(
-                                title: const Text("Recently listed"),
-                                leading:
-                                    const Icon(Icons.new_releases_outlined),
-                                onTap: () {
-                                  listingOrder = "listedAt";
-                                  loadListings(
-                                      order: listingOrder,
-                                      orderDirection: listingOrderDirection);
-                                  sortByButtonChildren = [
-                                    const Text("Recently listed"),
-                                    const Icon(Icons.new_releases_outlined)
-                                  ];
-                                  Navigator.pop(context);
-                                },
-                              ),
+                              // ListTile(
+                              //   title: const Text("Recently listed"),
+                              //   leading:
+                              //       const Icon(Icons.new_releases_outlined),
+                              //   onTap: () {
+                              //     listingOrder = "listedAt";
+                              //     loadListings(
+                              //         order: listingOrder,
+                              //         orderDirection: listingOrderDirection);
+                              //     sortByButtonChildren = [
+                              //       const Text("Recently listed"),
+                              //       const Icon(Icons.new_releases_outlined)
+                              //     ];
+                              //     Navigator.pop(context);
+                              //   },
+                              // ),
                             ],
                           );
                         },
@@ -194,11 +194,11 @@ class _HomeState extends State<Home> {
                               listings: listings,
                               onScrollEnd: () {
                                 if (searchValue.isEmpty) {
-                                  listingOffset += listingLimit;
+                                  listingPage += 1;
                                   loadListings(
                                       clearListings: false,
                                       limit: listingLimit,
-                                      offset: listingOffset,
+                                      page: listingPage,
                                       order: listingOrder);
                                 }
                               },
@@ -224,7 +224,7 @@ class _HomeState extends State<Home> {
   Future<void> loadListings({
     order = "marketCap",
     limit = 50,
-    offset = 0,
+    page = 1,
     clearListings = true,
     orderDirection = "desc",
   }) async {
@@ -234,7 +234,7 @@ class _HomeState extends State<Home> {
     var values = await getListings(
       order: order,
       limit: limit,
-      offset: offset,
+      page: page,
       orderDirection: orderDirection,
     );
 

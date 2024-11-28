@@ -66,15 +66,15 @@ class _FavoritesState extends State<Favorites> {
     List<String> favorites =
         Database.getValue("portfolio", "favoritesIds").cast<String>();
 
-    getListings(ids: favorites).then((values) {
-      setState(() {
-        isLoading = false;
-        if (values != null) {
-          listings = values;
-        } else {
-          loadingError = true;
-        }
-      });
-    });
+    // getListings(ids: favorites).then((values) {  TODO
+    //   setState(() {
+    //     isLoading = false;
+    //     if (values != null) {
+    //       listings = values;
+    //     } else {
+    //       loadingError = true;
+    //     }
+    //   });
+    // });
   }
 }
