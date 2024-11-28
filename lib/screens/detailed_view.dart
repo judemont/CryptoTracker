@@ -59,7 +59,7 @@ class _DetailedViewState extends State<DetailedView> {
               padding: WidgetStateProperty.all(EdgeInsets.zero),
               backgroundColor: WidgetStateProperty.all(
                   selectedTimePriceChartInterval == timePeriod
-                      ? Theme.of(context).primaryColor
+                      ? const Color.fromARGB(255, 0, 38, 255)
                       : Colors.transparent)),
           child: Text(timePeriod,
               style: TextStyle(
@@ -134,10 +134,13 @@ class _DetailedViewState extends State<DetailedView> {
                               const SizedBox(
                                 width: 20,
                               ),
-                              Text(formatePrice(
-                                  crypto.price,
-                                  SettingsDb.getValue(
-                                      "settings", "currencySymbol"))),
+                              Text(
+                                formatePrice(
+                                    crypto.price,
+                                    SettingsDb.getValue(
+                                        "settings", "currencySymbol")),
+                                style: const TextStyle(fontSize: 20),
+                              ),
                               const SizedBox(
                                 width: 20,
                               ),
@@ -157,10 +160,13 @@ class _DetailedViewState extends State<DetailedView> {
                           isTouchingChart
                               ? Column(
                                   children: [
-                                    Text(formatePrice(
-                                        touchedPrice,
-                                        SettingsDb.getValue(
-                                            "settings", "currencySymbol"))),
+                                    Text(
+                                      formatePrice(
+                                          touchedPrice,
+                                          SettingsDb.getValue(
+                                              "settings", "currencySymbol")),
+                                      style: const TextStyle(fontSize: 17),
+                                    ),
                                     Text(DateFormat('MM/dd/yyyy hh:mm')
                                         .format(touchedTime))
                                   ],
@@ -173,7 +179,7 @@ class _DetailedViewState extends State<DetailedView> {
                           ),
                           Container(
                               margin: const EdgeInsets.only(right: 10),
-                              height: 300,
+                              height: 200,
                               child: Listener(
                                   onPointerDown: (event) => setState(() {
                                         isTouchingChart = true;
@@ -219,18 +225,16 @@ class _DetailedViewState extends State<DetailedView> {
                                         }
                                       },
                                     ),
-                                    borderData: FlBorderData(show: true),
+                                    borderData: FlBorderData(show: false),
                                     gridData: const FlGridData(show: false),
                                     titlesData: const FlTitlesData(show: false),
                                     lineBarsData: [
                                       LineChartBarData(
-                                          color: Colors.purple,
-                                          dotData: const FlDotData(show: false),
-                                          spots: pricesHistoryChartData,
-                                          belowBarData: BarAreaData(
-                                              show: true,
-                                              color: Colors.purple
-                                                  .withOpacity(0.6)))
+                                        color: const Color.fromARGB(
+                                            255, 0, 26, 255),
+                                        dotData: const FlDotData(show: false),
+                                        spots: pricesHistoryChartData,
+                                      )
                                     ],
                                   )))),
                           const SizedBox(

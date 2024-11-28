@@ -9,20 +9,20 @@ String formatePrice(double? price, String symbol) {
   int priceTotalLength = 5;
 
   String formattedPrice;
-
   if ((price ?? 0.0) < (1 / pow(10, priceTotalLength - 1))) {
     formattedPrice =
         "${(price ?? 0).toStringAsFixed(8)} ${symbol.toUpperCase()}";
+    print(formattedPrice);
   } else {
     int decimalDigits =
         priceLength > priceTotalLength ? 0 : (priceTotalLength - priceLength);
 
     NumberFormat formatter = NumberFormat.currency(
-        locale: "en",
+        locale: "fr",
         symbol: symbol.toUpperCase(),
         decimalDigits: decimalDigits);
 
-    formattedPrice = formatter.format(price ?? 0.0);
+    formattedPrice = formatter.format(price ?? 0.0).replaceAll(",", ".");
   }
 
   return formattedPrice;
