@@ -1,4 +1,4 @@
-import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';

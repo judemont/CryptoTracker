@@ -6,7 +6,7 @@ import 'package:cryptotracker/models/currency.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
-import 'database.dart';
+import 'settingsDB.dart';
 
 const List<String> apiKeys = ["RCOsRbJcp62Ns6gkiqy4a3WGX7aJq9vzHaMIjiHp998="];
 
@@ -17,7 +17,7 @@ Future<List<Crypto>?> getListings({
   int page = 1,
   int limit = 50,
 }) async {
-  String currency = "USD"; // TODO
+  String currency = Database.getValue("settings", "currency"); // TODO
 
   Map<String, dynamic> queryParams = {
     "currency": currency,
@@ -32,6 +32,7 @@ Future<List<Crypto>?> getListings({
   }
 
   Uri url = Uri.https('openapiv1.coinstats.app', "/coins", queryParams);
+  print(url);
   http.Request request = http.Request("get", url);
 
   request.headers.addAll({"X-API-KEY": getApiKey()});
@@ -65,7 +66,8 @@ Future<List<Crypto>?> getListings({
 
 Future<List<CoinPrice>?> getPricesHistory(
     String coin, String timePeriod) async {
-  String currency = "USD";
+  double currencyRate =
+      Database.getValue("settings", "currencyRate").toDouble();
 
   Map<String, dynamic> queryParams = {"period": timePeriod};
 
@@ -95,7 +97,7 @@ Future<List<CoinPrice>?> getPricesHistory(
   for (var data in pricesHistoryData) {
     pricesHistory.add(CoinPrice(
       dateTime: DateTime.fromMillisecondsSinceEpoch(data[0] * 1000),
-      price: data[1].toDouble(),
+      price: data[1].toDouble() * currencyRate,
     ));
   }
 
@@ -103,7 +105,7 @@ Future<List<CoinPrice>?> getPricesHistory(
 }
 
 Future<Crypto?> getCoinData(String coin) async {
-  String currency = "USD"; // TODO
+  String currency = Database.getValue("settings", "currency"); // TODO
 
   Map<String, dynamic> queryParams = {
     "currency": currency,

@@ -1,5 +1,5 @@
 import 'package:cryptotracker/screens/detailed_view.dart';
-import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 

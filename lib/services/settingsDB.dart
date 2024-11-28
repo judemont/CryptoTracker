@@ -14,18 +14,21 @@ class Database {
 
   static void addDefaultValues() {
     Box settingsBox = Hive.box("settings");
-    if (settingsBox.get("currencyId") == null) {
-      settingsBox.put("currencyId", "yhjMzLPhuIDl");
+
+    if (settingsBox.get("currency") == null) {
+      settingsBox.put("currency", "USD");
     }
+
     if (settingsBox.get("currencySymbol") == null) {
-      settingsBox.put("currencySymbol", "USD");
+      settingsBox.put("currencySymbol", "\$");
     }
+
+    if (settingsBox.get("currencyRate") == null) {
+      settingsBox.put("currencyRate", 0.0);
+    }
+
     if (settingsBox.get("theme") == null) {
       settingsBox.put("theme", "system");
-    }
-    Box portfolioBox = Hive.box("portfolio");
-    if (portfolioBox.get("favoritesIds") == null) {
-      portfolioBox.put("favoritesIds", []);
     }
   }
 

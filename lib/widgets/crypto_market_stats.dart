@@ -1,4 +1,4 @@
-import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,7 +16,7 @@ class CryptoMarketStats extends StatefulWidget {
 class _CryptoMarketStatsState extends State<CryptoMarketStats> {
   @override
   Widget build(BuildContext context) {
-    String currency = Database.getValue("settings", "currencyId");
+    // String currency = Database.getValue("settings", "currencyId");
     String currencySymbol = Database.getValue("settings", "currencySymbol");
 
     Uri? homePageUri = Uri.tryParse(widget.crypto.website ?? "");

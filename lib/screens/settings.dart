@@ -1,6 +1,6 @@
 import 'package:cryptotracker/main.dart';
 import 'package:cryptotracker/services/coins_api.dart';
-import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -111,8 +111,6 @@ class _SettingsState extends State<Settings> {
                     return StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                       void loadCurrencies({
-                        int offset = 0,
-                        int limit = 50,
                         bool addAll = false,
                       }) {
                         loadingError = false;
@@ -163,6 +161,12 @@ class _SettingsState extends State<Settings> {
                                                   "settings",
                                                   "currencySymbol",
                                                   currency.symbol);
+                                              Database.setValue("settings",
+                                                  "currency", currency.name);
+                                              Database.setValue(
+                                                  "settings",
+                                                  "currencyRate",
+                                                  currency.rate);
                                               loadSettingsValues();
                                               Navigator.of(context).pop();
                                             },
@@ -211,7 +215,7 @@ class _SettingsState extends State<Settings> {
 
   void loadSettingsValues() {
     setState(() {
-      currency = Database.getValue("settings", "currencyId") ?? "";
+      currency = Database.getValue("settings", "currency") ?? "";
       currencySymbol = Database.getValue("settings", "currencySymbol") ?? "";
       theme = Database.getValue("settings", "theme") ?? "";
     });

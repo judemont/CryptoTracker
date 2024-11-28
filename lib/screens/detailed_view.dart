@@ -1,4 +1,4 @@
-import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -91,7 +91,7 @@ class _DetailedViewState extends State<DetailedView> {
                       });
                     }
 
-                    Database.setValue("portfolio", "favoritesIds", favorites);
+                    // Database.setValue("portfolio", "favoritesIds", favorites); // TODO
                     loadFavorites();
                   },
                   icon: Icon(favorites.contains(crypto.id)
@@ -322,7 +322,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   void loadFavorites() {
     setState(() {
-      favorites = Database.getValue("portfolio", "favoritesIds") ?? [];
+      // favorites = Database.getValue("portfolio", "favoritesIds") ?? []; // TODO
     });
   }
 }
