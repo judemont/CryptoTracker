@@ -134,6 +134,7 @@ Future<Crypto?> getCoinData(String coin) async {
     name: responseData["name"],
     symbol: responseData["symbol"],
     logoUrl: responseData["icon"],
+    price: responseData["price"].toDouble(),
     priceChangePercentageDay: (responseData["priceChange1d"] ?? 0).toDouble(),
     // description: responseData["description"],
     // categories: responseData["tags"].cast<String>(),
