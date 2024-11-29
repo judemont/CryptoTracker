@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Name=CryptoTracker
-Exec=cryptotracker %u
-Icon=cryptotracker
-Categories=Finance;

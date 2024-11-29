@@ -35,7 +35,7 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("NewsPage"),
+        title: const Text("News"),
         centerTitle: true,
       ),
       body: Column(
