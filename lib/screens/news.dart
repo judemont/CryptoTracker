@@ -3,7 +3,6 @@ import 'package:cryptotracker/widgets/news_list.dart';
 import 'package:flutter/material.dart';
 
 import '../services/coins_api.dart';
-import '../widgets/coins_list.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
