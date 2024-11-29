@@ -6,6 +6,8 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   SettingsDb.init().then((value) {
     SettingsDb.addDefaultValues();
     runApp(const MyApp());
@@ -33,9 +35,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'CryptoTracker',
