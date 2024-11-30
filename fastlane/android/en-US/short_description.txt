@@ -1,1 +1,1 @@
-Track cryptocurrency prices in real-time with CryptoTracker
+Track crypto prices, news, and stats - private & open source
