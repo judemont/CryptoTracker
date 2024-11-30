@@ -24,7 +24,7 @@ class SettingsDb {
     }
 
     if (settingsBox.get("currencyRate") == null) {
-      settingsBox.put("currencyRate", 0.0);
+      settingsBox.put("currencyRate", 1.0);
     }
 
     if (settingsBox.get("theme") == null) {
