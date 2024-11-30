@@ -37,13 +37,13 @@ dependencies:
   catppuccin_flutter: ^1.0.0
   http: ^1.2.1
   fl_chart: ^0.69.0
-  intl: ^0.19.0
+  intl: ^0.20.1
   url_launcher: ^6.2.6
   shared_preferences: ^2.2.3
   hive: ^2.2.3
   path: ^1.9.0
   hive_flutter: ^1.1.0
-  flex_color_scheme: ^7.3.1
+  flex_color_scheme: ^8.0.1
   flutter_svg: ^2.0.10+1
   sqflite: ^2.3.3+1
   path_provider: ^2.1.5
@@ -58,7 +58,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
