@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/currency.dart';
 import 'package:cryptotracker/models/news.dart';
 import 'package:cryptotracker/utils.dart';
-import 'package:http/http.dart' as http;
 
 import '../models/crypto.dart';
 import 'settingsDB.dart';

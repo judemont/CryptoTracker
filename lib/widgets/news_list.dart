@@ -1,10 +1,7 @@
 import 'package:cryptotracker/models/news.dart';
-import 'package:cryptotracker/screens/detailed_view.dart';
-import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../pages_layout.dart';
 
 class NewsList extends StatefulWidget {
   final List<News> listings;
