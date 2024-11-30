@@ -21,7 +21,8 @@ _Made with ❤️ and Flutter_
 
 ### Screenshots
 
-<img src="https://github.com/judemont/CryptoTracker/assets/96385330/e29ceb83-a227-4b56-8c08-7cd97da7d6cf" style="width: 20%;">
-<img src="https://github.com/judemont/CryptoTracker/assets/96385330/052df324-e46c-4cb1-b9bf-b2b2aa53806a" style="width: 20%;">
-<img src="https://github.com/judemont/CryptoTracker/assets/96385330/660150a1-f368-4c28-be06-a75857f808d0" style="width: 20%;">
-<img src="https://github.com/judemont/CryptoTracker/assets/96385330/19f82d99-9c20-46f7-8a5c-128b64339d08" style="width: 20%;">
+<img src="https://github.com/user-attachments/assets/169afd14-9cc6-45c0-a178-b8be69ec6f37" style="width: 20%;">
+<img src="https://github.com/user-attachments/assets/11cc8834-7d48-4306-b592-f713b402c348" style="width: 20%;">
+<img src="https://github.com/user-attachments/assets/93beec7c-58dc-4910-be2f-1e59fca8c245" style="width: 20%;">
+<img src="https://github.com/user-attachments/assets/991710e8-7d8e-4503-be89-45faccfc50d4" style="width: 20%;">
+<img src="https://github.com/user-attachments/assets/b5701b08-26cf-4291-8520-e5316179c137" style="width: 20%;">
