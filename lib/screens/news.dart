@@ -35,7 +35,6 @@ class _NewsPageState extends State<NewsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("News"),
-        centerTitle: true,
       ),
       body: Column(
         children: [

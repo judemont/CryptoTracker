@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,11 +28,7 @@ String formatePrice(double? price, String symbol) {
 }
 
 Widget getCoinLogoWidget(String logoUrl) {
-  if (logoUrl.contains(".svg")) {
-    return SvgPicture.network(
-      logoUrl,
-    );
-  } else {
+
     return Image.network(
       logoUrl,
       loadingBuilder: (context, child, loadingProgress) {
@@ -47,7 +42,7 @@ Widget getCoinLogoWidget(String logoUrl) {
         );
       },
     );
-  }
+  
 }
 
 Future<http.Response> httpGet(Uri url) async {
