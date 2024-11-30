@@ -189,6 +189,7 @@ class _DetailedViewState extends State<DetailedView> {
                                       }),
                                   child: LineChart(LineChartData(
                                     lineTouchData: LineTouchData(
+                                      
                                       touchTooltipData: LineTouchTooltipData(
                                           // tooltipBgColor:
                                           //     Colors.white.withAlpha(0),
@@ -230,6 +231,7 @@ class _DetailedViewState extends State<DetailedView> {
                                     titlesData: const FlTitlesData(show: false),
                                     lineBarsData: [
                                       LineChartBarData(
+                                        isCurved: true,
                                         color: const Color.fromARGB(
                                             255, 0, 26, 255),
                                         dotData: const FlDotData(show: false),
