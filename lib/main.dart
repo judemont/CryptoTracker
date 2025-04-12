@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'screens/home.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:adwaita/adwaita.dart';
 
 void main() {
   sqfliteFfiInit();
@@ -38,8 +39,8 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'CryptoTracker',
       themeMode: _themeMode,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: AdwaitaThemeData.light(),
+      darkTheme: AdwaitaThemeData.dark(),
       home: const PagesLayout(child: Home()),
     );
   }

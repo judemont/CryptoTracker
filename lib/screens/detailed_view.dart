@@ -189,7 +189,6 @@ class _DetailedViewState extends State<DetailedView> {
                                       }),
                                   child: LineChart(LineChartData(
                                     lineTouchData: LineTouchData(
-                                    
                                       touchTooltipData: LineTouchTooltipData(
                                           // tooltipBgColor:
                                           //     Colors.white.withAlpha(0),
@@ -232,16 +231,18 @@ class _DetailedViewState extends State<DetailedView> {
                                     lineBarsData: [
                                       LineChartBarData(
                                         belowBarData: BarAreaData(
-                                          show: true,
-                                          gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                            colors: [
-                                            const Color.fromARGB(255, 0, 19, 226),
-                                            const Color.fromARGB(146, 0, 19, 226),
-                                            const Color.fromARGB(0, 0, 19, 226)
-                                          ])
-                                        ),
+                                            show: true,
+                                            gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                  const Color.fromARGB(
+                                                      255, 0, 19, 226),
+                                                  const Color.fromARGB(
+                                                      146, 0, 19, 226),
+                                                  const Color.fromARGB(
+                                                      0, 0, 19, 226)
+                                                ])),
                                         isCurved: true,
                                         color: const Color.fromARGB(
                                             255, 0, 26, 255),
@@ -256,7 +257,7 @@ class _DetailedViewState extends State<DetailedView> {
                           Container(
                             margin: const EdgeInsets.only(right: 10),
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: Theme.of(context).colorScheme.primary,
                                 border: Border.all(),
                                 borderRadius: const BorderRadius.all(
                                     Radius.circular(20))),
