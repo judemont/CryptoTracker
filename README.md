@@ -17,7 +17,7 @@ _Made with ❤️ and Flutter_
 
 
 ## Desktop/Web version ?
-You can try (CryptoFlow)[https://github.com/judemont/cryptoflow]
+You can try [CryptoFlow](https://github.com/judemont/cryptoflow)
 
 
 ### Screenshots
