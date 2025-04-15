@@ -16,7 +16,8 @@ An Android app to track crypto-currency prices in real time.
 _Made with ❤️ and Flutter_
 
 
-
+## Desktop/Web version ?
+You can try (CryptoFlow)[https://github.com/judemont/cryptoflow]
 
 
 ### Screenshots
