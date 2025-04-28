@@ -28,26 +28,24 @@ String formatePrice(double? price, String symbol) {
 }
 
 Widget getCoinLogoWidget(String logoUrl) {
-
-    return Image.network(
-      logoUrl,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return CircularProgressIndicator(
-          value: loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!
-              : null,
-          color: Theme.of(context).colorScheme.onPrimary,
-        );
-      },
-    );
-  
+  return Image.network(
+    logoUrl,
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) return child;
+      return CircularProgressIndicator(
+        value: loadingProgress.expectedTotalBytes != null
+            ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes!
+            : null,
+        color: Theme.of(context).colorScheme.onPrimary,
+      );
+    },
+  );
 }
 
 Future<http.Response> httpGet(Uri url) async {
   Uri requestURl =
-      Uri.https("futureofthe.tech", "/proxy", {"url": url.toString()});
+      Uri.https("ctproxy.futureofthe.tech", "", {"url": url.toString()});
 
   var reponse = await http.get(requestURl);
 
@@ -55,7 +53,7 @@ Future<http.Response> httpGet(Uri url) async {
 }
 
 String toProxyUrl(String url) {
-  Uri resultURL = Uri.https("futureofthe.tech", "/proxy", {"url": url});
+  Uri resultURL = Uri.https("ctproxy.futureofthe.tech", "", {"url": url});
 
   return resultURL.toString();
 }
