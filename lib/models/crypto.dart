@@ -17,6 +17,7 @@ class Crypto {
   double? totalSupply;
   double? circulatingSupply;
   double? volume;
+  double? amount;
 
   Crypto({
     this.id,
@@ -37,6 +38,7 @@ class Crypto {
     this.totalSupply,
     this.circulatingSupply,
     this.volume,
+    this.amount,
   });
 
   Map<String, dynamic> toMap() {
@@ -59,6 +61,7 @@ class Crypto {
       'totalSupply': totalSupply,
       'circulatingSupply': circulatingSupply,
       'volume': volume,
+      'amount': amount,
     };
   }
 }

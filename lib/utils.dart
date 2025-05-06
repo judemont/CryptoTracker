@@ -52,7 +52,10 @@ Future<http.Response> httpGet(Uri url) async {
   return reponse;
 }
 
-String toProxyUrl(String url) {
+String? toProxyUrl(String? url) {
+  if (url == null) {
+    return null;
+  }
   Uri resultURL = Uri.https("ctproxy.futureofthe.tech", "", {"url": url});
 
   return resultURL.toString();

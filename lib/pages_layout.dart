@@ -1,4 +1,5 @@
 import 'package:cryptotracker/screens/favorites.dart';
+import 'package:cryptotracker/screens/portfolio.dart';
 import 'package:cryptotracker/screens/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,7 @@ class _PagesLayoutState extends State<PagesLayout> {
   List<Widget> pages = [
     const Home(),
     const Favorites(),
+    const Portfolio(),
     const Settings(),
   ];
 
@@ -51,6 +53,8 @@ class _PagesLayoutState extends State<PagesLayout> {
                   NavigationDestination(icon: Icon(Icons.home), label: "Home"),
                   NavigationDestination(
                       icon: Icon(Icons.star), label: "Favorites"),
+                  NavigationDestination(
+                      icon: Icon(Icons.pie_chart), label: "Portfolio"),
                   NavigationDestination(
                       icon: Icon(Icons.settings), label: "Settings")
                 ],

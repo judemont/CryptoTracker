@@ -1,4 +1,4 @@
-import 'package:cryptotracker/models/portfolio_coin.dart';
+import 'package:cryptotracker/models/crypto.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -102,13 +102,13 @@ class DatabaseService {
     return id;
   }
 
-  static Future<List<PortfolioCoin>> getPortfolio() async {
+  static Future<List<Crypto>> getPortfolio() async {
     final db = await DatabaseService.initializeDb();
 
     List<Map<String, dynamic>> queryResult = await db.query('portfolio');
 
     return queryResult
-        .map((e) => PortfolioCoin(id: e["crypto"], amount: e["amount"]))
+        .map((e) => Crypto(id: e["crypto"], amount: e["amount"]))
         .toList();
   }
 
