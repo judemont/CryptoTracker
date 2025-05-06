@@ -9,7 +9,8 @@ import '../pages_layout.dart';
 class Portfoliocoinslist extends StatefulWidget {
   final List<Crypto> listings;
   final Function? onScrollEnd;
-  const Portfoliocoinslist({super.key, required this.listings, this.onScrollEnd});
+  const Portfoliocoinslist(
+      {super.key, required this.listings, this.onScrollEnd});
 
   @override
   State<Portfoliocoinslist> createState() => _CoinsListState();
@@ -21,6 +22,9 @@ class _CoinsListState extends State<Portfoliocoinslist> {
     return ListView.builder(
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
+          double amountValue = (widget.listings[index].price ??
+              0) * (widget.listings[index].amount ?? 0);
+
           if (index >= widget.listings.length - 5) {
             if (widget.onScrollEnd != null) {
               widget.onScrollEnd!();
@@ -30,8 +34,8 @@ class _CoinsListState extends State<Portfoliocoinslist> {
             title: Text(widget.listings[index].name ?? ""),
             subtitle: Visibility(
                 visible: widget.listings[index].symbol != null,
-                child:
-                    Text(widget.listings[index].symbol?.toUpperCase() ?? "")),
+                child: Text(
+                    "${widget.listings[index].amount} ${widget.listings[index].symbol ?? ""}")),
             leading: SizedBox(
               width: 50,
               height: 50,
@@ -41,22 +45,28 @@ class _CoinsListState extends State<Portfoliocoinslist> {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Visibility(
                   visible: widget.listings[index].price != null,
-                  child: Text(formatePrice(widget.listings[index].price,
-                      SettingsDb.getValue("settings", "currencySymbol")))),
-              Visibility(
-                visible:
-                    widget.listings[index].priceChangePercentageDay != null,
-                child: Text(
-                  "${widget.listings[index].priceChangePercentageDay ?? 0.0}%",
+                  child: Text(
+                    formatePrice(amountValue,
+                        SettingsDb.getValue("settings", "currencySymbol")),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+              Text(
+                  widget.listings[index].price != null
+                      ? formatePrice(
+                          amountValue /
+                              100 *
+                              (widget.listings[index]
+                                      .priceChangePercentageDay ??
+                                  1),
+                          SettingsDb.getValue("settings", "currencySymbol"))
+                      : "",
                   style: TextStyle(
-                      fontSize: 13,
-                      color: (widget.listings[index].priceChangePercentageDay ??
-                                  0) >=
-                              0
+                      color: widget.listings[index].priceChangePercentageDay !=
+                                  null &&
+                              widget.listings[index].priceChangePercentageDay! >
+                                  0
                           ? Colors.green
-                          : Colors.red),
-                ),
-              ),
+                          : Colors.red)),
             ]),
             onTap: () {
               Navigator.of(context).push(

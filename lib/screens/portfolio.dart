@@ -48,6 +48,12 @@ class _PortfolioState extends State<Portfolio> {
   }
 
   @override
+  void initState() {
+    loadListings();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Portfolio")),
