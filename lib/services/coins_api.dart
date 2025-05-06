@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/currency.dart';
-import 'package:cryptotracker/models/news.dart';
 import 'package:cryptotracker/utils.dart';
 
 import '../models/crypto.dart';
@@ -141,33 +140,3 @@ Future<List<Currency>?> getAvailableCurrencies() async {
   return currencies;
 }
 
-Future<List<News>?> getNews({String? type, int page = 20}) async {
-  Map<String, dynamic> queryParams = {
-    'page': page.toString(),
-  };
-  Uri url =
-      Uri.https('openapiv1.coinstats.app', "/news/type/$type", queryParams);
-  print(url);
-
-  var response = await httpGet(url);
-
-  if (response.statusCode != 200) {
-    return null;
-  }
-
-  var data = jsonDecode(response.body);
-
-  List<News> newsList = [];
-  for (var news in data) {
-    newsList.add(News(
-      title: news["title"],
-      source: news["source"],
-      imgUrl: toProxyUrl(news["imgUrl"]),
-      feedDate: DateTime.fromMillisecondsSinceEpoch(news["feedDate"]),
-      url: news["link"],
-      description: news["description"],
-    ));
-  }
-
-  return newsList;
-}
