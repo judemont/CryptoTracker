@@ -1,6 +1,8 @@
 import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
+import 'package:cryptotracker/services/settingsDB.dart';
+import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/new_portfolio_dialog.dart';
 import 'package:cryptotracker/widgets/portfolio_coins_list.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,8 @@ class _PortfolioState extends State<Portfolio> {
   bool isLoading = false;
   bool loadingError = false;
   List<Crypto> listings = [];
+  double totalValue = 0;
+  double totalChange = 0;
 
   Future<void> loadListings() async {
     setState(() {
@@ -30,6 +34,11 @@ class _PortfolioState extends State<Portfolio> {
         Crypto? value = await getCoinData(portfolio[i].id!);
         if (value != null) {
           value.amount = portfolio[i].amount;
+          setState(() {
+            totalValue += (value.price ?? 0) * (value.amount ?? 0);
+            totalChange +=
+                (value.priceChangePercentageDay ?? 0) * (value.amount ?? 0);
+          });
           cryptoLists.add(value);
         }
       }
@@ -70,6 +79,21 @@ class _PortfolioState extends State<Portfolio> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 10),
+          Text(
+            formatePrice(
+                totalValue, SettingsDb.getValue("settings", "currencySymbol")),
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            formatePrice(
+                totalChange, SettingsDb.getValue("settings", "currencySymbol")),
+            style: TextStyle(
+                fontSize: 15,
+                color: totalChange > 0 ? Colors.green : Colors.red),
+          ),
+          const SizedBox(height: 10),
           Expanded(
               child: RefreshIndicator(
                   color: Theme.of(context).colorScheme.primary,
