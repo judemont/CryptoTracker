@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:cryptotracker/screens/portfolio_coin_detailed_view.dart';
+import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +12,12 @@ import '../pages_layout.dart';
 class PortfolioCoinsList extends StatefulWidget {
   final List<Crypto> listings;
   final Function? onScrollEnd;
+  final Function(Crypto) onLongPress;
   const PortfolioCoinsList(
-      {super.key, required this.listings, this.onScrollEnd});
+      {super.key,
+      required this.listings,
+      this.onScrollEnd,
+      required this.onLongPress});
 
   @override
   State<PortfolioCoinsList> createState() => _CoinsListState();
@@ -41,6 +48,7 @@ class _CoinsListState extends State<PortfolioCoinsList> {
               height: 50,
               child: getCoinLogoWidget(widget.listings[index].logoUrl ?? ""),
             ),
+            onLongPress: () => widget.onLongPress(widget.listings[index]),
             trailing:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Visibility(
@@ -75,7 +83,7 @@ class _CoinsListState extends State<PortfolioCoinsList> {
                         displayNavBar: false,
                         child: PortfolioCoinDetailedView(
                           cryptoId: widget.listings[index].id!,
-                          amount: widget.listings[index].amount??1,
+                          amount: widget.listings[index].amount ?? 1,
                         ))),
               );
             },

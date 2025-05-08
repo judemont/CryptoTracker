@@ -102,6 +102,14 @@ class DatabaseService {
     return id;
   }
 
+  static Future<int> updatePortfolioCoin(String cryptoId, double amount) async {
+    removePortfolioCoin(cryptoId);
+    final db = await DatabaseService.initializeDb();
+    final id =
+        await db.insert('portfolio', {'crypto': cryptoId, 'amount': amount});
+    return id;
+  }
+
   static Future<List<Crypto>> getPortfolio() async {
     final db = await DatabaseService.initializeDb();
 
@@ -114,6 +122,6 @@ class DatabaseService {
 
   static Future<void> removePortfolioCoin(String cryptoId) async {
     final db = await DatabaseService.initializeDb();
-    db.delete("portfolio", where: "crypto = $cryptoId");
+    db.delete("portfolio", where: "crypto = '$cryptoId'");
   }
 }
