@@ -135,6 +135,11 @@ class _PortfolioState extends State<Portfolio> {
                                             ]),
                                             actions: [
                                               TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("Cancel")),
+                                              TextButton(
                                                   onPressed: () async {
                                                     await DatabaseService
                                                         .removePortfolioCoin(
@@ -147,11 +152,6 @@ class _PortfolioState extends State<Portfolio> {
                                                     }
                                                   },
                                                   child: const Text("Remove")),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text("Cancel")),
                                               TextButton(
                                                   onPressed: () async {
                                                     await DatabaseService
