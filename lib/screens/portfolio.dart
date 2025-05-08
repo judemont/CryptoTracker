@@ -1,9 +1,8 @@
 import 'package:cryptotracker/models/crypto.dart';
-import 'package:cryptotracker/screens/settings.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
-import 'package:cryptotracker/widgets/newPortfolioDialog.dart';
-import 'package:cryptotracker/widgets/portfolioCoinsList.dart';
+import 'package:cryptotracker/widgets/new_portfolio_dialog.dart';
+import 'package:cryptotracker/widgets/portfolio_coins_list.dart';
 import 'package:flutter/material.dart';
 
 class Portfolio extends StatefulWidget {
@@ -62,7 +61,7 @@ class _PortfolioState extends State<Portfolio> {
           showDialog(
               context: context,
               builder: (context) {
-                return Newportfoliodialog(
+                return NewPortfolioDialog(
                   onAddCoin: () => loadListings(),
                 );
               });
@@ -77,7 +76,7 @@ class _PortfolioState extends State<Portfolio> {
                   child: !loadingError
                       ? (!isLoading
                           ? (listings.isNotEmpty
-                              ? Portfoliocoinslist(
+                              ? PortfolioCoinsList(
                                   listings: listings,
                                 )
                               : const Center(

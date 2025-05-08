@@ -1,4 +1,4 @@
-import 'package:cryptotracker/screens/detailed_view.dart';
+import 'package:cryptotracker/screens/portfolio_coin_detailed_view.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:flutter/material.dart';
@@ -6,24 +6,24 @@ import 'package:flutter/material.dart';
 import '../models/crypto.dart';
 import '../pages_layout.dart';
 
-class Portfoliocoinslist extends StatefulWidget {
+class PortfolioCoinsList extends StatefulWidget {
   final List<Crypto> listings;
   final Function? onScrollEnd;
-  const Portfoliocoinslist(
+  const PortfolioCoinsList(
       {super.key, required this.listings, this.onScrollEnd});
 
   @override
-  State<Portfoliocoinslist> createState() => _CoinsListState();
+  State<PortfolioCoinsList> createState() => _CoinsListState();
 }
 
-class _CoinsListState extends State<Portfoliocoinslist> {
+class _CoinsListState extends State<PortfolioCoinsList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
-          double amountValue = (widget.listings[index].price ??
-              0) * (widget.listings[index].amount ?? 0);
+          double amountValue = (widget.listings[index].price ?? 0) *
+              (widget.listings[index].amount ?? 0);
 
           if (index >= widget.listings.length - 5) {
             if (widget.onScrollEnd != null) {
@@ -73,8 +73,9 @@ class _CoinsListState extends State<Portfoliocoinslist> {
                 MaterialPageRoute(
                     builder: (context) => PagesLayout(
                         displayNavBar: false,
-                        child: DetailedView(
+                        child: PortfolioCoinDetailedView(
                           cryptoId: widget.listings[index].id!,
+                          amount: widget.listings[index].amount??1,
                         ))),
               );
             },

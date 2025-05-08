@@ -4,15 +4,15 @@ import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
 
-class Newportfoliodialog extends StatefulWidget {
+class NewPortfolioDialog extends StatefulWidget {
   final Function onAddCoin;
-  const Newportfoliodialog({super.key, required this.onAddCoin});
+  const NewPortfolioDialog({super.key, required this.onAddCoin});
 
   @override
-  State<Newportfoliodialog> createState() => _NewportfoliodialogState();
+  State<NewPortfolioDialog> createState() => _NewPortfolioDialogState();
 }
 
-class _NewportfoliodialogState extends State<Newportfoliodialog> {
+class _NewPortfolioDialogState extends State<NewPortfolioDialog> {
   TextEditingController coinNameController = TextEditingController();
   TextEditingController amountController = TextEditingController();
   @override
