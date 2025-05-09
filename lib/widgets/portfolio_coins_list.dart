@@ -24,6 +24,8 @@ class _CoinsListState extends State<PortfolioCoinsList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         itemCount: widget.listings.length,
         itemBuilder: (BuildContext context, int index) {
           double amountValue = (widget.listings[index].price ?? 0) *
