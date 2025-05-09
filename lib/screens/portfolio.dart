@@ -1,3 +1,4 @@
+import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
@@ -17,10 +18,12 @@ class Portfolio extends StatefulWidget {
 class _PortfolioState extends State<Portfolio> {
   bool isLoading = false;
   bool loadingError = false;
+  bool isChartLoading = false;
   List<Crypto> listings = [];
   double totalValue = 0;
   double totalChange = 0;
   TextEditingController amountController = TextEditingController();
+  List<CoinPrice> globalPriceHistory = [];
 
   Future<void> loadListings() async {
     setState(() {
@@ -66,16 +69,70 @@ class _PortfolioState extends State<Portfolio> {
     }
   }
 
+  Future<void> loadPriceHistory(String timePeriod) async {
+    setState(() {
+      isChartLoading = true;
+      loadingError = false;
+      globalPriceHistory = [];
+    });
+
+    List<DateTime> timestamps = [];
+    List<double> prices = [];
+
+    for (var i = 0; i < listings.length; i++) {
+      try {
+        List<CoinPrice>? priceHistory =
+            await getPricesHistory(listings[i].id!, timePeriod);
+
+        if (priceHistory != null) {
+          for (var j = 0; j < priceHistory.length; j++) {
+            if (!timestamps.contains(priceHistory[j].dateTime!)) {
+              timestamps.add(priceHistory[j].dateTime!);
+              prices.add(priceHistory[j].price!);
+            } else {
+              int index = timestamps.indexOf(priceHistory[j].dateTime!);
+              prices[index] += priceHistory[j].price!;
+            }
+          }
+        }
+      } catch (e) {
+        setState(() {
+          loadingError = true;
+          isChartLoading = false;
+        });
+      }
+    }
+    for (var i = 0; i < timestamps.length; i++) {
+      globalPriceHistory
+          .add(CoinPrice(price: prices[i], dateTime: timestamps[i]));
+    }
+  }
+
   @override
   void initState() {
     loadListings();
+    loadPriceHistory("24h");
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    const timePeriods = ["24h", "1w", "1m", "3m", "6m", "1y", "all"];
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Portfolio")),
+      appBar: AppBar(
+        title: const Text("Portfolio"),
+        actions: [
+          /*
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PagesLayout(
+                        displayNavBar: false, child: PortfolioStats())));
+              },
+              icon: Icon(Icons.pie_chart))*/
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(

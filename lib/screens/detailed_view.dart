@@ -2,6 +2,7 @@ import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
+import 'package:cryptotracker/widgets/price_history_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,6 @@ class DetailedView extends StatefulWidget {
 
 class _DetailedViewState extends State<DetailedView> {
   List<CoinPrice> pricesHistory = [];
-  List<FlSpot> pricesHistoryChartData = [];
   List<ShowingTooltipIndicators> chartIndicators = [];
   String selectedTimePriceChartInterval = "24h";
   double priceChangePercentage = 0;
@@ -180,76 +180,21 @@ class _DetailedViewState extends State<DetailedView> {
                           Container(
                               margin: const EdgeInsets.only(right: 10),
                               height: 200,
-                              child: Listener(
-                                  onPointerDown: (event) => setState(() {
-                                        isTouchingChart = true;
-                                      }),
-                                  onPointerUp: (event) => setState(() {
-                                        isTouchingChart = false;
-                                      }),
-                                  child: LineChart(LineChartData(
-                                    lineTouchData: LineTouchData(
-                                    
-                                      touchTooltipData: LineTouchTooltipData(
-                                          // tooltipBgColor:
-                                          //     Colors.white.withAlpha(0),
-                                          getTooltipColor: (touchedSpot) =>
-                                              Colors.white.withAlpha(0),
-                                          getTooltipItems: (lineBarSpots) {
-                                            return [
-                                              const LineTooltipItem(
-                                                  "", TextStyle())
-                                            ];
-                                          }),
-                                      touchCallback: (touchEvent,
-                                          LineTouchResponse? touchResponse) {
-                                        if (touchResponse?.lineBarSpots !=
-                                            null) {
-                                          setState(() {
-                                            touchedTime = DateTime
-                                                .fromMillisecondsSinceEpoch(
-                                                    touchResponse!
-                                                        .lineBarSpots!.first.x
-                                                        .round());
-
-                                            touchedPrice = touchResponse
-                                                .lineBarSpots!.first.y;
-                                            // isTouchingChart = true;
-                                          });
-                                          if (touchEvent is FlLongPressEnd ||
-                                              touchEvent is FlPanCancelEvent ||
-                                              touchEvent is FlTapUpEvent) {
-                                            setState(() {
-                                              isTouchingChart = false;
-                                            });
-                                          }
-                                        }
-                                      },
-                                    ),
-                                    borderData: FlBorderData(show: false),
-                                    gridData: const FlGridData(show: false),
-                                    titlesData: const FlTitlesData(show: false),
-                                    lineBarsData: [
-                                      LineChartBarData(
-                                        belowBarData: BarAreaData(
-                                          show: true,
-                                          gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                            colors: [
-                                            const Color.fromARGB(255, 0, 19, 226),
-                                            const Color.fromARGB(146, 0, 19, 226),
-                                            const Color.fromARGB(0, 0, 19, 226)
-                                          ])
-                                        ),
-                                        isCurved: true,
-                                        color: const Color.fromARGB(
-                                            255, 0, 26, 255),
-                                        dotData: const FlDotData(show: false),
-                                        spots: pricesHistoryChartData,
-                                      )
-                                    ],
-                                  )))),
+                              child: PriceHistoryChart(
+                                priceHistory: pricesHistory,
+                                onTouch: (touchedTime, touchedPrice) {
+                                  setState(() {
+                                    isTouchingChart = true;
+                                    this.touchedTime = touchedTime;
+                                    this.touchedPrice = touchedPrice;
+                                  });
+                                },
+                                onUntouch: () {
+                                  setState(() {
+                                    isTouchingChart = false;
+                                  });
+                                },
+                              )),
                           const SizedBox(
                             height: 5,
                           ),
@@ -303,10 +248,8 @@ class _DetailedViewState extends State<DetailedView> {
         } else {
           loadingError = true;
         }
+        isLoading = false;
       });
-      loadPricesHistoryChartData().then((value) => setState(() {
-            isLoading = false;
-          }));
     });
   }
 
@@ -322,20 +265,6 @@ class _DetailedViewState extends State<DetailedView> {
         crypto = values;
       } else {
         loadingError = true;
-      }
-    });
-  }
-
-  Future<void> loadPricesHistoryChartData() async {
-    setState(() {
-      pricesHistoryChartData.clear();
-      for (var i = 0; i < pricesHistory.length; i++) {
-        if (pricesHistory[i].price != null) {
-          pricesHistoryChartData.add(FlSpot(
-              pricesHistory[i].dateTime?.millisecondsSinceEpoch.toDouble() ??
-                  0.0,
-              pricesHistory[i].price!));
-        }
       }
     });
   }
