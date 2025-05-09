@@ -3,7 +3,7 @@ CryptoTracker is the ultimate companion for cryptocurrency enthusiasts and inves
 Whether you're a seasoned trader or just starting out, CryptoTracker equips you with all the tools you need to stay ahead in the cryptocurrency market:  
 - Real-time price updates 💹: Keep track of the latest market values in an instant.  
 - Detailed statistics 📈: Dive deep into key data for every cryptocurrency.  
-- "News" section 📰: Get the latest updates and trends from the world of crypto.  
+- Portfolio 💼: Monitor your crypto holdings, track performance over time, and manage your assets with ease.  
 - Insightful charts 📊: Visualize trends with beautifully crafted graphs.  
 - Material 3 design 🎨: Sleek, modern, and user-friendly interface.
 - Multi-currency support 💱: View rates in your preferred currency.  
