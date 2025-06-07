@@ -1,7 +1,6 @@
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:flutter/material.dart';
 import 'pages_layout.dart';
-import 'screens/home.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -9,7 +8,9 @@ void main() {
   databaseFactory = databaseFactoryFfi;
   SettingsDb.init().then((value) {
     SettingsDb.addDefaultValues();
-    runApp(const MyApp());
+    runApp(
+      const MyApp(),
+    );
   });
 }
 
@@ -40,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: const PagesLayout(child: Home()),
+      home: const PagesLayout(currentSection: 1),
     );
   }
 

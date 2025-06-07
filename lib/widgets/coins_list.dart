@@ -1,10 +1,9 @@
 import 'package:cryptotracker/screens/detailed_view.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
-import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../models/crypto.dart';
-import '../pages_layout.dart';
 
 class CoinsList extends StatefulWidget {
   final List<Crypto> listings;
@@ -61,11 +60,9 @@ class _CoinsListState extends State<CoinsList> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => PagesLayout(
-                        displayNavBar: false,
-                        child: DetailedView(
+                    builder: (context) => DetailedView(
                           cryptoId: widget.listings[index].id!,
-                        ))),
+                        )),
               );
             },
           );

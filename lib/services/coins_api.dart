@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cryptotracker/models/coin_price.dart';
 import 'package:cryptotracker/models/currency.dart';
-import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/utils/utils.dart';
 
 import '../models/crypto.dart';
 import 'settingsDB.dart';
@@ -139,4 +139,3 @@ Future<List<Currency>?> getAvailableCurrencies() async {
 
   return currencies;
 }
-

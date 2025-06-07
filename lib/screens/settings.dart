@@ -1,7 +1,7 @@
 import 'package:cryptotracker/main.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
-import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

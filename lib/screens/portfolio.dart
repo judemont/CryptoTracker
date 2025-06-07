@@ -2,7 +2,7 @@ import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
-import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/utils/utils.dart';
 import 'package:cryptotracker/widgets/cryptos_pie_chart.dart';
 import 'package:cryptotracker/widgets/new_portfolio_dialog.dart';
 import 'package:cryptotracker/widgets/portfolio_coins_list.dart';

@@ -1,6 +1,6 @@
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
-import 'package:cryptotracker/utils.dart';
+import 'package:cryptotracker/utils/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
