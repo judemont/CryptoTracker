@@ -33,10 +33,11 @@ class _PortfolioState extends State<PortfolioScreen> {
   List<PieChartSectionData> pieChartSections = [];
 
   Future<void> loadPortfolios() async {
-    portfolios = await DatabaseService.getPortfolios();
+    print("LOADING PORTFOLIOS22");
+    List<Portfolio> newPortfolios = await DatabaseService.getPortfolios();
 
     setState(() {
-      portfolios = portfolios;
+      portfolios = newPortfolios; // Assigner la nouvelle liste
     });
   }
 
@@ -120,9 +121,13 @@ class _PortfolioState extends State<PortfolioScreen> {
   void initState() {
     loadPortfolios().then((_) {
       if (portfolios.isEmpty) {
-        DatabaseService.newPortfolio("Main Portfolio");
+        DatabaseService.newPortfolio("Main Portfolio").then((id) {
+          loadPortfolios();
+          selectedPortfolioID = id;
+        });
+      } else {
+        selectedPortfolioID = portfolios[0].id!;
       }
-      selectedPortfolioID = portfolios[0].id!;
       loadListings(selectedPortfolioID);
     });
     super.initState();
@@ -152,13 +157,13 @@ class _PortfolioState extends State<PortfolioScreen> {
             children: [
               const SizedBox(height: 10),
               PortfolioSelector(
+                  portfolios: portfolios,
+                  loadPortfolios: loadPortfolios,
                   onPortfolioSelected: (id) {
-                    loadPortfolios().then((_) {
-                      loadListings(id);
-                    });
                     setState(() {
                       selectedPortfolioID = id;
                     });
+                    loadListings(id);
                   },
                   selectedPortfolioID: selectedPortfolioID),
               const SizedBox(height: 10),
@@ -224,6 +229,12 @@ class _PortfolioState extends State<PortfolioScreen> {
                                                 child: const Text("Cancel")),
                                             TextButton(
                                                 onPressed: () async {
+                                                  if (portfolios.length <= 1) {
+                                                    print("NEWW DEFAULT");
+                                                    await DatabaseService
+                                                        .newPortfolio(
+                                                            "Main Portfolio");
+                                                  }
                                                   await DatabaseService
                                                       .removePortfolioCoin(
                                                           coin.id!,

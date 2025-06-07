@@ -83,7 +83,7 @@ class DatabaseService {
           CREATE TABLE portfolioValue(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               crypto TEXT,
-              amount REAL
+              amount REAL,
               portfolioID INTEGER
           )
         """);
