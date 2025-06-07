@@ -1,22 +1,24 @@
 import 'package:cryptotracker/models/crypto.dart';
+import 'package:cryptotracker/models/portfolio.dart';
 import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils/utils.dart';
 import 'package:cryptotracker/widgets/cryptos_pie_chart.dart';
-import 'package:cryptotracker/widgets/new_portfolio_dialog.dart';
+import 'package:cryptotracker/widgets/new_portfolio_value_dialog.dart';
 import 'package:cryptotracker/widgets/portfolio_coins_list.dart';
+import 'package:cryptotracker/widgets/portfolio_selector.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class Portfolio extends StatefulWidget {
-  const Portfolio({super.key});
+class PortfolioScreen extends StatefulWidget {
+  const PortfolioScreen({super.key});
 
   @override
-  State<Portfolio> createState() => _PortfolioState();
+  State<PortfolioScreen> createState() => _PortfolioState();
 }
 
-class _PortfolioState extends State<Portfolio> {
+class _PortfolioState extends State<PortfolioScreen> {
   bool isLoading = false;
   bool loadingError = false;
   List<int> a = [];
@@ -25,16 +27,27 @@ class _PortfolioState extends State<Portfolio> {
   double totalChange = 0;
   TextEditingController amountController = TextEditingController();
   int touchedIndex = -1;
+  List<Portfolio> portfolios = [];
+  int selectedPortfolioID = 0;
 
   List<PieChartSectionData> pieChartSections = [];
 
-  Future<void> loadListings() async {
+  Future<void> loadPortfolios() async {
+    portfolios = await DatabaseService.getPortfolios();
+
+    setState(() {
+      portfolios = portfolios;
+    });
+  }
+
+  Future<void> loadListings(int portfolioID) async {
     setState(() {
       isLoading = true;
       loadingError = false;
     });
     try {
-      List<Crypto> portfolio = await DatabaseService.getPortfolio();
+      List<Crypto> portfolio =
+          await DatabaseService.getPortfolioValues(portfolioID);
 
       List<Crypto> cryptoLists = [];
       setState(() {
@@ -105,7 +118,13 @@ class _PortfolioState extends State<Portfolio> {
 
   @override
   void initState() {
-    loadListings();
+    loadPortfolios().then((_) {
+      if (portfolios.isEmpty) {
+        DatabaseService.newPortfolio("Main Portfolio");
+      }
+      selectedPortfolioID = portfolios[0].id!;
+      loadListings(selectedPortfolioID);
+    });
     super.initState();
   }
 
@@ -120,8 +139,9 @@ class _PortfolioState extends State<Portfolio> {
             showDialog(
                 context: context,
                 builder: (context) {
-                  return NewPortfolioDialog(
-                    onAddCoin: () => loadListings(),
+                  return NewPortfolioValueDialog(
+                    portfolioID: selectedPortfolioID,
+                    onAddCoin: () => loadListings(selectedPortfolioID),
                   );
                 });
           },
@@ -130,6 +150,17 @@ class _PortfolioState extends State<Portfolio> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 10),
+              PortfolioSelector(
+                  onPortfolioSelected: (id) {
+                    loadPortfolios().then((_) {
+                      loadListings(id);
+                    });
+                    setState(() {
+                      selectedPortfolioID = id;
+                    });
+                  },
+                  selectedPortfolioID: selectedPortfolioID),
               const SizedBox(height: 10),
               Text(
                 formatePrice(totalValue,
@@ -146,17 +177,18 @@ class _PortfolioState extends State<Portfolio> {
                     color: totalChange > 0 ? Colors.green : Colors.red),
               ),
               const SizedBox(height: 10),
-              Container(
-                  height: 200,
-                  padding: const EdgeInsets.all(10),
-                  child: CryptosPieChart(
-                    sections: pieChartSections,
-                  )),
+              if (pieChartSections.isNotEmpty)
+                Container(
+                    height: 200,
+                    padding: const EdgeInsets.all(10),
+                    child: CryptosPieChart(
+                      sections: pieChartSections,
+                    )),
               const SizedBox(height: 30),
               RefreshIndicator(
                 color: Theme.of(context).colorScheme.primary,
                 onRefresh: () async {
-                  await loadListings();
+                  await loadListings(selectedPortfolioID);
                   return Future<void>.delayed(const Duration(seconds: 1));
                 },
                 child: !loadingError
@@ -194,8 +226,10 @@ class _PortfolioState extends State<Portfolio> {
                                                 onPressed: () async {
                                                   await DatabaseService
                                                       .removePortfolioCoin(
-                                                          coin.id!);
-                                                  loadListings();
+                                                          coin.id!,
+                                                          selectedPortfolioID);
+                                                  loadListings(
+                                                      selectedPortfolioID);
 
                                                   if (mounted) {
                                                     Navigator.of(context).pop();
@@ -213,8 +247,11 @@ class _PortfolioState extends State<Portfolio> {
                                                                   .text);
                                                       await DatabaseService
                                                           .updatePortfolioCoin(
-                                                              coin.id!, amount);
-                                                      loadListings();
+                                                              coin.id!,
+                                                              amount,
+                                                              selectedPortfolioID);
+                                                      loadListings(
+                                                          selectedPortfolioID);
                                                     } catch (e) {
                                                       // Handle invalid number input
                                                       ScaffoldMessenger.of(
@@ -246,7 +283,7 @@ class _PortfolioState extends State<Portfolio> {
                             const SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () {
-                                loadListings();
+                                loadListings(selectedPortfolioID);
                               },
                               child: const Text("Try again"),
                             ),

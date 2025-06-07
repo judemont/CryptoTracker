@@ -1,4 +1,5 @@
 import 'package:cryptotracker/models/crypto.dart';
+import 'package:cryptotracker/models/portfolio.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,7 +8,7 @@ class DatabaseService {
   static const String databaseName = "cryptotrackerDB.sqlite";
   static Database? db;
 
-  static const databaseVersion = 2;
+  static const databaseVersion = 3;
   List<String> tables = ["favorites", "portfolio"];
 
   static Future<Database> initializeDb() async {
@@ -48,6 +49,20 @@ class DatabaseService {
           )
         """);
       }
+      if (oldVersion < 3) {
+        db.execute("""
+          ALTER TABLE portfolio RENAME TO portfolioValue;
+        """);
+        db.execute("""
+          ALTER TABLE portfolioValue ADD COLUMN portfolioID INTEGER;
+        """);
+        db.execute("""
+          CREATE TABLE portfolio(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT
+          )
+        """);
+      }
     }
   }
 
@@ -58,12 +73,18 @@ class DatabaseService {
           crypto TEXT
       )
     """);
-
     await database.execute("""
           CREATE TABLE portfolio(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT
+          )
+        """);
+    await database.execute("""
+          CREATE TABLE portfolioValue(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
               crypto TEXT,
               amount REAL
+              portfolioID INTEGER
           )
         """);
   }
@@ -95,33 +116,67 @@ class DatabaseService {
     db.delete("favorites", where: "crypto = '$name'");
   }
 
-  static Future<int> newPortfolioCoin(String cryptoId, double amount) async {
+  static Future<int> newPortfolioCoin(
+      String cryptoId, double amount, int portfolioId) async {
     final db = await DatabaseService.initializeDb();
-    final id =
-        await db.insert('portfolio', {'crypto': cryptoId, 'amount': amount});
+    final id = await db.insert('portfolioValue',
+        {'crypto': cryptoId, 'amount': amount, 'portfolioID': portfolioId});
     return id;
   }
 
-  static Future<int> updatePortfolioCoin(String cryptoId, double amount) async {
-    removePortfolioCoin(cryptoId);
+  static Future<int> newPortfolio(String name) async {
     final db = await DatabaseService.initializeDb();
-    final id =
-        await db.insert('portfolio', {'crypto': cryptoId, 'amount': amount});
+    final id = await db.insert('portfolio', {'name': name});
     return id;
   }
 
-  static Future<List<Crypto>> getPortfolio() async {
+  static Future<int> updatePortfolio(int portfolioID, String name) async {
+    removePortfolio(portfolioID);
+    final db = await DatabaseService.initializeDb();
+    final id = await db.insert('portfolio', {'name': name});
+    return id;
+  }
+
+  static Future<int> updatePortfolioCoin(
+      String cryptoId, double amount, int portfolioID) async {
+    removePortfolioCoin(cryptoId, portfolioID);
+    final db = await DatabaseService.initializeDb();
+    final id = await db.insert('portfolioValue',
+        {'crypto': cryptoId, 'amount': amount, 'portfolioID': portfolioID});
+    return id;
+  }
+
+  static Future<List<Portfolio>> getPortfolios() async {
     final db = await DatabaseService.initializeDb();
 
     List<Map<String, dynamic>> queryResult = await db.query('portfolio');
+
+    return queryResult
+        .map((e) => Portfolio(id: e["id"], name: e["name"]))
+        .toList();
+  }
+
+  static Future<List<Crypto>> getPortfolioValues(int portfolioID) async {
+    final db = await DatabaseService.initializeDb();
+
+    List<Map<String, dynamic>> queryResult = await db.query('portfolioValue',
+        where: 'portfolioID = ?', whereArgs: [portfolioID]);
 
     return queryResult
         .map((e) => Crypto(id: e["crypto"], amount: e["amount"]))
         .toList();
   }
 
-  static Future<void> removePortfolioCoin(String cryptoId) async {
+  static Future<void> removePortfolioCoin(
+      String cryptoId, int portfolioID) async {
     final db = await DatabaseService.initializeDb();
-    db.delete("portfolio", where: "crypto = '$cryptoId'");
+    print("remove $cryptoId from $portfolioID");
+    db.delete("portfolioValue",
+        where: "crypto = '$cryptoId' AND portfolioID = '$portfolioID'");
+  }
+
+  static Future<void> removePortfolio(int portfolioID) async {
+    final db = await DatabaseService.initializeDb();
+    db.delete("portfolio", where: "id = '$portfolioID'");
   }
 }

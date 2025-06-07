@@ -1,64 +1,30 @@
-import 'package:cryptotracker/models/crypto.dart';
-import 'package:cryptotracker/screens/settings.dart';
-import 'package:cryptotracker/services/coins_api.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:flutter/material.dart';
 
 class NewPortfolioDialog extends StatefulWidget {
-  final Function onAddCoin;
-  const NewPortfolioDialog({super.key, required this.onAddCoin});
+  final Function onAddPortfolio;
+  const NewPortfolioDialog({super.key, required this.onAddPortfolio});
 
   @override
   State<NewPortfolioDialog> createState() => _NewPortfolioDialogState();
 }
 
 class _NewPortfolioDialogState extends State<NewPortfolioDialog> {
-  TextEditingController coinNameController = TextEditingController();
-  TextEditingController amountController = TextEditingController();
+  TextEditingController portfolioNameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add coin to your portfolio"),
+      title: const Text("New portfolio"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text("Enter coin name"),
-          Autocomplete(
-            optionsBuilder: (TextEditingValue textEditingValue) async {
-              List<Crypto>? coins =
-                  await getListings(search: textEditingValue.text);
-
-              if (coins == null) {
-                return const Iterable<String>.empty();
-              }
-              return coins.map((e) => e.id!.toCapitalized());
-            },
-            onSelected: (option) {
-              setState(() {
-                coinNameController.text = option;
-              });
-            },
-            fieldViewBuilder:
-                (context, textEditingController, focusNode, onFieldSubmitted) {
-              return TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      coinNameController.text = value;
-                    });
-                  },
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    hintText: "Bitcoin",
-                  ));
-            },
-          ),
-          const SizedBox(height: 20),
-          const Text("Enter amount"),
+          const Text("Enter portfolio name"),
           TextField(
-              controller: amountController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(hintText: "3.5")),
+              controller: portfolioNameController,
+              decoration: const InputDecoration(
+                hintText: "Portfolio name",
+              )),
         ],
       ),
       actions: [
@@ -71,26 +37,11 @@ class _NewPortfolioDialogState extends State<NewPortfolioDialog> {
         TextButton(
           onPressed: () async {
             // try {
-            String name = coinNameController.text.toLowerCase();
-            double amount = double.parse(amountController.text);
+            String name = portfolioNameController.text.toLowerCase();
 
-            Crypto? coin = await getCoinData(name);
-            if (coin == null) {
-              throw Exception("Invalid coin");
-            }
-            if (amount <= 0) {
-              throw Exception("Invalid amount");
-            }
-            DatabaseService.newPortfolioCoin(name, amount);
-            widget.onAddCoin();
-            /*  } catch (e) {
-              print(e);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Invalid coin or amount"),
-                ),
-              );
-            }*/
+            DatabaseService.newPortfolio(name);
+            widget.onAddPortfolio();
+
             Navigator.of(context).pop();
           },
           child: const Text("Add"),

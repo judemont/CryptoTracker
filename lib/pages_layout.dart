@@ -1,5 +1,5 @@
 import 'package:cryptotracker/screens/favorites.dart';
-import 'package:cryptotracker/screens/portfolio.dart';
+import 'package:cryptotracker/screens/portfolio_screen.dart';
 import 'package:cryptotracker/screens/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ class _PagesLayoutState extends State<PagesLayout> {
   final List<Widget> pages = const [
     Home(),
     Favorites(),
-    Portfolio(),
+    PortfolioScreen(),
     Settings(),
   ];
 
