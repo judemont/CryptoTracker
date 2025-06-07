@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: const PagesLayout(currentSection: 1),
+      home: const PagesLayout(currentSection: 0),
     );
   }
 
