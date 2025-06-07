@@ -1,6 +1,7 @@
 import 'package:cryptotracker/models/portfolio.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/widgets/new_portfolio_dialog.dart';
+import 'package:cryptotracker/widgets/edit_portfolio_dialog.dart';
 import 'package:flutter/material.dart';
 
 class PortfolioSelector extends StatefulWidget {
@@ -21,17 +22,11 @@ class PortfolioSelector extends StatefulWidget {
 }
 
 class _PortfolioSelectorState extends State<PortfolioSelector> {
-  TextEditingController nameController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    if (widget.portfolios.isEmpty) {
-      return const CircularProgressIndicator();
-    }
-
     final selectedPortfolio = widget.portfolios.firstWhere(
       (el) => el.id == widget.selectedPortfolioID,
-      orElse: () => widget.portfolios.first,
+      orElse: () => Portfolio(name: "-"),
     );
 
     return ElevatedButton(
@@ -80,100 +75,15 @@ class _PortfolioSelectorState extends State<PortfolioSelector> {
                                         style: TextStyle(fontSize: 20)),
                                     leading: Icon(Icons.pie_chart),
                                     onLongPress: () {
-                                      nameController = TextEditingController(
-                                          text: currentPortfolios[index].name);
                                       showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return AlertDialog(
-                                            title: Text(
-                                                "Edit ${currentPortfolios[index].name}"),
-                                            content: TextField(
-                                              controller: nameController,
-                                              decoration: const InputDecoration(
-                                                  hintText: "Portfolio Name"),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Text("Cancel"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            "Confirm deletion"),
-                                                        content: Text(
-                                                          "Are you sure you want to delete '${currentPortfolios[index].name}'?",
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(),
-                                                            child: const Text(
-                                                                "Cancel"),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              await DatabaseService
-                                                                  .removePortfolio(
-                                                                      currentPortfolios[
-                                                                              index]
-                                                                          .id!);
-                                                              await widget
-                                                                  .loadPortfolios();
-                                                              if (mounted) {
-                                                                bottomSheetSetState(
-                                                                    () {});
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(); // close confirm dialog
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(); // close edit dialog
-                                                              }
-                                                            },
-                                                            child: const Text(
-                                                                "Delete"),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                child: const Text("Remove"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  if (nameController
-                                                      .text.isNotEmpty) {
-                                                    await DatabaseService
-                                                        .updatePortfolio(
-                                                            currentPortfolios[
-                                                                    index]
-                                                                .id!,
-                                                            nameController
-                                                                .text);
-                                                    await widget
-                                                        .loadPortfolios();
-                                                    if (mounted) {
-                                                      bottomSheetSetState(
-                                                          () {});
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    }
-                                                  }
-                                                },
-                                                child: const Text("Save"),
-                                              ),
-                                            ],
+                                          return EditPortfolioDialog(
+                                            portfolio: currentPortfolios[index],
+                                            onPortfolioUpdated: () async {
+                                              await widget.loadPortfolios();
+                                              bottomSheetSetState(() {});
+                                            },
                                           );
                                         },
                                       );
