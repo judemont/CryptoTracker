@@ -1,3 +1,4 @@
+import 'package:cryptotracker/screens/detailed_view.dart';
 import 'package:cryptotracker/services/database.dart';
 import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils/utils.dart';
@@ -82,6 +83,16 @@ class _PortfolioCoinDetailedViewState extends State<PortfolioCoinDetailedView> {
       appBar: AppBar(
         title: const Text("Details"),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => DetailedView(
+                            cryptoId: widget.cryptoId,
+                          )),
+                );
+              },
+              icon: Icon(Icons.area_chart)),
           Visibility(
               visible: crypto.id != null,
               child: IconButton(
