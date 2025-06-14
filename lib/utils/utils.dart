@@ -44,8 +44,7 @@ Widget getCoinLogoWidget(String logoUrl) {
 }
 
 Future<http.Response> httpGet(Uri url) async {
-  Uri requestURl =
-      Uri.https("futureofthe.tech", "/proxy", {"url": url.toString()});
+  Uri requestURl = Uri.parse(toProxyUrl(url.toString())!);
 
   var reponse = await http.get(requestURl);
 
@@ -57,6 +56,6 @@ String? toProxyUrl(String? url) {
     return null;
   }
   Uri resultURL = Uri.https("ctproxy.futureofthe.tech", "", {"url": url});
-
+  print(resultURL);
   return resultURL.toString();
 }
