@@ -56,6 +56,5 @@ String? toProxyUrl(String? url) {
     return null;
   }
   Uri resultURL = Uri.https("ctproxy.futureofthe.tech", "", {"url": url});
-  print(resultURL);
   return resultURL.toString();
 }
