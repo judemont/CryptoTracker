@@ -1,5 +1,6 @@
 import 'package:cryptotracker/models/crypto.dart';
 import 'package:cryptotracker/models/portfolio.dart';
+import 'package:cryptotracker/models/price_alert.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,8 +9,8 @@ class DatabaseService {
   static const String databaseName = "cryptotrackerDB.sqlite";
   static Database? db;
 
-  static const databaseVersion = 3;
-  List<String> tables = ["favorites", "portfolio"];
+  static const databaseVersion = 4;
+  List<String> tables = ["favorites", "portfolio", "price_alerts"];
 
   static Future<Database> initializeDb() async {
     final databasePath = (await getApplicationDocumentsDirectory()).path;
@@ -63,6 +64,20 @@ class DatabaseService {
           )
         """);
       }
+      if (oldVersion < 4) {
+        db.execute("""
+          CREATE TABLE price_alerts(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              cryptoId TEXT,
+              cryptoName TEXT,
+              thresholdAbove REAL,
+              thresholdBelow REAL,
+              isActive INTEGER,
+              createdAt TEXT,
+              lastTriggered TEXT
+          )
+        """);
+      }
     }
   }
 
@@ -85,6 +100,18 @@ class DatabaseService {
               crypto TEXT,
               amount REAL,
               portfolioID INTEGER
+          )
+        """);
+    await database.execute("""
+          CREATE TABLE price_alerts(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              cryptoId TEXT,
+              cryptoName TEXT,
+              thresholdAbove REAL,
+              thresholdBelow REAL,
+              isActive INTEGER,
+              createdAt TEXT,
+              lastTriggered TEXT
           )
         """);
   }
@@ -178,5 +205,43 @@ class DatabaseService {
   static Future<void> removePortfolio(int portfolioID) async {
     final db = await DatabaseService.initializeDb();
     db.delete("portfolio", where: "id = '$portfolioID'");
+  }
+
+  // Price Alert Methods
+  static Future<int> createPriceAlert(PriceAlert alert) async {
+    final db = await DatabaseService.initializeDb();
+    final id = await db.insert('price_alerts', alert.toMap());
+    return id;
+  }
+
+  static Future<List<PriceAlert>> getPriceAlerts() async {
+    final db = await DatabaseService.initializeDb();
+    List<Map<String, dynamic>> queryResult = await db.query('price_alerts');
+    return queryResult.map((e) => PriceAlert.fromMap(e)).toList();
+  }
+
+  static Future<List<PriceAlert>> getActivePriceAlerts() async {
+    final db = await DatabaseService.initializeDb();
+    List<Map<String, dynamic>> queryResult = await db.query('price_alerts', 
+        where: 'isActive = ?', whereArgs: [1]);
+    return queryResult.map((e) => PriceAlert.fromMap(e)).toList();
+  }
+
+  static Future<void> updatePriceAlert(PriceAlert alert) async {
+    final db = await DatabaseService.initializeDb();
+    await db.update('price_alerts', alert.toMap(), 
+        where: 'id = ?', whereArgs: [alert.id]);
+  }
+
+  static Future<void> deletePriceAlert(int id) async {
+    final db = await DatabaseService.initializeDb();
+    await db.delete('price_alerts', where: 'id = ?', whereArgs: [id]);
+  }
+
+  static Future<void> markAlertTriggered(int id) async {
+    final db = await DatabaseService.initializeDb();
+    await db.update('price_alerts', 
+        {'lastTriggered': DateTime.now().toIso8601String()}, 
+        where: 'id = ?', whereArgs: [id]);
   }
 }

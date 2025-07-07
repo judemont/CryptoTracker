@@ -3,6 +3,7 @@ import 'package:cryptotracker/services/settingsDB.dart';
 import 'package:cryptotracker/utils/utils.dart';
 import 'package:cryptotracker/widgets/crypto_market_stats.dart';
 import 'package:cryptotracker/widgets/price_history_chart.dart';
+import 'package:cryptotracker/widgets/create_alert_dialog.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -78,6 +79,13 @@ class _DetailedViewState extends State<DetailedView> {
       appBar: AppBar(
         title: const Text("Details"),
         actions: [
+          Visibility(
+              visible: crypto.id != null,
+              child: IconButton(
+                  onPressed: () {
+                    _showCreateAlertDialog();
+                  },
+                  icon: const Icon(Icons.notifications_add))),
           Visibility(
               visible: crypto.id != null,
               child: IconButton(
@@ -274,5 +282,21 @@ class _DetailedViewState extends State<DetailedView> {
     setState(() {
       // favorites = SettingsDb.getValue("portfolio", "favoritesIds") ?? []; // TODO
     });
+  }
+
+  void _showCreateAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CreateAlertDialog(
+          cryptoId: crypto.id!,
+          cryptoName: crypto.name!,
+          currentPrice: crypto.price,
+          onAlertCreated: () {
+            // Optional: You can add any callback logic here
+          },
+        );
+      },
+    );
   }
 }

@@ -45,6 +45,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.3
   sqlite3_flutter_libs: ^0.5.26
   provider: ^6.1.5
+  flutter_local_notifications: ^17.2.4
 
 dev_dependencies:
   flutter_test:

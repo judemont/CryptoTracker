@@ -1,5 +1,6 @@
 import 'package:cryptotracker/screens/favorites.dart';
 import 'package:cryptotracker/screens/portfolio_screen.dart';
+import 'package:cryptotracker/screens/price_alerts_screen.dart';
 import 'package:cryptotracker/screens/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,7 @@ class _PagesLayoutState extends State<PagesLayout> {
     Home(),
     Favorites(),
     PortfolioScreen(),
+    PriceAlertsScreen(),
     Settings(),
   ];
 
@@ -56,6 +58,8 @@ class _PagesLayoutState extends State<PagesLayout> {
                     icon: Icon(Icons.star), label: "Favorites"),
                 NavigationDestination(
                     icon: Icon(Icons.pie_chart), label: "Portfolio"),
+                NavigationDestination(
+                    icon: Icon(Icons.notifications), label: "Alerts"),
                 NavigationDestination(
                     icon: Icon(Icons.settings), label: "Settings"),
               ],

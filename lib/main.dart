@@ -1,4 +1,5 @@
 import 'package:cryptotracker/services/settingsDB.dart';
+import 'package:cryptotracker/services/alert_service.dart';
 import 'package:flutter/material.dart';
 import 'pages_layout.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -8,6 +9,10 @@ void main() {
   databaseFactory = databaseFactoryFfi;
   SettingsDb.init().then((value) {
     SettingsDb.addDefaultValues();
+    AlertService.initialize().then((_) {
+      AlertService.requestPermissions();
+      AlertService.startMonitoring();
+    });
     runApp(
       const MyApp(),
     );
