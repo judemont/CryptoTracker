@@ -43,7 +43,9 @@ class _FavoritesState extends State<Favorites> {
               color: Theme.of(context).colorScheme.primary,
               child: !loadingError
                   ? (!isLoading
-                      ? CoinsList(listings: listings)
+                      ? (listings.isNotEmpty
+                          ? CoinsList(listings: listings)
+                          : const Center(child: Text("No favorites yet")))
                       : const Center(child: CircularProgressIndicator()))
                   : Center(
                       child: ElevatedButton(
